@@ -495,8 +495,9 @@ async def choose_pages(callback: CallbackQuery, state: FSMContext, db_user: User
         is_pro = data.get("is_pro", False)
         plan_prompt = "7-10 ta juda batafsil bo'lim" if is_pro else "5-6 ta bo'lim"
         
+        real_service = data.get("service_type", "essay")
         plan_data = await generate_document_plan(
-            service_type="essay", 
+            service_type=real_service, 
             topic=topic, 
             language=data.get("language", "uz"),
             detail_level="pro" if is_pro else "standard"
@@ -556,8 +557,9 @@ async def handle_referat_webapp(message: Message, state: FSMContext, db_user: Us
                 parse_mode="HTML"
             )
             try:
+                real_service = data.get("service_type", "essay")
                 plan_data = await generate_document_plan(
-                    service_type="essay",
+                    service_type=real_service,
                     topic=topic,
                     language=data.get("language", "uz"),
                     detail_level="pro" if quality == "pro" else "standard"
@@ -838,7 +840,7 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                 ),
                 language=data.get("language", "uz"),
                 quality="pro",
-                service_type="article"
+                service_type=doc_type
             )
             full_content = [result]
 
@@ -882,7 +884,7 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                     ) + source_block + f"Ushbu bo'lim aynan {words_per_section} ta so'zdan iborat bo'lsin. " + data.get("extra_info", ""),
                     language=data.get("language", "uz"),
                     quality=data.get("quality", "standard"),
-                    service_type="article"
+                    service_type=doc_type
                 )
                 full_content.append(f"# {sec}\n\n{text}")
 
@@ -895,12 +897,16 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
             except TelegramBadRequest:
                 pass
             
-            bib_count = "10-15" if data.get("quality") == "pro" else "5-8"
+            real_service = data.get("service_type", "essay")
+            bib_count = "10-15" if data.get("quality") == "pro" else "5-10"
+            recent_rule = "Barcha manbalar SO'NGGI 5 YIL ICHIDA (2020-2025) nashr etilgan bo'lishi SHART.\n" if real_service == "mustaqil" else ""
+            
             bib_text = await generate_document_section(
                 topic=topic, 
                 section_title=bib_title, 
                 extra_details=(
-                    f"Mavzu bo'yicha kamida {bib_count} ta REAL ilmiy manbalarni yoz.\n"
+                    f"Mavzu bo'yicha {bib_count} ta REAL ilmiy manbalarni yoz.\n"
+                    f"{recent_rule}"
                     "TARKIBI:\n"
                     "- 40% O'zbek mualliflari (O'zbekiston nashriyotlari: Fan, Iqtisod-Moliya, Sharq, TDIU). "
                     "Masalan: Karimov A.K., Abdullayev B.M., Xo'jayev N.R. kabi.\n"
@@ -1109,10 +1115,12 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
         elif db_user.id not in ADMIN_IDS:
             await deduct_balance(db_user.id, price)
         
-        await create_request(user_id=db_user.id, service_type="essay", topic=topic, options={"pages": pages, "ai_images": ai_images_count})
+        real_service = data.get("service_type", "essay")
+        await create_request(user_id=db_user.id, service_type=real_service, topic=topic, options={"pages": pages, "ai_images": ai_images_count})
         
         await wait_msg.delete()
-        file_name = f"Referat_{topic[:20]}.docx"
+        prefix = "Mustaqil_ish_" if real_service == "mustaqil" else "Referat_"
+        file_name = f"{prefix}{topic[:20]}.docx"
         await message.answer_document(
             document=BufferedInputFile(docx_bytes, filename=file_name),
             caption=t("doc_done", lang, topic=topic, pages=pages, price=format_price(price)),

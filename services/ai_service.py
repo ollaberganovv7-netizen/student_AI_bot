@@ -249,6 +249,28 @@ async def generate_document_plan(service_type: str, topic: str, language: str = 
             "bob va paragraflar nomlari shu mavzuga mos, ilmiy va professional bo'lsin.\n"
             "FAQAT shu formatda javob bering, boshqa izoh yoki tushuntirish qo'shmang."
         )
+    elif service_type == "mustaqil":
+        plan_structure = "KIRISH\n"
+        plan_structure += "I BOB. [Nazariy qism umumiy nomi]\n"
+        for j in range(1, num_subchapters + 1):
+            plan_structure += f"1.{j}. [1-bob, {j}-bo'lim nazariy yondashuvlar]\n"
+        plan_structure += "II BOB. [Amaliy qism va muammolar tahlili nomi]\n"
+        for j in range(1, num_subchapters + 1):
+            plan_structure += f"2.{j}. [2-bob, {j}-bo'lim amaliy tahlil va yechimlar]\n"
+        plan_structure += "XULOSA VA TAKLIFLAR\nFOYDALANILGAN ADABIYOTLAR\n\n"
+
+        prompt = (
+            f"Mavzu: {topic}\n"
+            f"Til: {lang_name}\n\n"
+            "Vazifa: Mustaqil ish (Mustaqil ta'lim) uchun REJA tuzing.\n"
+            "Quyidagi formatda ANIQ yozing (boshqa hech narsa qo'shmang):\n\n"
+            f"{plan_structure}"
+            f"Mavzu: '{topic}'. Mustaqil ish talabiga ko'ra, 1-bob albatta nazariy qism (olimlar fikri, adabiyotlar tahlili), 2-bob esa amaliy qism (tahlil, amaliy holat, muammolar va yechimlar) bo'lishi shart.\n"
+            "QOIDALAR:\n"
+            "- Markdown belgilari (**yulduzcha**, # kabi) ISHLATMA\n"
+            "- Faqat oddiy matn, boshqa izoh yoki tushuntirish qo'shma\n"
+            "- Bo'lim nomlari qisqa va aniq bo'lsin (5-10 so'z)"
+        )
     else:
         # Build dynamic referat structure
         plan_structure = "KIRISH\n"
@@ -263,7 +285,7 @@ async def generate_document_plan(service_type: str, topic: str, language: str = 
         prompt = (
             f"Mavzu: {topic}\n"
             f"Til: {lang_name}\n\n"
-            "Vazifa: Referat/mustaqil ish uchun REJA tuzing.\n"
+            "Vazifa: Referat uchun REJA tuzing.\n"
             "Quyidagi formatda ANIQ yozing (boshqa hech narsa qo'shmang):\n\n"
             f"{plan_structure}"
             f"Mavzu: '{topic}' — bo'lim nomlari shu mavzuga mos, ilmiy va aniq bo'lsin.\n"
@@ -323,15 +345,30 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
             + humanizer
         )
         
+    mustaqil_rules = ""
+    if service_type == "mustaqil":
+        mustaqil_rules = (
+            "\n\nMUSTAQIL ISH QOIDALARI (Oliy ta'lim talablari):\n"
+            "1. Bu oddiy referat emas, balki chuqur tahliliy Mustaqil ish. Faqat nazariy ma'lumotlarni yozib qoldirmang!\n"
+            "2. Talabaning O'Z FIKRLARI, qiyosiy tahlillari va tanqidiy xulosalari har bir bo'limda yetakchi o'rinda bo'lishi shart.\n"
+            "3. Matn ichida aniq raqamli statistik tahlillar keltiring.\n"
+            "4. Ma'lumotlarni ifodalashda matnli jadvallar (markdown table) yoki strukturali tahlillarni qidiring va qatoriga qo'shing.\n"
+        )
+        if "KIRISH" in section_title.upper():
+            mustaqil_rules += "5. KIRISH qismida albatta mavzuning DOLZARBLIGI, MAQSADI, VAZIFALARI, OBYEKTI va PREDMETI kabi bandlar alohida ajratib yoki yaqqol bilinadigan qilib yozilishi SHART.\n"
+        elif "XULOSA" in section_title.upper():
+            mustaqil_rules += "5. XULOSA qismida faqatgina qilingan ishlarning xulosasi emas, balki amaliy muammolar yechimi uchun aniq TAKLIF VA TAVSIYALAR berilishi SHART.\n"
+
     prompt = (
         f"Mavzu: {topic}\n"
         f"Bo'lim nomi: {section_title}\n"
         f"Talablar: {extra_details}\n"
         f"Til: {lang_name}\n\n"
-        f"USLUB: {style_instruction}\n\n"
+        f"USLUB: {style_instruction}\n"
+        f"{mustaqil_rules}\n"
         "VAZIFA: Ushbu bo'lim uchun to'liq akademik matn yozing.\n\n"
         "QATIY QOIDALAR:\n"
-        "1. Matn faqat oddiy abzatslardan iborat bo'lsin. Raqamli ro'yxatlar (1), 2), a), b) va hokazo) ISHLATMA.\n"
+        "1. Matn faqat oddiy abzatslardan iborat bo'lsin. Raqamli ro'yxatlar (1), 2), a), b) va hokazo) ISHLATMA (agar jadval kerak bo'lsa markdown table ishlating).\n"
         "2. Har bir bo'limda kamida 5-7 abzats matn bo'lishi SHART. Har bir abzats 4-6 jumladan iborat bo'lsin.\n"
         "3. Matn ichida ilmiy manbalarga havolalar (masalan: [4, 25-b]) ALBATTA bo'lsin — har 2-3 abzatsda.\n"
         "4. Statistik ma'lumotlar, foizlar, yillar va aniq raqamlar keltiring (masalan: '2023-yil holatiga ko'ra...').\n"
