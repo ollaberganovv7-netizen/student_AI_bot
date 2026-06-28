@@ -1,0 +1,58 @@
+# Akademik Ma'ruza Taqdimoti (Presentation) Strukturasi
+
+Akademik ma'ruza taqdimoti (PPTX) quyidagi MAJBURIY slaydlardan iborat bo'lishi kerak.
+MUHIM: Har bir slaydni AYNAN shu ketma-ketlikda, standart talablari asosida shakllantiring!
+
+## SLAYD 1-3. KIRISH QISMI (Titul, tashkilot nomi, iqtibos)
+- (Titul slaydlari odatda shablonda bo'ladi yoki bot tomonidan to'ldiriladi)
+- Mavzu nomi aniq va katta harflar bilan yozilishi kerak.
+
+## SLAYD 4. O'QUV VA TARBIYAVIY MAQSADLAR
+- Ma'ruza mashg'ulotining mohiyati va maqsadi (aniq 3-4 ta maqsad)
+  * Tinglovchilarga ... bo'yicha tushunchalar berish.
+  * Ularda ... bo'yicha bilimlarini oshirish.
+  * Ularda ... xos bo'lgan sifatlarni rivojlantirish.
+
+## SLAYD 5. O'QUV SAVOLLARI (REJA)
+- 1. [Birinchi o'quv savolining nomi]
+- 2. [Ikkinchi o'quv savolining nomi]
+- 3. [Uchinchi o'quv savolining nomi]
+
+## SLAYD 6. ADABIYOTLAR
+- Mavzuga oid kamida 4-5 ta asosiy va qo'shimcha adabiyotlar ro'yxati (Prezident asarlari, qonunlar, darsliklar, o'quv qo'llanmalar).
+
+## SLAYD 7. BIRINCHI O'QUV SAVOLI (Sarlavha)
+- O'quv savoli nomi yirik harflar bilan ko'rsatiladi.
+
+## SLAYD 8-15. BIRINCHI O'QUV SAVOLI MATNI (Batafsil, vizual va qiziqarli)
+- Har bir slayd matni londa, aniq va qisqa bo'lishi kerak (bitta slaydda juda ko'p matn bo'lmasligi lozim).
+- Asosiy tushunchalar, qoidalar, tasniflar va tarixiy faktlar ketma-ketlikda yoritiladi.
+- Vizual ma'lumotlar uchun rasm joylari ajratiladi.
+- Muammoli vaziyatlar, qiyosiy tahlillar va statistik ma'lumotlar kiritilishi maqsadga muvofiq.
+
+## SLAYD 16-17. IKKINCHI O'QUV SAVOLI (O'tish va Sarlavha)
+- Ikkinchi savolga mantiqiy o'tish va uning nomi.
+
+## SLAYD 18-25. IKKINCHI O'QUV SAVOLI MATNI
+- Ikkinchi savol mazmunini to'liq ochib beruvchi nazariy va amaliy ma'lumotlar.
+- Algoritmlar, sxemalar, jadvallar yoki amaliyotga bog'liq misollar keltirilishi kerak.
+
+## SLAYD 26. IKKINCHI O'QUV SAVOLIGA XULOSA
+- Ushbu o'quv savoli bo'yicha qisqacha xulosa (1-2 ta jumla).
+
+## SLAYD 27-28. UCHINCHI O'QUV SAVOLI (Sarlavha)
+- Uchinchi o'quv savoli nomi.
+
+## SLAYD 29-31. UCHINCHI O'QUV SAVOLI MATNI
+- Metodika, qo'llanilishi, zamonaviy yondashuvlar yoki istiqboldagi rejalar yoritiladi.
+- Amaliyot va nazariyaning uyg'unligi, ilg'or xorijiy tajribalar haqida ma'lumot berilishi mumkin.
+
+## SLAYD 32. MAVZUGA OID IQTIBOS (Quote)
+- Mavzuga mos keluvchi, mashhur olim, faylasuf yoki davlat rahbarining hikmatli so'zi.
+
+## SLAYD 33. XULOSA
+- Butun ma'ruza bo'yicha yakuniy, chuqur va mazmunli xulosa.
+- Mashg'ulotning qanday natija bergani va tinglovchilarda qanday ko'nikmalar shakllangani haqida xulosa qilinadi.
+
+## SLAYD 34. YAKUNIY SLAYD
+- E'tiboringiz uchun rahmat (va yana titul ma'lumotlari).

@@ -1,0 +1,172 @@
+CRUSHED VELVET FABRIC TEXTURE — Substance Designer Node Guide
+=============================================================
+
+STEP 1: BASE FIBER PATTERN (Horizontal Threads)
+------------------------------------------------
+
+Graph:
+  [Anisotropic Noise] --> [Directional Warp] --> (Base Fibers)
+                                ↑
+                       [Perlin Noise]
+
+Node Settings:
+  Anisotropic Noise:
+    - Direction: 0° (horizontal)
+    - Stretching: 0.85
+    - Amount: 12
+    - Output size: 2048x2048
+
+  Perlin Noise:
+    - Scale: 5
+    - Disorder: 0.3
+
+  Directional Warp:
+    - Input: Anisotropic Noise output
+    - Intensity input: Perlin Noise output
+    - Warp Angle: 0°
+    - Intensity: 3.0
+
+
+STEP 2: CRUSHED VELVET VARIATION (Mottled Look)
+------------------------------------------------
+
+Graph:
+  [Perlin Noise Zoom] --> [Levels 1] --> [Blend: Multiply] --> (Crush Map)
+                                               ↑
+  [Clouds 2] -----------> [Levels 2] ---------┘
+
+Node Settings:
+  Perlin Noise Zoom:
+    - Scale: 3
+    - Disorder: 0.5
+    - Brightness: 0.6
+
+  Levels 1:
+    - Level In Low: 0.25
+    - Level In High: 0.85
+
+  Clouds 2:
+    - Scale: 6
+    - Disorder: 1.0
+
+  Levels 2:
+    - Level In Low: 0.3
+    - Level In High: 0.7
+
+  Blend:
+    - Foreground: Levels 1 output
+    - Background: Levels 2 output
+    - Blending Mode: Multiply
+    - Opacity: 0.7
+
+
+STEP 3: COMBINE FIBERS + CRUSH
+-------------------------------
+
+Graph:
+  (Base Fibers) --> [Blend: Multiply] --> [Levels] --> (Height Map)
+                          ↑
+                (Crush Map) -----┘
+
+Node Settings:
+  Blend:
+    - Foreground: Base Fibers
+    - Background: Crush Map
+    - Blending Mode: Multiply
+    - Opacity: 0.6
+
+  Levels:
+    - Level In Low: 0.15
+    - Level In High: 0.9
+    - Level Out Low: 0.1
+    - Level Out High: 0.85
+
+
+STEP 4: NORMAL MAP
+------------------
+
+Graph:
+  (Height Map) --> [Normal] --> Output: Normal
+
+Node Settings:
+  Normal:
+    - Input: Height Map
+    - Intensity: 4.0
+    - Format: DirectX or OpenGL (depending on your engine)
+
+
+STEP 5: BASE COLOR (Dark Olive Green)
+--------------------------------------
+
+Graph:
+  (Height Map) --> [Gradient Map] --> [HSL] --> Output: Base Color
+
+Node Settings:
+  Gradient Map:
+    - Input: Height Map
+    - Left color (dark):   #1A1F0E (very dark olive)
+    - Mid color:           #2E3318 (dark green)
+    - Right color (light): #4A4F28 (olive highlight)
+    - Mid position: 0.45
+
+  HSL:
+    - Saturation: -0.05
+    - Lightness: -0.1
+
+
+STEP 6: ROUGHNESS MAP
+---------------------
+
+Graph:
+  (Height Map) --> [Invert] --> [Levels] --> Output: Roughness
+
+Node Settings:
+  Invert:
+    - Input: Height Map
+
+  Levels:
+    - Level Out Low: 0.55
+    - Level Out High: 0.85
+
+Note: Velvet has HIGH roughness overall; crushed areas are slightly shinier.
+
+
+STEP 7: AO (Ambient Occlusion)
+-------------------------------
+
+Graph:
+  (Height Map) --> [Ambient Occlusion (HBAO)] --> Output: AO
+
+Node Settings:
+  HBAO:
+    - Height input: Height Map
+    - Radius: 0.75
+    - Quality: 8
+
+
+FULL GRAPH OVERVIEW
+===================
+
+[Anisotropic Noise] -> [Dir. Warp] ----------------┐
+        ↑                                           ↓
+[Perlin Noise]                                [Blend: Multiply] -> [Levels] -> HEIGHT
+                                                    ↑                           |
+[Perlin Noise Zoom] -> [Levels] --┐                |                           |-> [Normal] -> NORMAL
+                                   ↓                |                           |-> [Gradient Map] -> [HSL] -> BASE COLOR
+                             [Blend: Multiply] ----┘                           |-> [Invert] -> [Levels] -> ROUGHNESS
+                                   ↑                                           |-> [HBAO] -> AO
+                    [Clouds 2] -> [Levels] ---┘
+
+
+OUTPUT SUMMARY
+==============
+
+  Base Color:  Gradient Map -> HSL
+  Normal:      Normal node (intensity 4.0)
+  Height:      Blended fibers x crush
+  Roughness:   Inverted height, range 0.55-0.85
+  AO:          HBAO from height
+
+KEY: The main effect comes from Anisotropic Noise (horizontal fibers)
+multiplied with Perlin + Clouds (crushed mottling). Adjust the Gradient
+Map colors to dial in the exact olive tone.

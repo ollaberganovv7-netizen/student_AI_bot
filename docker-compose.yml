@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  student_bot:
+    build: .
+    container_name: student_bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./student_bot.db:/app/student_bot.db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

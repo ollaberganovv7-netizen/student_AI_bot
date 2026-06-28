@@ -1,0 +1,194 @@
+====================================================
+LECTURE STANDARD — UNIVERSITET STANDART TAQDIMOT STRUKTURASI
+====================================================
+
+Bu struktura harbiy va fuqaro universitetlari uchun standart ma'ruza taqdimotining
+to'liq sxemasi. AI AYNAN shu tartibda va shu turdagi slaydlarni yaratishi SHART.
+
+====================================================
+UMUMIY QOIDALAR:
+====================================================
+- Jami slaydlar soni: 28-35 ta (mavzu hajmiga qarab)
+- Til: O'zbek tili (rasmiy-ilmiy uslub)
+- Har bir o'quv savol uchun 5-8 ta slayd
+- Har bir slaydda matn QISQA va ANIQ bo'lishi kerak
+- Bullet pointlar — 3-5 ta, har biri 1-2 qator
+- Sarlavhalar — BOSH HARFLAR bilan
+- O'quv savol raqami har bir slaydda ko'rsatiladi
+
+====================================================
+SLAYD STRUKTURASI (TARTIB BO'YICHA):
+====================================================
+
+--- SLAYD 1: TITULNIY ---
+Tur: title
+Mazmun:
+  - Universitet nomi (yuqorida, markazda)
+  - Kafedra nomi
+  - Fan nomi
+  - Mavzu to'liq nomi (katta harflarda)
+  - "Toshkent — [yil]" (pastda)
+Dizayn: Rasmiy, gerb/logo bor
+
+--- SLAYD 2: REJA ---
+Tur: plan
+Mazmun:
+  - Sarlavha: "REJA:"
+  - 3 ta o'quv savol ro'yxati (raqamlangan)
+  - Har bir savol — 1-2 qator
+Misol:
+  1. [Birinchi o'quv savolning nomi]
+  2. [Ikkinchi o'quv savolning nomi]
+  3. [Uchinchi o'quv savolning nomi]
+
+--- SLAYD 3: KIRISH ---
+Tur: info
+Mazmun:
+  - Sarlavha: "KIRISH"
+  - Mavzuning dolzarbligi (aktualnost')
+  - Nega bu mavzu muhim — 3-4 jumlada
+  - Mavzuning amaliy ahamiyati
+
+--- SLAYD 4: MASHG'ULOT MAQSADI ---
+Tur: info
+Mazmun:
+  - Sarlavha: "MASHG'ULOTNING MAQSAD VA VAZIFALARI"
+  - Ta'limiy maqsad (1-2 jumla)
+  - Tarbiyaviy maqsad (1-2 jumla)
+  - Rivojlantiruvchi maqsad (1-2 jumla)
+
+--- SLAYD 5: O'QUV SAVOLLARI ---
+Tur: info
+Mazmun:
+  - 3 ta o'quv savolning to'liq nomi
+  - Har bir savolga ajratilgan vaqt (daqiqalarda)
+Misol:
+  1-savol: [nomi] — 25 daqiqa
+  2-savol: [nomi] — 25 daqiqa
+  3-savol: [nomi] — 25 daqiqa
+
+--- SLAYD 6: ADABIYOTLAR ---
+Tur: info
+Mazmun:
+  - Sarlavha: "ADABIYOTLAR"
+  - Asosiy adabiyotlar ro'yxati (3-5 ta)
+  - Qo'shimcha adabiyotlar (2-3 ta)
+  - Internet manbalar (1-2 ta)
+Format: muallif, nomi, nashriyot, yil
+
+====================================================
+I-O'QUV SAVOLI (5-8 slayd)
+====================================================
+
+--- SLAYD 7: I-O'QUV SAVOL SARLAVHA ---
+Tur: section_header
+Mazmun:
+  - "BIRINCHI O'QUV SAVOLI"
+  - Savolning to'liq nomi
+  - Belgi: "I-O'QUV SAVOLI"
+
+--- SLAYDLAR 8-12: I-SAVOL KONTENTI ---
+Tur: content
+Har bir slaydda:
+  - Sarlavha (mavzu bo'limi)
+  - Asosiy matn (3-5 bullet point YOKI 1-2 paragraf)
+  - Iloji bo'lsa — sxema, jadval yoki rasm
+  - Kalit atamalar ajratilgan (BOSH HARF yoki qalin shrift)
+  - Belgi: "I-O'QUV SAVOLI" (har bir slaydda)
+
+Kontentga tavsiyalar:
+  - Ta'rif va tushunchalar
+  - Tasnif (klassifikatsiya)
+  - Asosiy xususiyatlar
+  - Amaliy misollar
+  - Sxema yoki diagramma (agar mavzuga mos)
+
+--- SLAYD ~13: I-SAVOL XULOSA ---
+Tur: conclusion_mini  
+Mazmun:
+  - "I-O'QUV SAVOLGA XULOSA"
+  - 2-3 ta asosiy xulosaviy fikr
+
+====================================================
+II-O'QUV SAVOLI (5-8 slayd)
+====================================================
+
+--- SLAYD ~14: II-O'QUV SAVOL SARLAVHA ---
+Tur: section_header
+Mazmun:
+  - "IKKINCHI O'QUV SAVOLI"
+  - Savolning to'liq nomi
+  - Belgi: "II-O'QUV SAVOLI"
+
+--- SLAYDLAR ~15-20: II-SAVOL KONTENTI ---
+Tur: content
+(Xuddi I-savol kabi, lekin boshqa mavzu bo'yicha)
+  - Belgi: "II-O'QUV SAVOLI" (har bir slaydda)
+
+--- SLAYD ~21: II-SAVOL XULOSA ---
+Tur: conclusion_mini
+Mazmun:
+  - "II-O'QUV SAVOLGA XULOSA"
+  - 2-3 ta xulosaviy fikr
+
+====================================================
+III-O'QUV SAVOLI (5-8 slayd)
+====================================================
+
+--- SLAYD ~22: III-O'QUV SAVOL SARLAVHA ---
+Tur: section_header
+Mazmun:
+  - "UCHINCHI O'QUV SAVOLI"
+  - Savolning to'liq nomi
+  - Belgi: "III-O'QUV SAVOLI"
+
+--- SLAYDLAR ~23-28: III-SAVOL KONTENTI ---
+Tur: content
+(Xuddi I va II-savol kabi)
+  - Belgi: "III-O'QUV SAVOLI" (har bir slaydda)
+
+--- SLAYD ~29: III-SAVOL XULOSA ---
+Tur: conclusion_mini
+Mazmun:
+  - "III-O'QUV SAVOLGA XULOSA"
+  - 2-3 ta xulosaviy fikr
+
+====================================================
+YAKUNIY SLAYDLAR
+====================================================
+
+--- SLAYD ~30: IQTIBOS ---
+Tur: quote
+Mazmun:
+  - Mavzuga mos mashhur iqtibos (tsitata)
+  - Muallif ismi
+  - Dekorativ dizayn
+
+--- SLAYD ~31: UMUMIY XULOSA ---
+Tur: conclusion
+Mazmun:
+  - Sarlavha: "XULOSA"
+  - Barcha 3 ta o'quv savolning umumiy xulosasi
+  - 1 paragraf (5-7 jumla)
+  - Amaliy ahamiyat
+
+--- SLAYD ~32: YAKUNIY ---
+Tur: final
+Mazmun:
+  - Universitet nomi
+  - Mavzu nomi
+  - "Toshkent — [yil]"
+
+====================================================
+MATN USLUBI QOIDALARI:
+====================================================
+1. Rasmiy-ilmiy uslub (og'zaki emas)
+2. Har bir fikr dalillangan bo'lsin
+3. Kalit atamalar BOSH HARF bilan yoki qalin shriftda
+4. Raqamlar va statistika ishlatilsin
+5. Qisqa jumlalar (15-20 so'z)
+6. Har bir bullet point — 1 ta g'oya
+7. "Biz" olmoshi ishlatilmasin, "...ligi ta'kidlanadi", "...shi lozim" uslubida
+8. Ilmiy terminologiya to'g'ri ishlatilsin
+9. Har bir slayd sarlavhasi — BOSH HARFLARDA
+10. O'quv savol raqami HAR BIR slaydda ko'rsatilishi shart
