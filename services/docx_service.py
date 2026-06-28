@@ -586,6 +586,41 @@ def generate_docx_from_template(
     if current_section is not None:
         sections_list.append((current_section, "\n".join(current_lines)))
 
+    # Reorganize sections to ensure Chapter (BOB) and Subchapter (1.1) titles are back-to-back
+    normalized = []
+    for name, text in sections_list:
+        curr_name = name
+        curr_lines = []
+        for line in text.split('\n'):
+            clean_l = line.replace("*", "").strip()
+            if bool(re.match(r"^\d+\.\d+\.?\s", clean_l)) and not line.startswith("#"):
+                if curr_lines or curr_name:
+                    normalized.append((curr_name, "\n".join(curr_lines)))
+                curr_name = clean_l
+                curr_lines = []
+            else:
+                curr_lines.append(line)
+        normalized.append((curr_name, "\n".join(curr_lines)))
+        
+    final_sections = []
+    pending_text = ""
+    for name, text in normalized:
+        name_upper = name.upper()
+        is_bob = "BOB." in name_upper or "BOB " in name_upper
+        
+        if is_bob:
+            final_sections.append((name, ""))
+            pending_text = text.strip()
+        else:
+            combined = pending_text + ("\n\n" if pending_text and text.strip() else "") + text.strip()
+            pending_text = ""
+            final_sections.append((name, combined))
+            
+    if pending_text and final_sections:
+        final_sections[-1] = (final_sections[-1][0], final_sections[-1][1] + "\n\n" + pending_text)
+        
+    sections_list = final_sections
+
     # 2. Extract structured plan names
     plan_sections = [s.strip() for s in plan.split("\n") if s.strip()] if plan else []
     
@@ -882,10 +917,14 @@ def generate_docx_from_template(
         p = doc.add_paragraph()
         if page_break_before:
             p.paragraph_format.page_break_before = True
+            
+        clean_name = text.replace("*", "").strip()
+        is_subchapter = bool(re.match(r"^\d+\.\d+\.?\s", clean_name))
 
+        # Make the header text uppercase if it's not a subchapter
+        display_text = text if is_subchapter else text.upper()
         
-        # Make the header text uppercase and bold
-        r = p.add_run(text.upper())
+        r = p.add_run(display_text)
         r.bold = True
         r.font.name = "Times New Roman"
         r.font.size = Pt(14)
