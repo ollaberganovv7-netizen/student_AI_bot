@@ -753,8 +753,12 @@ def generate_docx_from_template(
             c3_run.font.name = "Times New Roman"
             c3_run.font.size = Pt(14)
             
-        # Estimate page numbers dynamically based on actual section text lengths
-        current_page_est = 3.0
+        # Estimate page numbers dynamically based on actual line wrapping
+        current_page_est = 3
+        current_lines = 0
+        LINES_PER_PAGE = 29
+        CHARS_PER_LINE = 68
+        
         section_pages = {}
         for name, text in sections_list:
             name_upper = name.upper()
@@ -764,21 +768,26 @@ def generate_docx_from_template(
             is_bob = "BOB." in name_upper or "BOB " in name_upper
             
             should_page_break = is_xulosa or is_adabiyot or is_kirish or is_bob
-            if should_page_break and (current_page_est > int(current_page_est)):
-                current_page_est = float(int(current_page_est) + 1)
+            if should_page_break and current_lines > 0:
+                current_page_est += 1
+                current_lines = 0
                 
-            section_pages[name_upper] = int(current_page_est)
+            section_pages[name_upper] = current_page_est
             
-            # approx 1600 characters per page (including header space)
-            pages_added = (len(text) + 100) / 1600.0
-            current_page_est += pages_added
-
-        # Scale estimated pages to match exactly the requested num_pages
-        if current_page_est > 3.0 and num_pages > 3:
-            scale_factor = (num_pages - 3.0) / (current_page_est - 3.0)
-            for k in section_pages:
-                scaled_val = 3.0 + (section_pages[k] - 3.0) * scale_factor
-                section_pages[k] = int(round(scaled_val))
+            current_lines += 2 # Title spacing
+            
+            paragraphs = text.split('\n')
+            for p in paragraphs:
+                p = p.strip()
+                if not p:
+                    current_lines += 1
+                else:
+                    lines_for_p = (len(p) + CHARS_PER_LINE - 1) // CHARS_PER_LINE
+                    current_lines += lines_for_p
+                    
+            while current_lines >= LINES_PER_PAGE:
+                current_page_est += 1
+                current_lines -= LINES_PER_PAGE
 
         def get_page(sec_name, default_page):
             sec_upper = sec_name.upper().replace("*", "").strip()
