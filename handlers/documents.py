@@ -851,6 +851,10 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                 if is_cancelled():
                     await state.clear()
                     return
+                
+                if "ADABIYOT" in sec.upper():
+                    continue
+                    
                 filled = int(((i - 1) / len(sections)) * 10)
                 bar = "🟩" * filled + "⬜" * (10 - filled)
                 try:
