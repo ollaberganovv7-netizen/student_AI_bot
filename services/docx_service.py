@@ -791,7 +791,7 @@ def generate_docx_from_template(
         # Estimate page numbers dynamically based on actual line wrapping
         current_page_est = 3
         current_lines = 0
-        LINES_PER_PAGE = 29
+        LINES_PER_PAGE = 34
         CHARS_PER_LINE = 68
         
         section_pages = {}
@@ -811,15 +811,14 @@ def generate_docx_from_template(
             
             current_lines += 2 # Title spacing
             
-            paragraphs = text.split('\n')
+            paragraphs = [l.strip() for l in text.split('\n') if l.strip()]
             for p in paragraphs:
-                p = p.strip()
-                if not p:
-                    current_lines += 1
-                else:
-                    lines_for_p = (len(p) + CHARS_PER_LINE - 1) // CHARS_PER_LINE
-                    current_lines += lines_for_p
+                if p.startswith("#"):
+                    continue
                     
+                lines_for_p = (len(p) + CHARS_PER_LINE - 1) // CHARS_PER_LINE
+                current_lines += lines_for_p
+                
             while current_lines >= LINES_PER_PAGE:
                 current_page_est += 1
                 current_lines -= LINES_PER_PAGE
