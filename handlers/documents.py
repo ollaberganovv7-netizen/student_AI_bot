@@ -544,6 +544,10 @@ async def handle_referat_webapp(message: Message, state: FSMContext, db_user: Us
                 price=data.get("price", 3000),
                 base_price=data.get("price", 3000),
                 ai_images_count=ai_images,
+                fakultet=data.get("fakultet", ""),
+                specialty=data.get("specialty", ""),
+                reviewer=data.get("reviewer", ""),
+                university=data.get("university", ""),
             )
             # Auto-generate plan
             topic = data.get("topic")
