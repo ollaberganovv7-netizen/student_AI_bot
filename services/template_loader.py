@@ -79,16 +79,16 @@ def _find_file(directory: str, doc_type: str) -> str | None:
     """
     Find a file inside *directory* whose base name starts with *doc_type*
     and has a supported extension.
-
-    Examples:
-        doc_type="tezis" matches "tezis_structure.txt", "tezis.docx", etc.
     """
     if not os.path.isdir(directory):
         return None
 
+    # Only look for text-based templates for AI instructions
+    allowed_exts = [".txt", ".md"]
+
     for filename in sorted(os.listdir(directory)):
         name_no_ext, ext = os.path.splitext(filename)
-        if ext.lower() in _READERS and name_no_ext.lower().startswith(doc_type.lower()):
+        if ext.lower() in allowed_exts and name_no_ext.lower().startswith(doc_type.lower()):
             return os.path.join(directory, filename)
 
     return None
