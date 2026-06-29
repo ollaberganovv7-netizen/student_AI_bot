@@ -55,19 +55,10 @@ async def start_referat_creation(message: Message, state: FSMContext, db_user: U
     else:
         balance_display = format_price(balance)
 
-    is_mustaqil = not is_referat
-
-    if is_mustaqil:
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="✅ Mavzu yozib yaratish", callback_data=f"doc_confirm:{service_type}")],
-            [InlineKeyboardButton(text="📎 Fayldan yaratish", callback_data=f"doc_file:{service_type}")],
-            [InlineKeyboardButton(text="❌ Bekor qilish", callback_data="doc_cancel")]
-        ])
-    else:
-        kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="✅ Davom etish", callback_data=f"doc_confirm:{service_type}")],
-            [InlineKeyboardButton(text="❌ Bekor qilish", callback_data="doc_cancel")]
-        ])
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Davom etish", callback_data=f"doc_confirm:{service_type}")],
+        [InlineKeyboardButton(text="❌ Bekor qilish", callback_data="doc_cancel")]
+    ])
 
     await message.answer(
         f"{service_label}\n\n"
