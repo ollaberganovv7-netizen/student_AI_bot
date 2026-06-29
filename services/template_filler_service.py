@@ -828,6 +828,7 @@ def fill_template(
     subject: str = "",
     university: str = "",
     doc_type_label: str = "",
+    reviewer: str = "",
 ) -> bytes:
     """
     Fill an existing PPTX template with AI-generated content.
@@ -877,7 +878,7 @@ def fill_template(
         build_academic_title_slide(
             slides[0], topic=topic, author=author,
             subject=subject, university=university,
-            doc_type_label=doc_type_label, prs=prs
+            doc_type_label=doc_type_label, reviewer=reviewer, prs=prs
         )
 
     for slide_idx, slide in enumerate(slides):
@@ -1151,7 +1152,13 @@ def fill_template(
                 logger.warning(f"Failed to remove slide {remove_idx}: {e}")
                 break
 
-    # Save
+    # Save & Animations
+    try:
+        from services.pptx_service import apply_modern_animations
+        apply_modern_animations(prs)
+    except Exception as e:
+        pass
+
     buf = io.BytesIO()
     prs.save(buf)
     buf.seek(0)

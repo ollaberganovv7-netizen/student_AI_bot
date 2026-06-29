@@ -230,16 +230,18 @@ async def handle_webapp_data_summary(message: Message, state: FSMContext, db_use
                 tone=data.get("tone"),
                 add_images=data.get("add_images")
             )
-        elif data.get("action") == "full_settings":
+        elif data.get("type") == "settings" or data.get("action") == "full_settings":
             # Full settings from webapp (initial or edit)
             quality = data.get("quality", "standard")
             if quality == "pro": quality = "premium"
-            slides = int(data.get("num_pages", 10))
+            slides = int(data.get("num_pages", data.get("slides", 10)))
             ai_images = int(data.get("ai_images", 3))
             ai_images_extra = int(data.get("ai_images_extra", 0))
             await state.update_data(
                 topic=data.get("topic", "").strip(),
                 author=data.get("author", db_user.full_name or "Foydalanuvchi"),
+                reviewer=data.get("reviewer", ""),
+                manual_plan=data.get("plan", ""),
                 language=data.get("language", "uz"),
                 subject=data.get("subject", ""),
                 university=data.get("university", ""),
@@ -757,9 +759,8 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
         except Exception as e:
             logger.error(f"JSON Parse error: {e}\nRaw content (first 200): {raw_content[:200]}")
             slides_data = [{"title": topic, "points": [raw_content[:500]]}]
-
         author = data.get("author", "Foydalanuvchi")
-
+        reviewer = data.get("reviewer", "")
         # ─── AKADEMIK TEMPLATE BRANCH ───────────────────────────────────
         if template_path and "akademik" in template_path.lower():
             try:
@@ -1145,6 +1146,7 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                     subject=subject,
                     university=university,
                     doc_type_label="Taqdimot",
+                    reviewer=reviewer,
                 )
             )
         else:
@@ -1152,7 +1154,7 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
             pptx_bytes = await asyncio.get_event_loop().run_in_executor(
                 None, 
                 lambda: generate_pptx(slides_data, template_path, topic, author, slide_images, is_maket_mode,
-                                      subject=subject, university=university, doc_type_label="Taqdimot")
+                                      subject=subject, university=university, doc_type_label="Taqdimot", reviewer=reviewer)
             )
 
         # Mark free trial or deduct balance

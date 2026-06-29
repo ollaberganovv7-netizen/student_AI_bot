@@ -515,34 +515,22 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
             chapters = ["Asosiy tushunchalar", "Tahlil va metodologiya", "Amaliy ahamiyati"]
 
     # ──────────────────────────────────────────────────────────────
-    # NEW STRUCTURE: Reja + Kirish + [Header + 2 Info] per chapter + Xulosa
-    # Fixed slides: Reja(1) + Kirish(1) + Xulosa(1) = 3
-    # Per chapter: Header(1) + Info(2) = 3
-    # Total AI slides = 3 + chapters * 3
-    # BONUS: Allow +2-3 slides if chapters don't fit perfectly
+    # NEW ACADEMIC STRUCTURE: Cover(1) + Iqtibos(1) + Maqsadlar(1) + O'quv savollari(1) + Adabiyotlar(1) + [Header + Info + Mini-Xulosa] per chapter + Umumiy Xulosa(1) + Rahmat(1)
     # ──────────────────────────────────────────────────────────────
-    ai_slides_available = num_slides - 1  # minus title slide
-    fixed_overhead = 3  # reja + kirish + xulosa
-    slots_for_chapters = max(3, ai_slides_available - fixed_overhead)
-    optimal_chapters = slots_for_chapters // 3
+    fixed_overhead = 6  # iqtibos, maqsadlar, o'quv_savollari, adabiyotlar, umumiy xulosa, rahmat
+    slots_for_chapters = max(3, num_slides - fixed_overhead)
+    # Each chapter needs at least: Header(1) + Info(1) + Conclusion(1) = 3 slides
+    optimal_chapters = max(1, slots_for_chapters // 3)
 
-    # If chapters don't fit evenly, allow bonus slides (+2-3) to keep all chapters
-    if len(chapters) > optimal_chapters and len(chapters) <= optimal_chapters + 1:
-        # Allow 1 extra chapter (= +3 bonus slides) instead of cutting
-        optimal_chapters = len(chapters)
-    elif len(chapters) > optimal_chapters:
+    if len(chapters) > optimal_chapters:
         chapters = chapters[:optimal_chapters]
 
-    if len(chapters) < optimal_chapters and not forced_titles:
-        optimal_chapters = len(chapters)
-
-    # How many info slides per chapter (base=2, some get 3 if extra)
-    extra_info = max(0, ai_slides_available - fixed_overhead - len(chapters) * 3)
-    info_per_chapter = [2] * len(chapters)
+    info_per_chapter = [1] * len(chapters)
+    extra_info = max(0, num_slides - fixed_overhead - (len(chapters) * 3))
     for ei in range(min(extra_info, len(chapters))):
         info_per_chapter[ei] += 1
 
-    total_steps = fixed_overhead + sum(1 + ipc for ipc in info_per_chapter) + 1
+    total_steps = fixed_overhead + sum(2 + ipc for ipc in info_per_chapter) + 1
 
     # ==========================================
     # ETAP 3 & 4: KONTENT VA ADAPTATSIYA (SLAYD GENERATION)
@@ -583,144 +571,122 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
     import json
     completed_steps = 1
 
-    # ── 1. REJA slide ──────────────────────────────────────────
-    items = [f"{idx+1}. {c}" for idx, c in enumerate(chapters)]
-    slides_data.append({"title": "Reja", "content": items})
+    # ── 1. IQTIBOS slide (Slayd 2) ─────────────────────────────
+    slides_data.append({
+        "title": "IQTIBOS",
+        "content": ["Yangi O'zbekistonni barpo etishda biz, eng avvalo, yoshlarga, ularning kuch-g'ayratiga tayanamiz."],
+        "image_keyword": "Shavkat Mirziyoyev president of Uzbekistan",
+        "needs_image": True
+    })
     completed_steps += 1
-    if progress_callback:
-        try: await progress_callback(completed_steps, total_steps, "Kirish yozilmoqda...")
-        except: pass
 
-    # ── 2. KIRISH slide ────────────────────────────────────────
-    k_prompt = (
+    # ── 2. MAQSADLAR slide (Slayd 3) ───────────────────────────
+    if progress_callback:
+        try: await progress_callback(completed_steps, total_steps, "O'quv maqsadlari yozilmoqda...")
+        except: pass
+        
+    m_prompt = (
         f"Mavzu: {topic}\nTil: {language}\n"
-        f"Tadqiqot bazasi: {research_text[:1000]}...\n\n"
-        "Ushbu taqdimot uchun qisqa va qiziqarli 'Kirish' tayyorlang.\n"
-        "Mavzuning dolzarbligi va ahamiyatini tushuntiring.\n"
-        "- FAQAT JSON formatida javob bering:\n"
-        "{\"title\": \"Kirish\", \"content\": [\"1-qism...\", \"2-qism...\"], \"image_keyword\": \"english keyword\"}"
+        "Ushbu taqdimot uchun 3-4 ta O'quv-tarbiyaviy maqsadlarni qisqa yozib bering.\n"
+        "FAQAT JSON: {\"title\": \"O'quv-tarbiyaviy maqsadlar\", \"content\": [\"1...\", \"2...\"]}"
     )
     try:
-        raw = await _call_ai(
-            [{"role": "system", "content": system_persona}, {"role": "user", "content": k_prompt}],
-            max_tokens=max_tok, temperature=temp, json_mode=True
-        )
-        data = json.loads(raw)
-        slides_data.append({
-            "title": "Kirish",
-            "content": data.get("content", data.get("points", ["Mavzuning dolzarbligi va ahamiyati"])),
-            "image_keyword": data.get("image_keyword", ""),
-        })
-    except Exception as e:
-        logger.error(f"Kirish generation error: {e}")
-        slides_data.append({"title": "Kirish", "content": ["Mavzuning dolzarbligi", "Asosiy maqsad va vazifalar"]})
-
+        raw = await _call_ai([{"role": "user", "content": m_prompt}], max_tokens=1000, temperature=0.7, json_mode=True)
+        m_data = json.loads(raw)
+        m_data["title"] = "O'quv-tarbiyaviy maqsadlar"
+        if "points" in m_data and "content" not in m_data: m_data["content"] = m_data.pop("points")
+        slides_data.append(m_data)
+    except Exception:
+        slides_data.append({"title": "O'quv-tarbiyaviy maqsadlar", "content": ["Mavzuni chuqur o'rganish", "Amaliy ko'nikmalarni shakllantirish"]})
     completed_steps += 1
+
+    # ── 3. O'QUV SAVOLLARI slide (Slayd 4) ─────────────────────
+    items = [f"{idx+1}. {c}" for idx, c in enumerate(chapters)]
+    slides_data.append({"title": "O'quv savollari", "content": items})
+    completed_steps += 1
+
+    # ── 4. ADABIYOTLAR slide (Slayd 5) ─────────────────────────
     if progress_callback:
-        try: await progress_callback(completed_steps, total_steps, chapters[0] if chapters else "")
+        try: await progress_callback(completed_steps, total_steps, "Adabiyotlar ro'yxati...")
         except: pass
 
-    # ── 3. CHAPTER SLIDES (Header + Info x N per chapter) ──────
+    a_prompt = (
+        f"Mavzu: {topic}\nTil: {language}\n"
+        "Ushbu mavzu bo'yicha 4-5 ta ishonchli akademik adabiyotlar (kitoblar, maqolalar) ro'yxatini yozing.\n"
+        "FAQAT JSON: {\"title\": \"Foydalanilgan adabiyotlar\", \"content\": [\"1...\", \"2...\"]}"
+    )
+    try:
+        raw = await _call_ai([{"role": "user", "content": a_prompt}], max_tokens=1000, temperature=0.7, json_mode=True)
+        a_data = json.loads(raw)
+        a_data["title"] = "Foydalanilgan adabiyotlar"
+        if "points" in a_data and "content" not in a_data: a_data["content"] = a_data.pop("points")
+        slides_data.append(a_data)
+    except Exception:
+        slides_data.append({"title": "Foydalanilgan adabiyotlar", "content": ["Tegishli o'quv adabiyotlar", "Internet manbalari"]})
+    completed_steps += 1
+
+    # ── 5. CHAPTER SLIDES (Header + Info + Mini-Conclusion) ──────
     for ch_idx, chapter in enumerate(chapters):
         num_info = info_per_chapter[ch_idx]
 
-        # Generate section header + info slides in ONE AI call
+        # 5.1 HEADER SLIDE
+        slides_data.append({
+            "title": f"{ch_idx+1}-o'quv savoli",
+            "content": [chapter],
+            "needs_image": False
+        })
+        
+        # 5.2 INFO SLIDES
         ch_prompt = (
             f"Mavzu: {topic}\nBo'lim: {chapter}\nTil: {language}\n\n"
             f"Tadqiqot bazasi:\n{research_text[:1500]}\n\n"
-            f"Ushbu bo'lim uchun {num_info + 1} ta slayd yarat:\n\n"
-            f"1-SLAYD — BO'LIM SARLAVHASI:\n"
-            f"  title: \"{ch_idx+1}-BO'LIM. {chapter}\"\n"
-            f"  content: [2-3 ta qisqa punkt — shu bo'limda qanday mavzular yoritiladi. Har biri 5-10 so'z]\n"
-            f"  image_keyword: ingliz tilida rasm kalit so'zi\n\n"
-            f"2-SLAYD dan {num_info + 1}-SLAYD gacha — BATAFSIL MA'LUMOT:\n"
-            f"  Har bir slaydda alohida sub-mavzu (sarlavha).\n"
-            f"  content: 2-4 ta batafsil punkt (har biri 30-50 so'z)\n"
-            f"  image_keyword: ingliz tilida rasm kalit so'zi\n\n"
-            "MUHIM: Har bir slayd BOSHQASIDAN FARQ QILISHI kerak! Takrorlamaslik!\n"
-            "Matn ichida qo'shtirnoq (\") ISHLATMA, faqat (')\n\n"
+            f"Ushbu bo'lim uchun {num_info} ta BATAFSIL ma'lumot slaydi yarat:\n\n"
+            f"Har bir slaydda alohida qiziqarli sub-mavzu bo'lsin.\n"
+            f"content: 2-4 ta batafsil punkt (har biri 30-50 so'z)\n"
+            f"image_keyword: ingliz tilida rasm kalit so'zi\n\n"
             "FAQAT JSON formatida javob ber (array):\n"
-            "[\n"
-            "  {\"title\": \"...\", \"content\": [\"...\"], \"image_keyword\": \"...\"},\n"
-            "  ...\n"
-            "]"
+            "[\n  {\"title\": \"...\", \"content\": [\"...\"], \"image_keyword\": \"...\"}\n]"
         )
         try:
-            raw = await _call_ai(
-                [{"role": "system", "content": system_persona}, {"role": "user", "content": ch_prompt}],
-                max_tokens=max_tok + 1000, temperature=temp, json_mode=True
-            )
+            raw = await _call_ai([{"role": "system", "content": system_persona}, {"role": "user", "content": ch_prompt}], max_tokens=max_tok + 1000, temperature=temp, json_mode=True)
             clean = raw.replace("```json", "").replace("```", "").strip()
             ch_slides = json.loads(clean)
-            if isinstance(ch_slides, dict):
-                ch_slides = ch_slides.get("slides", [ch_slides])
-            # Ensure correct count
-            expected_count = num_info + 1  # header + info slides
-            for s_idx, s in enumerate(ch_slides[:expected_count]):
-                if s_idx == 0:
-                    s["title"] = chapter  # force chapter title
-                if "points" in s and "content" not in s:
-                    s["content"] = s.pop("points")
-                # Photo placement: header (s_idx=0) + first info (s_idx=1) get images
-                s["needs_image"] = (s_idx <= 1)
+            if isinstance(ch_slides, dict): ch_slides = ch_slides.get("slides", [ch_slides])
+            
+            for s_idx, s in enumerate(ch_slides[:num_info]):
+                s["section_label"] = f"{ch_idx+1}-o'quv savoli"
+                if "points" in s and "content" not in s: s["content"] = s.pop("points")
+                s["needs_image"] = True
                 slides_data.append(s)
-            # PAD: if AI returned fewer slides, generate missing ones individually
-            got = min(len(ch_slides), expected_count)
-            for pad_idx in range(got, expected_count):
-                try:
-                    pad_prompt = (
-                        f"Mavzu: {topic}\nBo'lim: {chapter}\nTil: {language}\n"
-                        f"Tadqiqot bazasi: {research_text[:800]}\n\n"
-                        f"'{chapter}' bo'limining {pad_idx}-qismini batafsil yoz.\n"
-                        "2-4 ta mustaqil, boy punkt yoz (har biri 30-50 so'z).\n"
-                        "FAQAT JSON:\n"
-                        "{\"title\": \"...\", \"content\": [\"...\", \"...\"], \"image_keyword\": \"english keyword\"}"
-                    )
-                    pad_raw = await _call_ai(
-                        [{"role": "system", "content": system_persona}, {"role": "user", "content": pad_prompt}],
-                        max_tokens=1500, temperature=temp, json_mode=True
-                    )
-                    pad_data = json.loads(pad_raw)
-                    if "points" in pad_data and "content" not in pad_data:
-                        pad_data["content"] = pad_data.pop("points")
-                    pad_data["needs_image"] = (pad_idx <= 1)
-                    slides_data.append(pad_data)
-                except Exception:
-                    slides_data.append({
-                        "title": f"{chapter} — {pad_idx}-qism",
-                        "content": [f"'{chapter}' bo'yicha ma'lumot."],
-                        "image_keyword": chapter,
-                        "needs_image": (pad_idx <= 1),
-                    })
+                
+            # Fallback padding
+            for pad_idx in range(len(ch_slides), num_info):
+                slides_data.append({"title": f"{chapter} — {pad_idx+1}-qism", "content": [f"'{chapter}' bo'yicha ma'lumot."], "section_label": f"{ch_idx+1}-o'quv savoli", "needs_image": True})
         except Exception as e:
             logger.error(f"Chapter '{chapter}' generation failed: {e}")
-            # Generate header
-            slides_data.append({"title": chapter, "content": [f"'{chapter}' bo'limiga kirish"], "image_keyword": chapter, "needs_image": True})
-            # Generate info slides individually
             for j in range(num_info):
-                try:
-                    fallback_prompt = (
-                        f"Mavzu: {topic}\nBo'lim: {chapter}\nTil: {language}\n"
-                        f"'{chapter}' bo'limining {j+1}-qismini batafsil yoz.\n"
-                        "2-4 ta punkt yoz. FAQAT JSON:\n"
-                        "{\"title\": \"...\", \"content\": [\"...\"], \"image_keyword\": \"english keyword\"}"
-                    )
-                    fb_raw = await _call_ai(
-                        [{"role": "system", "content": system_persona}, {"role": "user", "content": fallback_prompt}],
-                        max_tokens=1500, temperature=temp, json_mode=True
-                    )
-                    fb_data = json.loads(fb_raw)
-                    if "points" in fb_data and "content" not in fb_data:
-                        fb_data["content"] = fb_data.pop("points")
-                    fb_data["needs_image"] = (j == 0)
-                    slides_data.append(fb_data)
-                except Exception:
-                    slides_data.append({"title": f"{chapter} — {j+1}-qism", "content": [f"'{chapter}' bo'yicha ma'lumot."], "image_keyword": chapter, "needs_image": (j == 0)})
+                slides_data.append({"title": f"{chapter} — {j+1}-qism", "content": [f"'{chapter}' bo'yicha ma'lumot."], "section_label": f"{ch_idx+1}-o'quv savoli", "needs_image": True})
 
-        completed_steps += (num_info + 1)
+        # 5.3 MINI-CONCLUSION SLIDE
+        cx_prompt = f"Mavzu: {chapter}\nQisqacha xulosa yozing (1-2 punkt). JSON: {{\"content\": [\"...\"]}}"
+        try:
+            cx_raw = await _call_ai([{"role": "user", "content": cx_prompt}], max_tokens=500, temperature=0.7, json_mode=True)
+            cx_data = json.loads(cx_raw)
+            cx_points = cx_data.get("content", cx_data.get("points", [f"{chapter} bo'yicha xulosa."]))
+        except:
+            cx_points = [f"{chapter} bo'yicha xulosa."]
+        
+        slides_data.append({
+            "title": "Xulosa",
+            "content": cx_points,
+            "section_label": f"{ch_idx+1}-o'quv savoli",
+            "needs_image": True,
+            "image_keyword": "conclusion summary"
+        })
+
+        completed_steps += (num_info + 2)
         if progress_callback:
-            next_ch = chapters[ch_idx + 1] if ch_idx + 1 < len(chapters) else "Xulosa"
-            try: await progress_callback(completed_steps, total_steps, next_ch)
+            try: await progress_callback(completed_steps, total_steps, f"{ch_idx+1}-qism tayyor")
             except: pass
 
     # ── 4. XULOSA slide ───────────────────────────────────────

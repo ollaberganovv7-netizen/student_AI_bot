@@ -220,21 +220,21 @@ def _capture_font(run):
     }
 
 
-def _apply_font(font, props):
-    """Apply captured font properties."""
+def _apply_font(run, props):
+    """Apply captured font properties and force Arial."""
     try:
-        if props.get("size"):    font.size = props["size"]
-        if props.get("bold") is not None: font.bold = props["bold"]
-        if props.get("italic") is not None: font.italic = props["italic"]
-        if props.get("name"):    font.name = props["name"]
+        run.font.name = "Arial"
+        if props.get("size"):    run.font.size = props["size"]
+        if props.get("bold") is not None: run.font.bold = props["bold"]
+        if props.get("italic") is not None: run.font.italic = props["italic"]
         
         c_val = props.get("color_val")
         c_type = props.get("color_type")
         if c_val is not None:
             if c_type == "rgb":
-                font.color.rgb = c_val
+                run.font.color.rgb = c_val
             elif c_type == "theme":
-                font.color.theme_color = c_val
+                run.font.color.theme_color = c_val
     except Exception:
         pass
 
@@ -297,7 +297,7 @@ def _fill_textframe(tf, content, is_title=False, compact=False):
         if alignment is not None:
             para.alignment = alignment
         for run in para.runs:
-            _apply_font(run.font, font_props)
+            _apply_font(run, font_props)
             # Override font size to ensure readability, but clamp to max_size
             size = font_props.get("size") or default_size
             if size > max_size:
@@ -759,6 +759,7 @@ def _add_textbox(slide, left, top, width, height, text, font_size=14,
     p.text = text
     p.alignment = alignment
     for run in p.runs:
+        run.font.name = "Arial"
         run.font.size = Pt(font_size)
         run.font.bold = bold
         if color:
@@ -768,7 +769,7 @@ def _add_textbox(slide, left, top, width, height, text, font_size=14,
 
 def build_academic_title_slide(slide, topic: str, author: str = "",
                                 subject: str = "", university: str = "",
-                                doc_type_label: str = "", prs=None):
+                                doc_type_label: str = "", reviewer: str = "", prs=None):
     """
     Overlay academic title info on top of an existing title slide.
     Layout matches Uzbek university standard:
@@ -853,13 +854,15 @@ def build_academic_title_slide(slide, topic: str, author: str = "",
                  color=RGBColor(0, 0, 0))
     y_pos += Inches(1.0)
 
-    # 6. Author (right-aligned, bottom area)
-    if author:
-        author_text = f"Bajardi: {author}"
+    # 6. Author and Reviewer (right-aligned, bottom area)
+    if author or reviewer:
+        author_text = ""
+        if author: author_text += f"Bajardi: {author}\n"
+        if reviewer: author_text += f"Qabul qildi: {reviewer}"
         author_left = slide_w - Inches(4.5)
-        author_top = slide_h - Inches(1.5)
-        _add_textbox(slide, author_left, author_top, Inches(4.0), Inches(0.8),
-                     author_text, font_size=14, bold=False,
+        author_top = slide_h - Inches(1.8)
+        _add_textbox(slide, author_left, author_top, Inches(4.0), Inches(1.0),
+                     author_text.strip(), font_size=14, bold=False,
                      alignment=PP_ALIGN.RIGHT, color=RGBColor(0, 0, 0))
 
 
@@ -877,6 +880,7 @@ def generate_pptx(
     subject: str = "",
     university: str = "",
     doc_type_label: str = "",
+    reviewer: str = "",
 ) -> bytes:
     """
     Smart PPTX generator.
@@ -909,19 +913,18 @@ def generate_pptx(
         need_content = len(slides_data)      # how many AI content slides
 
     # ── 1. Title slide ────────────────────────────────────────────────────
-    if tpl_count > 0:
-        ts = prs.slides[0]
-
+    title_slide = prs.slides[0] if prs.slides else None
+    if title_slide:
         # Use academic title slide if subject or university is provided
         if subject or university:
             build_academic_title_slide(
-                ts, topic=topic, author=author,
+                title_slide, topic=topic, author=author,
                 subject=subject, university=university,
-                doc_type_label=doc_type_label, prs=prs
+                doc_type_label=doc_type_label, reviewer=reviewer, prs=prs
             )
         else:
             # Legacy: simple title + author
-            shapes = _classify_shapes(ts)
+            shapes = _classify_shapes(title_slide)
             title_filled = False
             
             for s in shapes["title"]:
@@ -1001,8 +1004,28 @@ def generate_pptx(
                 if (i + 1) in slide_images:
                     _add_image(fresh[idx], slide_images[i + 1], prs)
 
-    # ── 3. Save ───────────────────────────────────────────────────────────
+    # ── 3. Animations & Save ──────────────────────────────────────
+    try:
+        apply_modern_animations(prs)
+    except Exception as e:
+        pass  # non-critical
+
     buf = io.BytesIO()
     prs.save(buf)
     buf.seek(0)
     return buf.read()
+
+def apply_modern_animations(prs):
+    from pptx.oxml import parse_xml
+    import random
+    transitions = [
+        '<p:transition xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" spd="med"><p:fade/></p:transition>',
+        '<p:transition xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" spd="med"><p:push dir="u"/></p:transition>',
+        '<p:transition xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" spd="med"><p:cover dir="l"/></p:transition>'
+    ]
+    for slide in prs.slides:
+        try:
+            t_xml = random.choice(transitions)
+            slide._element.insert(1, parse_xml(t_xml))
+        except:
+            pass
