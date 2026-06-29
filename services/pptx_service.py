@@ -262,15 +262,23 @@ def _fill_textframe(tf, content, is_title=False, compact=False):
         if len(items) > max_points:
             items = items[:max_points]
 
-    # Set default and max font sizes
-    if compact:
-        default_size = Pt(24) if is_title else Pt(14)
-        max_size = Pt(32) if is_title else Pt(16)
-        max_words = 60
+    # Calculate total text length for dynamic font sizing
+    total_text_len = sum(len(str(item)) for item in items)
+    
+    if is_title:
+        if total_text_len < 40: default_size = Pt(40)
+        elif total_text_len < 80: default_size = Pt(36)
+        elif total_text_len < 120: default_size = Pt(32)
+        else: default_size = Pt(28)
+        max_size = Pt(44)
+        max_words = 30
     else:
-        default_size = Pt(28) if is_title else Pt(16)
-        max_size = Pt(40) if is_title else Pt(20)
-        max_words = 80
+        if total_text_len < 100: default_size = Pt(28)
+        elif total_text_len < 250: default_size = Pt(24)
+        elif total_text_len < 400: default_size = Pt(20)
+        else: default_size = Pt(18)
+        max_size = Pt(32)
+        max_words = 120
 
     for i, item in enumerate(items):
         para = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
@@ -305,10 +313,10 @@ def _fill_textframe(tf, content, is_title=False, compact=False):
             run.text = part[2:-2] if is_bold else part
             
             _apply_font(run, font_props)
-            # Override font size
-            size = font_props.get("size") or default_size
-            if size > max_size: size = max_size
-            run.font.size = size
+            # Override font size based on dynamic calculation, ignoring original template size 
+            # if it's too big or small, but if original is reasonable, we can keep it.
+            # Actually, to guarantee readability as requested: force the dynamic default_size!
+            run.font.size = default_size
 
             if is_bold:
                 run.font.bold = True
