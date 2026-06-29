@@ -726,18 +726,21 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
 
     # ── 4. XULOSA slide ───────────────────────────────────────
     x_rule = (
-        "Xulosa juda chuqur bo'lsin. Kamida 3 ta yirik punkt: "
+        "Xulosa juda chuqur va professional bo'lsin. Kamida 3 ta yirik punkt: "
         "(1) Asosiy topilmalarni jamlash, (2) Amaliy va nazariy ahamiyati, (3) Kelajakdagi istiqbollar. "
-        "Har bir punkt kamida 60 so'z."
-    ) if is_premium else "Ikki yirik punkt: (1) asosiy natijalar va (2) ahamiyat. Har biri 40 so'z."
+        "Eng asosiysi: Xulosa FOYDALANUVCHI (TALABA) nomidan, ya'ni I-shaxs ko'pligida ('biz shunday xulosaga keldikki', 'tahlillarimiz shuni ko'rsatadiki', 'bizningcha') yozilishi shart! Quruq ensiklopediya tilida yozmang."
+    ) if is_premium else (
+        "Ikki yirik punkt: (1) asosiy natijalar va (2) ahamiyat. "
+        "Eng asosiysi: Xulosa FOYDALANUVCHI nomidan ('bizningcha', 'xulosa qilib aytganda') yozilishi shart!"
+    )
 
     x_prompt = (
         f"Mavzu: {topic}\nTil: {language}\n"
         f"Tadqiqot bazasi: {research_text[:1000]}...\n\n"
-        "Ushbu taqdimot uchun chuqur Xulosa tayyorlang.\n"
+        "Ushbu taqdimotning barcha qismlarini jamlovchi Umumiy Xulosa tayyorlang.\n"
         f"QOIDALAR: {x_rule}\n"
         "- FAQAT JSON formatida javob bering:\n"
-        "{\"title\": \"Xulosa\", \"content\": [\"1-qism...\", \"2-qism...\", \"...\"]}"
+        "{\"title\": \"Umumiy Xulosa\", \"content\": [\"1-punkt...\", \"2-punkt...\", \"...\"]}"
     )
     try:
         raw = await _call_ai(
@@ -745,13 +748,16 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
             max_tokens=max_tok, temperature=temp, json_mode=True
         )
         data = json.loads(raw)
-        data["title"] = "Xulosa"
+        data["title"] = "Umumiy Xulosa"
         if "points" in data and "content" not in data:
             data["content"] = data.pop("points")
         slides_data.append(data)
     except Exception as e:
         logger.error(f"Xulosa generation failed: {e}")
-        slides_data.append({"title": "Xulosa", "content": ["Xulosa yuzaga keldi."]})
+        slides_data.append({"title": "Umumiy Xulosa", "content": [
+            "Ushbu mavzuni chuqur o'rganish va tahlil qilish natijasida shunday xulosaga keldikki, mazkur yo'nalish kelajakda yanada kengroq o'rganishni talab etadi.",
+            "O'tkazilgan tahlillarimiz va o'rganilgan adabiyotlar shuni ko'rsatadiki, bu sohada amaliy tadqiqotlarni davom ettirish jamiyatimiz uchun muhim ahamiyat kasb etadi."
+        ]})
 
     completed_steps += 1
     if progress_callback:
