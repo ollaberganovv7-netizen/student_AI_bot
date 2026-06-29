@@ -960,6 +960,11 @@ def generate_docx_from_template(
             lw = set(_norm(clean_line).split())
             match_count = sum(1 for t_word in tw if any(t_word in l_word or l_word in t_word for l_word in lw))
             if tw and match_count >= len(tw) * 0.5: return True
+            
+            stripped_sec_for_fallback = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_sec).strip()
+            sw = set(_norm(stripped_sec_for_fallback).split())
+            match_count_sec = sum(1 for s_word in sw if any(s_word in l_word or l_word in s_word for l_word in lw))
+            if len(sw) > 1 and match_count_sec >= len(sw) * 0.5: return True
         return False
 
     def add_section_text(text_block, section_name):
@@ -1129,6 +1134,11 @@ def generate_maqola_from_template(
             lw = set(_norm(clean_line).split())
             match_count = sum(1 for t_word in tw if any(t_word in l_word or l_word in t_word for l_word in lw))
             if tw and match_count >= len(tw) * 0.5: return True
+            
+            stripped_sec_for_fallback = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_sec).strip()
+            sw = set(_norm(stripped_sec_for_fallback).split())
+            match_count_sec = sum(1 for s_word in sw if any(s_word in l_word or l_word in s_word for l_word in lw))
+            if len(sw) > 1 and match_count_sec >= len(sw) * 0.5: return True
         return False
 
     # ── 5. Helper: create paragraph with Times New Roman 14pt ─────────────
