@@ -869,7 +869,7 @@ def build_academic_title_slide(slide, topic: str, author: str = "",
         y_pos += Inches(0.8)
 
     # 5. Topic (Mavzu)
-    mavzu_text = f"Mavzu: {topic}"
+    mavzu_text = f"MAVZU: {topic}"
     _add_textbox(slide, margin, y_pos, content_w, Inches(0.7),
                  mavzu_text, font_size=18, bold=True,
                  color=RGBColor(0, 0, 0))
