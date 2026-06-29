@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 import os
 from dotenv import load_dotenv
 
@@ -15,7 +15,7 @@ CLAUDE_MODEL: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
 # OpenAI (fallback)
 OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
-OPENAI_MODEL: str = "gpt-4o"
+OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o")
 
 # Gemini AI (research + Google Search)
 GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
