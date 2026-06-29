@@ -636,17 +636,28 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
 
     a_prompt = (
         f"Mavzu: {topic}\nTil: {language}\n"
-        "Ushbu mavzu bo'yicha 4-5 ta ishonchli akademik adabiyotlar (kitoblar, maqolalar) ro'yxatini yozing.\n"
-        "FAQAT JSON: {\"title\": \"Foydalanilgan adabiyotlar\", \"content\": [\"1...\", \"2...\"]}"
+        "Ushbu mavzu bo'yicha AYNAN MAVZUGA MOS va ISHONCHLI 4-5 ta haqiqiy akademik adabiyotlar (kitoblar, darsliklar yoki ilmiy maqolalar, mualliflari va yili bilan) ro'yxatini shakllantiring.\n"
+        "Adabiyotlar to'qima bo'lmasin, soha bo'yicha nufuzli manbalar bo'lishi shart.\n"
+        "FAQAT JSON: {\"content\": [\"1. Muallif. Kitob nomi. Yil\", \"2. ...\"]}"
     )
     try:
         raw = await _call_ai([{"role": "user", "content": a_prompt}], max_tokens=1000, temperature=0.7, json_mode=True)
         a_data = json.loads(raw)
-        a_data["title"] = "Foydalanilgan adabiyotlar"
-        if "points" in a_data and "content" not in a_data: a_data["content"] = a_data.pop("points")
-        slides_data.append(a_data)
+        
+        q_content = a_data.get("content") or a_data.get("points")
+        if not q_content:
+            raise ValueError("No content found")
+            
+        slides_data.append({
+            "title": "Foydalanilgan adabiyotlar",
+            "content": q_content
+        })
     except Exception:
-        slides_data.append({"title": "Foydalanilgan adabiyotlar", "content": ["Tegishli o'quv adabiyotlar", "Internet manbalari"]})
+        slides_data.append({"title": "Foydalanilgan adabiyotlar", "content": [
+            "1. Oliy ta'lim muassasalari fan dasturi asosidagi o'quv adabiyotlari",
+            "2. Mavzuga doir xalqaro va milliy ilmiy maqolalar",
+            "3. Ziyonet.uz va milliy elektron kutubxona manbalari"
+        ]})
     completed_steps += 1
 
     # ── 5. CHAPTER SLIDES (Header + Info + Mini-Conclusion) ──────
