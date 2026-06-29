@@ -897,16 +897,13 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
             except TelegramBadRequest:
                 pass
             
-            real_service = data.get("service_type", "essay")
-            bib_count = "10-15" if data.get("quality") == "pro" else "5-10"
-            recent_rule = "Barcha manbalar SO'NGGI 5 YIL ICHIDA (2020-2025) nashr etilgan bo'lishi SHART.\n" if real_service == "mustaqil" else ""
+            bib_count = "10-15" if data.get("quality") == "pro" else "5-8"
             
             bib_text = await generate_document_section(
                 topic=topic, 
                 section_title=bib_title, 
                 extra_details=(
-                    f"Mavzu bo'yicha {bib_count} ta REAL ilmiy manbalarni yoz.\n"
-                    f"{recent_rule}"
+                    f"Mavzu bo'yicha kamida {bib_count} ta REAL ilmiy manbalarni yoz.\n"
                     "TARKIBI:\n"
                     "- 40% O'zbek mualliflari (O'zbekiston nashriyotlari: Fan, Iqtisod-Moliya, Sharq, TDIU). "
                     "Masalan: Karimov A.K., Abdullayev B.M., Xo'jayev N.R. kabi.\n"
