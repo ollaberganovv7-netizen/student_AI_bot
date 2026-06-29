@@ -543,6 +543,8 @@ async def handle_referat_webapp(message: Message, state: FSMContext, db_user: Us
             )
             # Auto-generate plan
             topic = data.get("topic")
+            req_chapters = int(data.get("num_chapters", 2))
+            req_subchapters = int(data.get("num_subchapters", 2))
             wait_msg = await message.answer(
                 t("doc_preparing_plan", "uz"),
                 parse_mode="HTML"
@@ -553,7 +555,9 @@ async def handle_referat_webapp(message: Message, state: FSMContext, db_user: Us
                     service_type=real_service,
                     topic=topic,
                     language=data.get("language", "uz"),
-                    detail_level="pro" if quality == "pro" else "standard"
+                    detail_level="pro" if quality == "pro" else "standard",
+                    num_chapters=req_chapters,
+                    num_subchapters=req_subchapters
                 )
                 plan = plan_data.get("plan", "")
                 sections = [s.strip() for s in plan.split('\n') if s.strip()]
