@@ -868,11 +868,12 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                 except:
                     pass
 
+                image_rule = "3. Matnni boyitish uchun o'rtacha har 1-2 betda bitta rasm qoldiring. Rasm o'rniga aynan shu matnni ishlating: [ 🖼 SHU YERGA RASM JOYLANG: (rasm mavzusi) ]\n" if data.get("ai_images", 3) > 0 else ""
                 strict_rules = (
                     "QOIDALAR (QAT'IY RIOYA QILING):\n"
                     "1. Hech qanday Markdown (```, ##, **) ishlatmang. Sarlavhalarni faqat BOSH HARFLAR bilan yozing.\n"
                     "2. SIZ FAqat BIZ SO'RAGAN BO'LIMNI YOZASIZ. Boshqa bo'limlar (Reja, Kirish, Xulosa, Adabiyotlar) ni ASLO YOZMANG!\n"
-                    "3. Matnni boyitish uchun o'rtacha har 1-2 betda bitta rasm qoldiring. Rasm o'rniga aynan shu matnni ishlating: [ 🖼 SHU YERGA RASM JOYLANG: (rasm mavzusi) ]\n"
+                    f"{image_rule}"
                     "4. Akademik va ilmiy tilda yozing.\n"
                 )
                 
