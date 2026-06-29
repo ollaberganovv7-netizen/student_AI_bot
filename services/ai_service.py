@@ -547,8 +547,9 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
         "7. SARLAVHALAR qiziqarli va ilhomli bo'lsin, quruq emas!\n"
         "8. Soha bo'yicha REAL misollar keltir (mamlakatlar, kompaniyalar, hodisalar).\n"
         "9. Matn ichida qo'shtirnoq (\") ISHLATMA, faqat (')\n"
-        "10. image_keyword — INGLIZ tilida rasm qidirish uchun kalit so'z yoz.\n"
-        f"11. {HUMANIZER_SLIDES}\n"
+        "10. MUHIM: Har bir slaydda 1-2 ta eng muhim kalit so'zlarni yoki iboralarni **orasiga olib yozing (masalan, **muhim so'z**). Bu taqdimotda rangli qilib ajratiladi.\n"
+        "11. image_keyword — INGLIZ tilida rasm qidirish uchun kalit so'z yoz.\n"
+        f"12. {HUMANIZER_SLIDES}\n"
     )
 
     if is_premium:

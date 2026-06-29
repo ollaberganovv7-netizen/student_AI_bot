@@ -292,17 +292,30 @@ def _fill_textframe(tf, content, is_title=False, compact=False):
             para.space_after = Pt(8)
             para.space_before = Pt(2)
 
-        para.text = text
         para.level = 0
         if alignment is not None:
             para.alignment = alignment
-        for run in para.runs:
+
+        import re
+        parts = re.split(r'(\*\*.*?\*\*)', text)
+        for part in parts:
+            if not part: continue
+            run = para.add_run()
+            is_bold = part.startswith('**') and part.endswith('**')
+            run.text = part[2:-2] if is_bold else part
+            
             _apply_font(run, font_props)
-            # Override font size to ensure readability, but clamp to max_size
+            # Override font size
             size = font_props.get("size") or default_size
-            if size > max_size:
-                size = max_size
+            if size > max_size: size = max_size
             run.font.size = size
+
+            if is_bold:
+                run.font.bold = True
+                try:
+                    from pptx.enum.dml import MSO_THEME_COLOR
+                    run.font.color.theme_color = MSO_THEME_COLOR.ACCENT_1
+                except: pass
 
     try:
         tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
