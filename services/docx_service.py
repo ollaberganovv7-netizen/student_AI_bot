@@ -607,8 +607,9 @@ def generate_docx_from_template(
     for name, text in normalized:
         name_upper = name.upper()
         is_bob = "BOB." in name_upper or "BOB " in name_upper
-        
-        if is_bob:
+        should_page_break = name_upper in ["KIRISH", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "FOYDALANILGAN ADABIYOTLAR RO'YXATI"]
+        if name_upper.startswith("I BOB") and not name_upper.startswith("II") and not name_upper.startswith("III"):
+            should_page_break = True
             final_sections.append((name, ""))
             pending_text = text.strip()
         else:
