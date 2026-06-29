@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 import os
 from dotenv import load_dotenv
 
@@ -11,7 +11,7 @@ ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "@admin_username")
 
 # Claude (primary)
 ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
-CLAUDE_MODEL: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
+CLAUDE_MODEL: str = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 
 # OpenAI (fallback)
 OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
