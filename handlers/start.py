@@ -228,6 +228,9 @@ async def handle_webapp_submit(message: Message, db_user: User, state: FSMContex
         doc_type = "essay" if service == "referat" else "report"
         pages = int(data.get("pages", 12))
         subject = data.get("subject", "")
+        ai_images = int(data.get("ai_images", 0))
+        ai_images_extra = int(data.get("ai_images_extra", 0))
+        
         # Calculate price based on page tiers
         if pages <= 10:
             price = 5000
@@ -237,12 +240,15 @@ async def handle_webapp_submit(message: Message, db_user: User, state: FSMContex
             price = 15000
         else:
             price = 20000
+            
+        price += ai_images_extra * 1000
 
         await state.update_data(
             service_type=doc_type, topic=topic, language=language,
             quality=quality, num_pages=pages, subject=subject,
             university="", manual_plan="", extra_info="",
             source_text="", mode="normal", price=price,
+            ai_images=ai_images, ai_images_extra=ai_images_extra,
         )
         await generate_referat(message, state=state, db_user=db_user)
 
