@@ -343,6 +343,18 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
                 "5. Matn ravon o'qilishi kerak, huddi bitta odam o'z tajribasidan yozgandek.\n"
             )
 
+    base_rules = ""
+    if "adabiyot" in section_title.lower():
+        base_rules = (
+            "1. VAZIFA: Faqat raqamlangan adabiyotlar ro'yxatini (1, 2, 3...) yarating.\n"
+            "2. HECH QANDAY odatiy matn, abzats, izoh yoki sarlavha yozmang. Faqat kitoblar/manbalar ro'yxati bo'lsin.\n"
+        )
+    else:
+        base_rules = (
+            "1. Matn faqat oddiy abzatslardan iborat bo'lsin. Raqamli ro'yxatlar (1), 2), a), b) va hokazo) ISHLATMA.\n"
+            "2. Har bir bo'limda kamida 5-7 abzats matn bo'lishi SHART. Har bir abzats 4-6 jumladan iborat bo'lsin.\n"
+        )
+
     prompt = (
         f"Mavzu: {topic}\n"
         f"Bo'lim nomi: {section_title}\n"
@@ -351,8 +363,7 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
         f"USLUB: {style_instruction}\n\n"
         "VAZIFA: Ushbu bo'lim uchun to'liq akademik matn yozing.\n\n"
         "QATIY QOIDALAR:\n"
-        "1. Matn faqat oddiy abzatslardan iborat bo'lsin. Raqamli ro'yxatlar (1), 2), a), b) va hokazo) ISHLATMA.\n"
-        "2. Har bir bo'limda kamida 5-7 abzats matn bo'lishi SHART. Har bir abzats 4-6 jumladan iborat bo'lsin.\n"
+        f"{base_rules}"
         f"{xulosa_rule}"
         "6. Faqat matnning o'zini yuboring, qo'shimcha izoh yoki sarlavha qo'shma.\n"
         "7. SO'ZLAR SONI talabga QATIY javob bersin - agar X so'z talab qilinsa, AYNAN X so'z yozish SHART. Kam bo'lsa yangi abzatslar qo'shib UZAYTIR.\n"
