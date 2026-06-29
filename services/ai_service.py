@@ -291,13 +291,15 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
     lang_map = {"uz": "O'zbek tilida (lotin)", "ru": "На русском языке", "en": "In English"}
     lang_name = lang_map.get(language, "O'zbek tilida")
     
-    refs_rule = (
-        " Manbalar (havolalar) FAQAT o'zbek mualliflari va O'zbekiston nashriyotlariga "
-        "tegishli bo'lsin. Masalan: '[1] Karimov A. Iqtisodiyot asoslari. — T.: Fan, 2022.' kabi."
-        if is_coursework else
-        " Matn ichida keltirilgan statistik ma'lumotlar yoki olimlarning fikrlariga kvadrat qavsda (masalan: [4, 25-b]) havola berib keting. "
-        "Foydalanilgan adabiyotlar (manbalar) real, ishonchli va mavzuga mos bo'lsin."
-    )
+    if is_coursework:
+        refs_rule = (
+            " Manbalar (havolalar) FAQAT o'zbek mualliflari va O'zbekiston nashriyotlariga "
+            "tegishli bo'lsin. Masalan: '[1] Karimov A. Iqtisodiyot asoslari. - T.: Fan, 2022.' kabi. "
+            "Matn ichida keltirilgan statistik ma'lumotlar yoki olimlarning fikrlariga kvadrat qavsda (masalan: [4, 25-b]) havola berib keting. "
+            "Foydalanilgan adabiyotlar (manbalar) real, ishonchli va mavzuga mos bo'lsin."
+        )
+    else:
+        refs_rule = " Matn ichida HECH QANDAY kvadrat qavsli havolalar (masalan: [4, 25-b]) aslo ishlata ko'rmang!"
     
     humanizer = _get_humanizer_rules(language)
 
@@ -305,8 +307,7 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
         style_instruction = (
             "Siz fan doktori, professor darajasidagi akademik yozuvchisiz. "
             "Matnni juda yuqori ilmiy saviyada, chuqur tahliliy yondashuvda yozing. "
-            "Har bir fikrni dalillar, statistik ma'lumotlar va ilmiy manbalar bilan asoslang. "
-            "Matn ichida ilmiy manbalarga havolalar (masalan: [4, 25-b]) ALBATTA ishlating. "
+            "Har bir fikrni dalillar va statistik ma'lumotlar bilan asoslang. "
             "Turli olimlar va tadqiqotchilarning fikrlarini keltiring va taqqoslang. "
             "Matn akademik jargon va ilmiy terminologiyaga boy bo'lsin."
             + refs_rule
@@ -317,12 +318,31 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
             "Siz tajribali akademik yozuvchisiz. "
             "Matn tushunarli, mantiqiy va akademik uslubda bo'lsin. "
             "Asosiy fikrlarni misollar va dalillar bilan izohlang. "
-            "Matn ichida ilmiy manbalarga havolalar (masalan: [4, 25-b]) qo'shing. "
             "Professional akademik til ishlating."
             + refs_rule
             + humanizer
         )
-        
+    xulosa_rule = ""
+    if "xulosa" in section_title.lower():
+        xulosa_rule = (
+            "3. DIQQAT: Xulosada faqat foydalanuvchining (talabaning) mavzudan kelib chiqqan holdagi YAKUNIY SHAXSIY FIKRLARI bo'lishi kerak.\n"
+            "4. HECH QANDAY adabiyotlarga yoki olimlarga havola (kvadrat qavsli tsitatalar) aslo ISHLATILMASIN!\n"
+            "5. Yangi dalillar yoki avval aytilmagan ma'lumotlar kiritilmasin.\n"
+        )
+    else:
+        if is_coursework:
+            xulosa_rule = (
+                "3. Matn ichida ilmiy manbalarga havolalar (masalan: [4, 25-b]) ALBATTA bo'lsin - har 2-3 abzatsda.\n"
+                "4. Statistik ma'lumotlar, foizlar, yillar va aniq raqamlar keltiring (masalan: '2023-yil holatiga ko'ra...').\n"
+                "5. Turli olimlarning fikrlarini keltiring va taqqoslang (masalan: 'Professor X ta'kidlashicha...').\n"
+            )
+        else:
+            xulosa_rule = (
+                "3. HECH QANDAY ilmiy manbalarga havola yoki kvadrat qavsli tsitatalar (masalan: [4, 25-b]) ISHLATILMASIN.\n"
+                "4. Statistik ma'lumotlar, foizlar, yillar ishlating, lekin ularga qavs ichida manba ko'rsatmang.\n"
+                "5. Matn ravon o'qilishi kerak, huddi bitta odam o'z tajribasidan yozgandek.\n"
+            )
+
     prompt = (
         f"Mavzu: {topic}\n"
         f"Bo'lim nomi: {section_title}\n"
@@ -333,15 +353,14 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
         "QATIY QOIDALAR:\n"
         "1. Matn faqat oddiy abzatslardan iborat bo'lsin. Raqamli ro'yxatlar (1), 2), a), b) va hokazo) ISHLATMA.\n"
         "2. Har bir bo'limda kamida 5-7 abzats matn bo'lishi SHART. Har bir abzats 4-6 jumladan iborat bo'lsin.\n"
-        "3. Matn ichida ilmiy manbalarga havolalar (masalan: [4, 25-b]) ALBATTA bo'lsin — har 2-3 abzatsda.\n"
-        "4. Statistik ma'lumotlar, foizlar, yillar va aniq raqamlar keltiring (masalan: '2023-yil holatiga ko'ra...').\n"
-        "5. Turli olimlarning fikrlarini keltiring va taqqoslang (masalan: 'Professor X ta'kidlashicha...').\n"
+        f"{xulosa_rule}"
         "6. Faqat matnning o'zini yuboring, qo'shimcha izoh yoki sarlavha qo'shma.\n"
-        "7. SO'ZLAR SONI talabga QATIY javob bersin — agar X so'z talab qilinsa, AYNAN X so'z yozish SHART. Kam bo'lsa yangi abzatslar qo'shib UZAYTIR.\n"
+        "7. SO'ZLAR SONI talabga QATIY javob bersin - agar X so'z talab qilinsa, AYNAN X so'z yozish SHART. Kam bo'lsa yangi abzatslar qo'shib UZAYTIR.\n"
         "8. Matn professional, chuqur va to'liq bo'lsin.\n"
         "9. DIQQAT: Oddiy boblar oxiriga (KIRISH, XULOSA, ASOSIY QISM) adabiyotlar ro'yxatini QO'SHMANG! Adabiyotlar ro'yxati (1, 2, 3...) FAQAT 'FOYDALANILGAN ADABIYOTLAR' nomli eng oxirgi bo'limda berilishi shart. Hech qachon ikkita o'xshash nomli adabiyotlar bo'limi yaratmang.\n"
-        "10. Rasm placeholder yoki '[ 🖼 SHU YERGA RASM JOYLANG: ... ]' kabi narsalar QOSHMA."
+        "10. Rasm placeholder yoki '[ SHU YERGA RASM JOYLANG: ... ]' kabi narsalar QOSHMA."
     )
+
     try:
         result = await _call_ai(
             [{"role": "system", "content": style_instruction},
