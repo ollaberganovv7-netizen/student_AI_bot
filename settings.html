@@ -27,6 +27,12 @@
         <textarea id="topicInput" rows="2" placeholder="Mavzuni kiriting..."></textarea>
     </div>
 
+    <!-- Plan / Questions (Taqdimot only) -->
+    <div class="input-group animate-in hidden" id="planGroup">
+        <label>📑 O'quv savollari (Reja)</label>
+        <textarea id="planInput" rows="3" placeholder="Ixtiyoriy. Bo'sh qoldirsangiz AI avtomatik tuzadi..."></textarea>
+    </div>
+
     <!-- Subject (Fan) -->
     <div class="input-group animate-in" id="subjectGroup">
         <label id="subjectLabel">📚 Fan nomi</label>
@@ -272,6 +278,8 @@
                 title: '📊 Taqdimot sozlamalari',
                 showSubject: true,
                 showUniversity: true,
+                showReviewer: true,
+                showPlanInput: true,
                 showMashgulot: false,
                 showQuality: true,
                 showAiImages: true,
@@ -369,6 +377,10 @@
         if (!config.showReviewer) {
             const revGrp = document.getElementById('reviewerGroup');
             if (revGrp) revGrp.classList.add('hidden');
+        }
+        if (config.showPlanInput) {
+            const planGrp = document.getElementById('planGroup');
+            if (planGrp) planGrp.classList.remove('hidden');
         }
         if (config.showMashgulot) document.getElementById('mashgulotSection').classList.remove('hidden');
         if (config.showReferatStructure) {
