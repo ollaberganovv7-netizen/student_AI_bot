@@ -34,7 +34,11 @@ HUMANIZER_RULES_UZ = (
     "4. Ba'zan norasmiy akademik uslub ishlat — haqiqiy professor gapirgandek, "
     "lekin ilmiy asosda.\n"
     "5. Ortiqcha mukammallikdan qoching — haqiqiy odamlar ba'zan oddiy so'zlar ishlatadilar.\n"
-    "6. Har bir abzatsni bir xil so'z bilan boshlaMA — har safar yangi, kutilmagan boshlanish bo'lsin.\n"
+    "6. QAT'IY TIL QOIDASI: Matn FAQAT TOZA O'ZBEK TILIDA yozilishi SHART! Ingliz, rus yoki "
+    "boshqa chet el so'zlarini (masalan, 'traditional', 'development', 'process', 'smart' kabi) "
+    "UMUMAN ISHLATMANG. Ularning o'rniga faqat toza o'zbekcha atamalarni "
+    "(masalan, 'an'anaviy', 'rivojlanish', 'jarayon', 'aqlli') ishlating.\n"
+    "7. Har bir abzatsni bir xil so'z bilan boshlaMA — har safar yangi, kutilmagan boshlanish bo'lsin.\n"
 )
 
 HUMANIZER_RULES_RU = (
