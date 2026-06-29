@@ -1025,8 +1025,9 @@ def generate_pptx(
                 if (i + 1) in slide_images:
                     _add_image(fresh[idx], slide_images[i + 1], prs)
 
-    # ── 3. Animations & Save ──────────────────────────────────────
+    # ── 3. Unique Design, Animations & Save ──────────────────────────────────────
     try:
+        apply_unique_ai_design(prs)
         apply_modern_animations(prs)
     except Exception as e:
         pass  # non-critical
@@ -1050,3 +1051,63 @@ def apply_modern_animations(prs):
             slide._element.insert(1, parse_xml(t_xml))
         except:
             pass
+
+def apply_unique_ai_design(prs):
+    """
+    Applies a dynamically generated unique design to the presentation,
+    moving away from static templates to create a truly unique and modern look.
+    """
+    import random
+    from pptx.dml.color import RGBColor
+    from pptx.enum.shapes import MSO_SHAPE
+    
+    # Generate a random professional color palette
+    palettes = [
+        {"bg": RGBColor(20, 25, 35), "accent": RGBColor(255, 94, 58), "text": RGBColor(245, 245, 250)}, # Dark Modern
+        {"bg": RGBColor(245, 247, 250), "accent": RGBColor(0, 102, 204), "text": RGBColor(30, 35, 40)},  # Light Corporate
+        {"bg": RGBColor(25, 40, 55), "accent": RGBColor(46, 204, 113), "text": RGBColor(255, 255, 255)}, # Deep Forest
+        {"bg": RGBColor(250, 245, 240), "accent": RGBColor(211, 84, 0), "text": RGBColor(40, 30, 20)},   # Warm Minimalist
+    ]
+    palette = random.choice(palettes)
+    is_dark = (palette["bg"].r + palette["bg"].g + palette["bg"].b) < 300
+    
+    for idx, slide in enumerate(prs.slides):
+        # 1. Apply background
+        try:
+            slide.background.fill.solid()
+            slide.background.fill.fore_color.rgb = palette["bg"]
+        except:
+            pass
+            
+        # 2. Add decorative geometric shapes (Unique touch)
+        # Left accent bar
+        try:
+            accent_bar = slide.shapes.add_shape(
+                MSO_SHAPE.RECTANGLE, 0, 0, Inches(0.2), prs.slide_height
+            )
+            accent_bar.fill.solid()
+            accent_bar.fill.fore_color.rgb = palette["accent"]
+            accent_bar.line.fill.background()
+            
+            # Slide index specific decorations
+            if idx == 0:
+                # Title slide decoration
+                circle = slide.shapes.add_shape(
+                    MSO_SHAPE.OVAL, prs.slide_width - Inches(2), -Inches(1), Inches(3), Inches(3)
+                )
+                circle.fill.solid()
+                circle.fill.fore_color.rgb = palette["accent"]
+                circle.line.fill.background()
+        except:
+            pass
+
+        # 3. Recolor text for contrast
+        for shape in slide.shapes:
+            if not shape.has_text_frame: continue
+            for para in shape.text_frame.paragraphs:
+                for run in para.runs:
+                    if run.font.color.type == 0: # If no explicit color
+                        run.font.color.rgb = palette["text"]
+                    elif is_dark and hasattr(run.font.color, 'rgb') and run.font.color.rgb == RGBColor(0,0,0):
+                        # Fix black text on dark background
+                        run.font.color.rgb = palette["text"]

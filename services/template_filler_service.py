@@ -1158,7 +1158,8 @@ def fill_template(
 
     # Save & Animations
     try:
-        from services.pptx_service import apply_modern_animations
+        from services.pptx_service import apply_modern_animations, apply_unique_ai_design
+        apply_unique_ai_design(prs)
         apply_modern_animations(prs)
     except Exception as e:
         pass
