@@ -867,11 +867,19 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                 except:
                     pass
 
+                strict_rules = (
+                    "QOIDALAR (QAT'IY RIOYA QILING):\n"
+                    "1. Hech qanday Markdown (```, ##, **) ishlatmang. Sarlavhalarni faqat BOSH HARFLAR bilan yozing.\n"
+                    "2. SIZ FAqat BIZ SO'RAGAN BO'LIMNI YOZASIZ. Boshqa bo'limlar (Reja, Kirish, Xulosa, Adabiyotlar) ni ASLO YOZMANG!\n"
+                    "3. Matnni boyitish uchun o'rtacha har 1-2 betda bitta rasm qoldiring. Rasm o'rniga aynan shu matnni ishlating: [ 🖼 SHU YERGA RASM JOYLANG: (rasm mavzusi) ]\n"
+                    "4. Akademik va ilmiy tilda yozing.\n"
+                )
+                
                 text = await generate_document_section(
                     topic=topic,
                     section_title=sec,
                     extra_details=(
-                        f"{template_context}\n" if template_context else ""
+                        f"{strict_rules}\n"
                     ) + source_block + f"Ushbu bo'lim aynan {words_per_section} ta so'zdan iborat bo'lsin. " + data.get("extra_info", ""),
                     language=data.get("language", "uz"),
                     quality=data.get("quality", "standard"),
