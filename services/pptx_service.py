@@ -1098,6 +1098,14 @@ def apply_unique_ai_design(prs):
                 circle.fill.solid()
                 circle.fill.fore_color.rgb = palette["accent"]
                 circle.line.fill.background()
+            elif idx == len(prs.slides) - 1:
+                # Final slide decoration (bottom thick bar)
+                bottom_bar = slide.shapes.add_shape(
+                    MSO_SHAPE.RECTANGLE, 0, prs.slide_height - Inches(0.5), prs.slide_width, Inches(0.5)
+                )
+                bottom_bar.fill.solid()
+                bottom_bar.fill.fore_color.rgb = palette["accent"]
+                bottom_bar.line.fill.background()
         except:
             pass
 

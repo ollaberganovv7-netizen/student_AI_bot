@@ -759,6 +759,14 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
             "O'tkazilgan tahlillarimiz va o'rganilgan adabiyotlar shuni ko'rsatadiki, bu sohada amaliy tadqiqotlarni davom ettirish jamiyatimiz uchun muhim ahamiyat kasb etadi."
         ]})
 
+    # ── 5. RAHMAT slide ───────────────────────────────────────
+    slides_data.append({
+        "title": "E'tiboringiz uchun rahmat!",
+        "content": ["Taqdimot bo'yicha savollaringiz bo'lsa, marhamat."],
+        "needs_image": False,
+        "is_final": True
+    })
+
     completed_steps += 1
     if progress_callback:
         try: await progress_callback(completed_steps, total_steps, "Sifat nazorati")
