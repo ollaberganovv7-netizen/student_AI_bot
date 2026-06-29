@@ -1063,24 +1063,34 @@ def generate_maqola_from_template(
         skip_phrases.add(title.upper().strip())
 
     def _is_junk(line: str, section_name: str) -> bool:
-        lu = line.upper().strip().rstrip(":")
-        if not lu:
+        # Strip common markdown and punctuation
+        clean_line = re.sub(r'[*#\_]', '', line).upper().strip().rstrip(":.")
+        clean_sec = re.sub(r'[*#\_]', '', section_name).upper().strip().rstrip(":.")
+        
+        if not clean_line:
             return True
-        if lu.startswith("MAVZU:") or lu.startswith("MAVZU "):
+        if clean_line.startswith("MAVZU:") or clean_line.startswith("MAVZU "):
             return True
-        if lu == section_name.upper().rstrip(":"):
+        if clean_line == clean_sec:
             return True
-        if lu in skip_phrases:
+        if clean_line in skip_phrases:
             return True
-        stripped = re.sub(r'^\d+(?:\.\d+)?\.\s*', '', lu)
-        if stripped and stripped in skip_phrases:
+            
+        # Strip number prefixes (e.g. '1. ', '1.2. ', '1.2 ')
+        stripped_line = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_line).strip()
+        stripped_sec = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_sec).strip()
+        
+        if stripped_line and stripped_sec and stripped_line == stripped_sec:
             return True
-        if lu == topic_upper:
+        if stripped_line and stripped_line in skip_phrases:
             return True
+        if clean_line == topic_upper or stripped_line == topic_upper:
+            return True
+            
         # Short ALL-CAPS line matching topic words
-        if len(lu) < 80 and line.strip().isupper():
+        if len(clean_line) < 80 and line.strip().isupper():
             tw = set(topic_upper.split())
-            lw = set(lu.split())
+            lw = set(clean_line.split())
             if tw and len(tw & lw) >= len(tw) * 0.5:
                 return True
         return False
