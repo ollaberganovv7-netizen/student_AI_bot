@@ -347,7 +347,6 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
                 "5. Matn ravon o'qilishi kerak, huddi bitta odam o'z tajribasidan yozgandek.\n"
             )
 
-    base_rules = ""
     if "adabiyot" in section_title.lower():
         base_rules = (
             "1. VAZIFA: Faqat raqamlangan adabiyotlar ro'yxatini (1, 2, 3...) yarating.\n"
@@ -359,6 +358,12 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
             "2. Har bir bo'limda kamida 5-7 abzats matn bo'lishi SHART. Har bir abzats 4-6 jumladan iborat bo'lsin.\n"
         )
 
+    anti_hallucination_rule = (
+        "DIQQAT: Mavzuning ma'nosini to'g'ri tahlil qiling. Asossiz narsalarni o'ylab topmang (gallyutsinatsiya qilmang). "
+        "Masalan, agar mavzu kasb, insonlar yoki tarix haqida bo'lsa, uni asossiz ravishda geografik joy yoki tabiat hodisasi deb yozmang. "
+        "Matnni FAQAT toza O'zbek tilida yozing. Inglizcha yoki boshqa tildagi so'zlarni aslo ishlata ko'rmang!"
+    )
+
     prompt = (
         f"Mavzu: {topic}\n"
         f"Bo'lim nomi: {section_title}\n"
@@ -369,6 +374,7 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
         "QATIY QOIDALAR:\n"
         f"{base_rules}"
         f"{xulosa_rule}"
+        f"{anti_hallucination_rule}\n"
         "6. Faqat matnning o'zini yuboring, qo'shimcha izoh yoki sarlavha qo'shma.\n"
         "7. SO'ZLAR SONI talabga QATIY javob bersin - agar X so'z talab qilinsa, AYNAN X so'z yozish SHART. Kam bo'lsa yangi abzatslar qo'shib UZAYTIR.\n"
         "8. Matn professional, chuqur va to'liq bo'lsin.\n"

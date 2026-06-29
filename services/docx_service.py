@@ -954,10 +954,12 @@ def generate_docx_from_template(
         if stripped_line and stripped_sec and stripped_line == stripped_sec: return True
         if stripped_line and stripped_line in skip_phrases: return True
         if clean_line == topic_upper or stripped_line == topic_upper: return True
-        if len(clean_line) < 80 and line.strip().isupper():
-            tw = set(topic_upper.split())
-            lw = set(clean_line.split())
-            if tw and len(tw & lw) >= len(tw) * 0.5: return True
+        if len(clean_line) < 120 and line.strip().isupper():
+            def _norm(t): return re.sub(r'[^A-Z0-9 ]', '', t)
+            tw = set(_norm(topic_upper).split())
+            lw = set(_norm(clean_line).split())
+            match_count = sum(1 for t_word in tw if any(t_word in l_word or l_word in t_word for l_word in lw))
+            if tw and match_count >= len(tw) * 0.5: return True
         return False
 
     def add_section_text(text_block, section_name):
@@ -1121,11 +1123,12 @@ def generate_maqola_from_template(
             return True
             
         # Short ALL-CAPS line matching topic words
-        if len(clean_line) < 80 and line.strip().isupper():
-            tw = set(topic_upper.split())
-            lw = set(clean_line.split())
-            if tw and len(tw & lw) >= len(tw) * 0.5:
-                return True
+        if len(clean_line) < 120 and line.strip().isupper():
+            def _norm(t): return re.sub(r'[^A-Z0-9 ]', '', t)
+            tw = set(_norm(topic_upper).split())
+            lw = set(_norm(clean_line).split())
+            match_count = sum(1 for t_word in tw if any(t_word in l_word or l_word in t_word for l_word in lw))
+            if tw and match_count >= len(tw) * 0.5: return True
         return False
 
     # ── 5. Helper: create paragraph with Times New Roman 14pt ─────────────
