@@ -1020,18 +1020,19 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                 continue
             eligible.append(idx)
 
-        # Evenly distribute photos across eligible slides
-        target_photos = min(ai_images_count, len(eligible))
-        if eligible and target_photos > 0:
-            step = max(1, len(eligible) / target_photos)
-            img_slide_indices = [eligible[int(i * step)] for i in range(target_photos)]
+        # Distribute up to 3 photos per eligible slide (round-robin)
+        img_slide_assignments = []
+        if eligible and ai_images_count > 0:
+            actual_photos = min(ai_images_count, len(eligible) * 3)
+            for i in range(actual_photos):
+                img_slide_assignments.append(eligible[i % len(eligible)])
 
             try:
                 await wait_msg.edit_text("🎨 <b>AI rasmlar generatsiya qilinmoqda...</b>", parse_mode="HTML")
             except TelegramBadRequest:
                 pass
 
-            for i, idx in enumerate(img_slide_indices):
+            for i, idx in enumerate(img_slide_assignments):
                 if is_cancelled():
                     await state.clear()
                     return
@@ -1055,11 +1056,18 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                 try:
                     img_bytes = await generate_image_gemini(query)
                     if img_bytes:
-                        slide_images[slide_idx_key] = img_bytes
+                        if slide_idx_key not in slide_images:
+                            slide_images[slide_idx_key] = [img_bytes]
+                        else:
+                            if isinstance(slide_images[slide_idx_key], list):
+                                slide_images[slide_idx_key].append(img_bytes)
+                            else:
+                                slide_images[slide_idx_key] = [slide_images[slide_idx_key], img_bytes]
+                                
                         auto_img_count += 1
                         try:
                             await wait_msg.edit_text(
-                                f"🎨 <b>AI rasmlar: {auto_img_count}/{target_photos}</b>",
+                                f"🎨 <b>AI rasmlar: {auto_img_count}/{actual_photos}</b>",
                                 parse_mode="HTML"
                             )
                         except TelegramBadRequest:
@@ -1068,7 +1076,7 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                     logger.error(f"Gemini image gen error for slide {idx}: {e}")
 
         if auto_img_count > 0:
-            logger.debug(f"Gemini AI images added: {auto_img_count}/{target_photos}")
+            logger.debug(f"Gemini AI images added: {auto_img_count} total images generated.")
 
         try:
             await wait_msg.edit_text(t("pres_assembling", lang), parse_mode="HTML")

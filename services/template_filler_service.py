@@ -1020,13 +1020,17 @@ def fill_template(
 
             # Fallback: insert slide_images into ALL uninserted placeholders
             # Handler uses 1-based keys (slide 1, 2, 3...), so check both conventions
-            img_bytes_fallback = slide_images.get(slide_idx) or slide_images.get(slide_idx + 1)
-            if img_bytes_fallback:
+            img_data = slide_images.get(slide_idx) or slide_images.get(slide_idx + 1)
+            if img_data:
+                img_list = img_data if isinstance(img_data, list) else [img_data]
+                img_idx = 0
                 for placeholder in sa.image_placeholders:
                     if placeholder.shape_name in inserted:
                         continue
-                    _do_insert(placeholder, img_bytes_fallback)
-                    inserted.add(placeholder.shape_name)
+                    if img_idx < len(img_list):
+                        _do_insert(placeholder, img_list[img_idx])
+                        inserted.add(placeholder.shape_name)
+                        img_idx += 1
 
     # ── Second pass: replace any remaining {{tag}} patterns inline ────────
     from datetime import datetime
