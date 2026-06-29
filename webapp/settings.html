@@ -8,7 +8,7 @@
     <meta http-equiv="Expires" content="0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sozlamalar</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js?v=2"></script>
     <link rel="stylesheet" href="static/styles.css">
     <style>
         body { display: flex; flex-direction: column; gap: 12px; }
@@ -333,8 +333,11 @@
 
         const config = DOC_CONFIG[docType] || DOC_CONFIG.referat;
 
-        // ── Init UI with translations ──
+        // 🔄 Init UI with translations 🔄
         document.getElementById('pageTitle').innerText = T.titles[docType] || config.title;
+        if (docType === 'presentation') {
+            document.getElementById('pageTitle').innerText = '📄 Taqdimot sozlamalari';
+        }
         document.getElementById('topicInput').value = topicParam;
         document.getElementById('topicInput').placeholder = T.topicPh;
         document.getElementById('subjectLabel').innerText = T.subject;
