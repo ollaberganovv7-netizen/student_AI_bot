@@ -928,10 +928,43 @@ def generate_docx_from_template(
         r.font.size = Pt(14)
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         
-    def add_section_text(text_block):
+    # Build skip phrases for filtering out duplicate AI-generated titles
+    topic_upper = topic.upper().strip() if topic else ""
+    skip_phrases = {
+        "KIRISH", "XULOSA", "MUNDARIJA", "REJA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR",
+        "FOYDALANILGAN ADABIYOTLAR RO'YXATI", "XULOSA QILISh"
+    }
+    if plan:
+        for p_line in plan.split('\n'):
+            p_line = p_line.strip()
+            if p_line:
+                clean_p = re.sub(r'[*#\_]', '', p_line).upper().strip().rstrip(":.")
+                skip_phrases.add(clean_p)
+                skip_phrases.add(re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_p).strip())
+
+    def _is_junk_for_docx(line: str, section_name: str) -> bool:
+        clean_line = re.sub(r'[*#\_]', '', line).upper().strip().rstrip(":.")
+        clean_sec = re.sub(r'[*#\_]', '', section_name).upper().strip().rstrip(":.")
+        if not clean_line: return True
+        if clean_line.startswith("MAVZU:") or clean_line.startswith("MAVZU "): return True
+        if clean_line == clean_sec: return True
+        if clean_line in skip_phrases: return True
+        stripped_line = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_line).strip()
+        stripped_sec = re.sub(r'^\d+(?:\.\d+)*\.*\-?\s*', '', clean_sec).strip()
+        if stripped_line and stripped_sec and stripped_line == stripped_sec: return True
+        if stripped_line and stripped_line in skip_phrases: return True
+        if clean_line == topic_upper or stripped_line == topic_upper: return True
+        if len(clean_line) < 80 and line.strip().isupper():
+            tw = set(topic_upper.split())
+            lw = set(clean_line.split())
+            if tw and len(tw & lw) >= len(tw) * 0.5: return True
+        return False
+
+    def add_section_text(text_block, section_name):
         lines = [l.strip() for l in text_block.split("\n") if l.strip()]
         for l in lines:
             if l.startswith("#"): continue
+            if _is_junk_for_docx(l, section_name): continue
             
             # Detect subchapters like "1.1. Buxoro...", optionally with bold asterisks
             clean_l = l.replace("*", "").strip()
@@ -965,7 +998,7 @@ def generate_docx_from_template(
         
         should_page_break = is_xulosa or is_adabiyot or is_kirish or is_bob
         add_section_header(name, page_break_before=should_page_break)
-        add_section_text(text)
+        add_section_text(text, name)
 
     buf = io.BytesIO()
     doc.save(buf)
