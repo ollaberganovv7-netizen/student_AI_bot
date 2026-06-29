@@ -28,7 +28,7 @@
     </div>
 
     <!-- Plan / Questions (Taqdimot only) -->
-    <div class="input-group animate-in hidden" id="planGroup">
+    <div class="input-group animate-in" id="planGroup">
         <label>📑 O'quv savollari (Reja)</label>
         <textarea id="planInput" rows="3" placeholder="Ixtiyoriy. Bo'sh qoldirsangiz AI avtomatik tuzadi..."></textarea>
     </div>
@@ -275,9 +275,11 @@
         // ── Document type configurations ──
         const DOC_CONFIG = {
             presentation: {
-                title: '📊 Taqdimot sozlamalari',
-                showSubject: true,
+                title: '📄 Taqdimot sozlamalari',
+                showSubject: false,
                 showUniversity: true,
+                showFakultet: false,
+                showSpecialty: false,
                 showReviewer: true,
                 showPlanInput: true,
                 showMashgulot: false,
@@ -378,9 +380,13 @@
             const revGrp = document.getElementById('reviewerGroup');
             if (revGrp) revGrp.classList.add('hidden');
         }
-        if (config.showPlanInput) {
+        if (config.showFakultet === false) {
+            const fakGrp = document.getElementById('fakultetGroup');
+            if (fakGrp) fakGrp.classList.add('hidden');
+        }
+        if (!config.showPlanInput) {
             const planGrp = document.getElementById('planGroup');
-            if (planGrp) planGrp.classList.remove('hidden');
+            if (planGrp) planGrp.classList.add('hidden');
         }
         if (config.showMashgulot) document.getElementById('mashgulotSection').classList.remove('hidden');
         if (config.showReferatStructure) {
