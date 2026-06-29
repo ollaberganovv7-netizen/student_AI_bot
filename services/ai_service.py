@@ -573,12 +573,35 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
     completed_steps = 1
 
     # ── 1. IQTIBOS slide (Slayd 2) ─────────────────────────────
-    slides_data.append({
-        "title": "IQTIBOS",
-        "content": ["Yangi O'zbekistonni barpo etishda biz, eng avvalo, yoshlarga, ularning kuch-g'ayratiga tayanamiz."],
-        "image_keyword": "Shavkat Mirziyoyev president of Uzbekistan",
-        "needs_image": True
-    })
+    if progress_callback:
+        try: await progress_callback(completed_steps, total_steps, "Iqtibos tanlanmoqda...")
+        except: pass
+        
+    q_prompt = (
+        f"Mavzu: {topic}\nTil: {language}\n"
+        "O'zbekiston Respublikasi Prezidenti Shavkat Mirziyoyevning aynan ushbu mavzuga "
+        "(yoki unga yaqin bo'lgan ta'lim, fan, yoshlar, taraqqiyot sohasiga) oid eng mos va ta'sirli iqtibosini keltiring.\n"
+        "Iqtibos qisqa va aniq bo'lsin.\n"
+        "FAQAT JSON: {\"content\": [\"Iqtibos matni...\", \"- Shavkat Mirziyoyev\"]}"
+    )
+    try:
+        raw_q = await _call_ai([{"role": "user", "content": q_prompt}], max_tokens=1000, temperature=0.7, json_mode=True)
+        q_data = json.loads(raw_q)
+        q_content = q_data.get("content") or q_data.get("points") or ["Yangi O'zbekistonni barpo etishda biz, eng avvalo, yoshlarga, ularning kuch-g'ayratiga tayanamiz.", "- Shavkat Mirziyoyev"]
+        
+        slides_data.append({
+            "title": "IQTIBOS",
+            "content": q_content,
+            "image_keyword": "Shavkat Mirziyoyev president of Uzbekistan portrait",
+            "needs_image": True
+        })
+    except Exception:
+        slides_data.append({
+            "title": "IQTIBOS",
+            "content": ["Yangi O'zbekistonni barpo etishda biz, eng avvalo, yoshlarga, ularning kuch-g'ayratiga tayanamiz.", "- Shavkat Mirziyoyev"],
+            "image_keyword": "Shavkat Mirziyoyev president of Uzbekistan portrait",
+            "needs_image": True
+        })
     completed_steps += 1
 
     # ── 2. MAQSADLAR slide (Slayd 3) ───────────────────────────
