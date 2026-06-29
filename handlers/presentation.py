@@ -52,8 +52,11 @@ class PresentationStates(StatesGroup):
 # ─── Step 1: Quality selection ───────────────────────────────────────────────
 
 @router.message(F.text.in_([
+    "🎓 Taqdimot (Slayd) yaratish", "🎓 Slayd Pro (Premium)",
+    "🎓 Создать презентацию (Слайды)", "🎓 Слайд Pro (Премиум)",
+    "🎓 Create Presentation", "🎓 Slide Pro (Premium)",
     "🆕 Taqdimot (Slayd) yaratish", "🚀 Slayd Pro (Premium)",
-    "🆕 Презентация (Слайд)", "🚀 Слайд Про (Премиум)",
+    "🆕 Создать презентацию (Слайды)", "🚀 Слайд Про (Премиум)",
     "🆕 Create Presentation", "🚀 Slide Pro (Premium)",
 ]))
 async def start_presentation(message: Message, db_user: User, state: FSMContext):
