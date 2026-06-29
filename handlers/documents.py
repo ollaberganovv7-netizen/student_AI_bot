@@ -792,10 +792,11 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
         # Dynamic word count calculation to hit the page target
         sections = [s.strip() for s in plan.split('\n') if s.strip()] if plan else [topic]
         num_sections = len(sections)
-        # 1 page is ~250-280 words with our 14pt 1.5 spacing format
-        # Use 300 to overshoot slightly and guarantee page count
-        total_target_words = pages * 300 
-        words_per_section = int(total_target_words / num_sections)
+        # 1 page is ~200 words with our 14pt 1.5 spacing format (accounting for headers/margins)
+        # Subtract 3 pages (Title page, Mundarija, Adabiyotlar) from the word count target
+        content_pages = max(pages - 3, 1)
+        total_target_words = content_pages * 200
+        words_per_section = int(total_target_words / num_sections) if num_sections > 0 else 200
         
         # Load structure template + quality example
         doc_type = data.get("service_type", "referat")
@@ -827,7 +828,7 @@ async def generate_referat(message: Message, state: FSMContext, db_user: User):
                     "QOIDA: Yuqoridagi faylda yozilgan BARCHA ko'rsatmalarni "
                     "SO'ZSIZ bajaring. Hech qanday shablon, qo'shimcha qoida yoki "
                     "cheklov ishlatmang. Faqat faylda yozilganidek, aynan o'sha "
-                    f"format va tuzilmada bajaring. Hajm: ~{pages * 280} so'z."
+                    f"format va tuzilmada bajaring. Hajm: ~{total_target_words} so'z."
                 ),
                 language=data.get("language", "uz"),
                 quality="pro",
