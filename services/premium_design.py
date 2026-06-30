@@ -232,8 +232,8 @@ def _select_palette(topic: str) -> dict:
 # ════════════════════════════════════════════════════════════════════════════════
 
 _TITLE_WORDS = {"muqova", "title"}
-_SECTION_WORDS = {"o'quv savoli", "bo'lim", "section", "savol"}
-_PLAN_WORDS = {"reja", "plan", "mundarija", "savol", "savollari"}
+_SECTION_WORDS = {"o'quv savoli", "bo'lim", "section", "qism"}
+_PLAN_WORDS = {"reja", "plan", "mundarija", "o'quv savollari"}
 _INTRO_WORDS = {"kirish", "introduction", "maqsad"}
 _CONCLUSION_WORDS = {"xulosa", "conclusion", "yakun"}
 _QUOTE_WORDS = {"iqtibos", "tsitata", "quote"}
@@ -688,9 +688,17 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     else:
                         run.font.color.rgb = text1
                     run.font.bold = True
-                    # Center align title on goals and plan slides
-                    if slide_type in ("goals", "plan"):
+                    # Center align title on goals, plan, and section slides
+                    if slide_type in ("goals", "plan", "section"):
                         para.alignment = PP_ALIGN.CENTER
+                        
+                    # Huge uppercase for section titles
+                    if slide_type == "section":
+                        run.text = run.text.upper()
+                        try:
+                            run.font.size = Pt(40)
+                        except Exception:
+                            pass
                 else:
                     # Check if run has explicit black color on dark bg
                     current_color = None
@@ -718,6 +726,20 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                             # Remove bullet point format if exists
                             if para.level > 0:
                                 para.level = 0
+                        except Exception:
+                            pass
+                            
+                    # Section slide body text formatting (center, bold, huge)
+                    if slide_type == "section":
+                        run.font.bold = True
+                        para.alignment = PP_ALIGN.CENTER
+                        if para.level > 0:
+                            para.level = 0
+                        try:
+                            if run.font.size:
+                                run.font.size = Pt(int(run.font.size.pt * 1.5))
+                            else:
+                                run.font.size = Pt(32)
                         except Exception:
                             pass
                     

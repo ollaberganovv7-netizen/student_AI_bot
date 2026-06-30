@@ -17,3 +17,5 @@ node_modules/
 scratch/
 *.log
 bot.log
+
+.env.bak
