@@ -525,12 +525,11 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
     if len(chapters) > optimal_chapters:
         chapters = chapters[:optimal_chapters]
 
-    info_per_chapter = [1] * len(chapters)
-    extra_info = max(0, num_slides - fixed_overhead - (len(chapters) * 3))
-    for ei in range(min(extra_info, len(chapters))):
-        info_per_chapter[ei] += 1
-
-    total_steps = fixed_overhead + sum(2 + ipc for ipc in info_per_chapter) + 1
+    # Set info_per_chapter to 2 for exactly 3 slides per chapter (1 header + 2 info)
+    info_per_chapter = [2] * len(chapters)
+    
+    # Calculate total steps. 1 header + ipc info slides for each chapter
+    total_steps = fixed_overhead + sum(1 + ipc for ipc in info_per_chapter) + 1
 
     # ==========================================
     # ETAP 3 & 4: KONTENT VA ADAPTATSIYA (SLAYD GENERATION)
