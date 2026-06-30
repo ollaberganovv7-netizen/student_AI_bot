@@ -366,6 +366,16 @@ def _set_gradient_3stop(slide, c1: str, c2: str, c3: str, angle: int = 5400000):
 # DECORATIVE SHAPES (geometric elements with transparency and shadows)
 # ════════════════════════════════════════════════════════════════════════════════
 
+def _send_to_back(shape):
+    """Sends a shape to the back of the shape tree so it doesn't cover text."""
+    try:
+        element = shape.element
+        spTree = element.getparent()
+        spTree.remove(element)
+        spTree.insert(2, element)
+    except Exception:
+        pass
+
 def _add_shape_no_border(slide, shape_type, left, top, width, height, fill_hex,
                           alpha_pct: int = 100):
     """Add shape with fill, no border, optional transparency."""
@@ -387,7 +397,8 @@ def _add_shape_no_border(slide, shape_type, left, top, width, height, fill_hex,
                     srgb.append(alpha_elem)
         except Exception:
             pass
-
+            
+    _send_to_back(shape)
     return shape
 
 
@@ -738,19 +749,12 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                         except Exception:
                             pass
                 else:
-                    # Check if run has explicit black color on dark bg
-                    current_color = None
+                    # Force all body text to use the palette's text1 color
+                    # to ensure readability against our custom background gradients
                     try:
-                        current_color = run.font.color.rgb
+                        run.font.color.rgb = text1
                     except Exception:
                         pass
-
-                    if is_dark:
-                        if current_color == RGBColor(0, 0, 0) or current_color is None:
-                            run.font.color.rgb = text1
-                    else:
-                        if current_color == RGBColor(255, 255, 255) or current_color is None:
-                            run.font.color.rgb = text1
                             
                     # Remove bullets and make text italic and larger for quote slides
                     if slide_type == "quote":
