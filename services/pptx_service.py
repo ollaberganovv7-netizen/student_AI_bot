@@ -869,22 +869,22 @@ def build_academic_title_slide(slide, topic: str, author: str = "",
         y_pos += Inches(0.8)
 
     # 5. Topic (Mavzu)
-    mavzu_text = f"MAVZU: {topic}"
-    _add_textbox(slide, margin, y_pos, content_w, Inches(0.7),
-                 mavzu_text, font_size=18, bold=True,
+    mavzu_text = f"MAVZU:\n{topic.upper()}"
+    _add_textbox(slide, margin, y_pos, content_w, Inches(1.5),
+                 mavzu_text, font_size=32, bold=True,
                  color=RGBColor(0, 0, 0))
-    y_pos += Inches(1.0)
+    y_pos += Inches(1.5)
 
-    # 6. Author and Reviewer (right-aligned, bottom area)
+    # 6. Author and Reviewer (left-aligned, bottom area)
     if author or reviewer:
         author_text = ""
         if author: author_text += f"Bajardi: {author}\n"
         if reviewer: author_text += f"Qabul qildi: {reviewer}"
-        author_left = slide_w - Inches(4.5)
+        author_left = Inches(1.0)
         author_top = slide_h - Inches(1.8)
         _add_textbox(slide, author_left, author_top, Inches(4.0), Inches(1.0),
-                     author_text.strip(), font_size=14, bold=False,
-                     alignment=PP_ALIGN.RIGHT, color=RGBColor(0, 0, 0))
+                     author_text.strip(), font_size=16, bold=False,
+                     alignment=PP_ALIGN.LEFT, color=RGBColor(0, 0, 0))
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1027,9 +1027,13 @@ def generate_pptx(
 
     # ── 3. Unique Design, Animations & Save ──────────────────────────────────────
     try:
-        apply_unique_ai_design(prs)
-        apply_modern_animations(prs)
+        from services.premium_design import apply_premium_design, apply_premium_transitions
+        apply_premium_design(prs, topic)
+        apply_premium_transitions(prs)
     except Exception as e:
+        import traceback
+        print("Premium Design Error:", e)
+        traceback.print_exc()
         pass  # non-critical
 
     buf = io.BytesIO()

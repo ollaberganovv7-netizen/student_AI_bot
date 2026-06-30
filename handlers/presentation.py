@@ -1056,14 +1056,7 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                 try:
                     img_bytes = await generate_image_gemini(query)
                     if img_bytes:
-                        if slide_idx_key not in slide_images:
-                            slide_images[slide_idx_key] = [img_bytes]
-                        else:
-                            if isinstance(slide_images[slide_idx_key], list):
-                                slide_images[slide_idx_key].append(img_bytes)
-                            else:
-                                slide_images[slide_idx_key] = [slide_images[slide_idx_key], img_bytes]
-                                
+                        slide_images[slide_idx_key] = img_bytes
                         auto_img_count += 1
                         try:
                             await wait_msg.edit_text(

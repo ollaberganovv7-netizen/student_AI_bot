@@ -34,7 +34,7 @@ def _build_settings_url(balance: int, name: str, topic: str = "", doc_type: str 
     v = int(time.time())
     topic_enc = urllib.parse.quote(topic[:60]) if topic else ""
     name_enc = urllib.parse.quote(name) if name else ""
-    return f"{base_url}settings_new.html?balance={balance}&name={name_enc}&doc_type={doc_type}&quality={quality}&topic={topic_enc}&lang={lang}&v={v}"
+    return f"{base_url}settings.html?balance={balance}&name={name_enc}&doc_type={doc_type}&quality={quality}&topic={topic_enc}&lang={lang}&v={v}"
 
 def doc_initial_settings_kb(balance: int, name: str, doc_type: str = "referat", lang: str = "uz") -> ReplyKeyboardMarkup:
     """Initial keyboard with only Settings webapp + Cancel. Shown right after confirm."""
