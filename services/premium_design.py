@@ -593,14 +593,27 @@ def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
     accent = pal["accent"]
     accent2 = pal["accent2"]
 
-    # Top accent bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, sw, Inches(0.12), accent, alpha_pct=85)
-
-    # Right decorative shape
+    # Awesome geometric "Sticker" background for Conclusion
+    
+    # Large angled backdrop on the left
+    _add_shape_no_border(slide, MSO_SHAPE.PARALLELOGRAM,
+                         -Inches(3), 0,
+                         Inches(6), sh, accent, alpha_pct=15)
+                         
+    # Accent glowing orb in the center right
     _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(1.8), sh - Inches(1.8),
-                         Inches(2.5), Inches(2.5), accent2, alpha_pct=7)
+                         sw/2 + Inches(1), sh/2 - Inches(2),
+                         Inches(5), Inches(5), accent2, alpha_pct=10)
+                         
+    # Top right diagonal banner/sticker
+    _add_shape_no_border(slide, MSO_SHAPE.CHEVRON,
+                         sw - Inches(3), Inches(0.5),
+                         Inches(4), Inches(1), accent2, alpha_pct=85)
+                         
+    # Bottom elegant thin lines (Underline the slide)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(1), sh - Inches(0.5),
+                         sw - Inches(2), Inches(0.08), accent, alpha_pct=90)
 
 
 def _decorate_final_slide(slide, pal: dict, sw, sh):
@@ -682,12 +695,12 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     else:
                         run.font.color.rgb = text1
                     run.font.bold = True
-                    # Center align title on goals, plan, and section slides
-                    if slide_type in ("goals", "plan", "section"):
+                    # Center align title on goals, plan, section, and conclusion slides
+                    if slide_type in ("goals", "plan", "section", "conclusion"):
                         para.alignment = PP_ALIGN.CENTER
                         
-                    # Huge uppercase for section titles
-                    if slide_type == "section":
+                    # Huge uppercase for section and conclusion titles
+                    if slide_type in ("section", "conclusion"):
                         run.text = run.text.upper()
                         try:
                             run.font.size = Pt(40)
@@ -740,6 +753,19 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     # Justify body text on most slides
                     if slide_type in ("goals", "plan", "content", "intro", "conclusion"):
                         para.alignment = PP_ALIGN.JUSTIFY
+                        
+                    # Conclusion slide body text formatting (remove bullets, bold)
+                    if slide_type == "conclusion":
+                        run.font.bold = True
+                        if para.level > 0:
+                            para.level = 0
+                        try:
+                            if run.font.size:
+                                run.font.size = Pt(int(run.font.size.pt * 1.2))
+                            else:
+                                run.font.size = Pt(24)
+                        except Exception:
+                            pass
 
 
 # ════════════════════════════════════════════════════════════════════════════════
