@@ -1035,6 +1035,17 @@ def generate_pptx(
         print("Premium Design Error:", e)
         traceback.print_exc()
         pass  # non-critical
+    # Clean up empty picture placeholders (to prevent dashed boxes)
+    for slide in prs.slides:
+        for shape in list(slide.shapes):
+            if shape.is_placeholder:
+                try:
+                    if shape.placeholder_format.type == 18 and not shape.has_text_frame:
+                        if not hasattr(shape, "image"):
+                            sp = shape._element
+                            sp.getparent().remove(sp)
+                except Exception:
+                    pass
 
     buf = io.BytesIO()
     prs.save(buf)

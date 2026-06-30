@@ -238,6 +238,7 @@ _INTRO_WORDS = {"kirish", "introduction", "maqsad"}
 _CONCLUSION_WORDS = {"xulosa", "conclusion", "yakun"}
 _QUOTE_WORDS = {"iqtibos", "tsitata", "quote"}
 _FINAL_WORDS = {"rahmat", "thank", "e'tibor", "yakuniy"}
+_GOAL_WORDS = {"maqsad", "maqsadlar", "tarbiyaviy"}
 
 
 def _detect_slide_type(slide, idx: int, total: int) -> str:
@@ -260,6 +261,9 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
     for w in _CONCLUSION_WORDS:
         if w in text:
             return "conclusion"
+    for w in _GOAL_WORDS:
+        if w in text:
+            return "goals"
     for w in _PLAN_WORDS:
         if w in text:
             return "plan"
@@ -540,6 +544,32 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
                          Inches(0.5), sh - Inches(0.5),
                          sw - Inches(1.0), Inches(0.15), accent2, alpha_pct=90)
 
+def _decorate_goals_slide(slide, pal: dict, sw, sh):
+    """Premium decorations for Goals/Maqsadlar slide."""
+    accent = pal["accent"]
+    accent2 = pal["accent2"]
+    
+    # Large soft glowing background circle in the center
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         sw/2 - Inches(3), sh/2 - Inches(3),
+                         Inches(6), Inches(6), accent, alpha_pct=10)
+    
+    # Top and bottom elegant accent lines
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(2), Inches(0.3),
+                         sw - Inches(4), Inches(0.08), accent2, alpha_pct=80)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(2), sh - Inches(0.38),
+                         sw - Inches(4), Inches(0.08), accent2, alpha_pct=80)
+                         
+    # Left and right vertical floating lines
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(0.2), Inches(1),
+                         Inches(0.05), sh - Inches(2), accent, alpha_pct=50)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         sw - Inches(0.25), Inches(1),
+                         Inches(0.05), sh - Inches(2), accent, alpha_pct=50)
+
 
 def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
     """Premium decorations for conclusion slides."""
@@ -630,11 +660,14 @@ def _format_all_text(slide, pal: dict, slide_type: str):
 
                 # Determine appropriate color
                 if is_title:
-                    if slide_type in ("title", "section", "final"):
+                    if slide_type in ("title", "section", "final", "goals"):
                         run.font.color.rgb = accent_rgb
                     else:
                         run.font.color.rgb = text1
                     run.font.bold = True
+                    # Center align title on goals slide
+                    if slide_type == "goals":
+                        para.alignment = PP_ALIGN.CENTER
                 else:
                     # Check if run has explicit black color on dark bg
                     current_color = None
@@ -664,6 +697,10 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                                 para.level = 0
                         except Exception:
                             pass
+                    
+                    # Justify body text on goals slide
+                    if slide_type == "goals":
+                        para.alignment = PP_ALIGN.JUSTIFY
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -757,6 +794,8 @@ def apply_premium_design(prs, topic: str = ""):
             _decorate_section_slide(slide, palette, sw, sh)
         elif slide_type == "quote":
             _decorate_quote_slide(slide, palette, sw, sh)
+        elif slide_type == "goals":
+            _decorate_goals_slide(slide, palette, sw, sh)
         elif slide_type == "conclusion":
             _decorate_conclusion_slide(slide, palette, sw, sh)
         elif slide_type == "final":
