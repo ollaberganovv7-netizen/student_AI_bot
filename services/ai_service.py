@@ -673,24 +673,7 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
             for j in range(num_info):
                 slides_data.append({"title": f"{chapter} — {j+1}-qism", "content": [f"'{chapter}' bo'yicha ma'lumot."], "section_label": f"{ch_idx+1}-o'quv savoli", "needs_image": True})
 
-        # 5.3 MINI-CONCLUSION SLIDE
-        cx_prompt = f"Mavzu: {chapter}\nQisqacha xulosa yozing (1-2 punkt). JSON: {{\"content\": [\"...\"]}}"
-        try:
-            cx_raw = await _call_ai([{"role": "user", "content": cx_prompt}], max_tokens=500, temperature=0.7, json_mode=True)
-            cx_data = json.loads(cx_raw)
-            cx_points = cx_data.get("content", cx_data.get("points", [f"{chapter} bo'yicha xulosa."]))
-        except:
-            cx_points = [f"{chapter} bo'yicha xulosa."]
-        
-        slides_data.append({
-            "title": "Xulosa",
-            "content": cx_points,
-            "section_label": f"{ch_idx+1}-o'quv savoli",
-            "needs_image": True,
-            "image_keyword": "conclusion summary"
-        })
-
-        completed_steps += (num_info + 2)
+        completed_steps += (num_info + 1)
         if progress_callback:
             try: await progress_callback(completed_steps, total_steps, f"{ch_idx+1}-qism tayyor")
             except: pass

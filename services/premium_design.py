@@ -459,64 +459,58 @@ def _decorate_content_slide_v1(slide, pal: dict, sw, sh):
     accent = pal["accent"]
     accent2 = pal["accent2"]
 
-    # Thin left accent bar
+    # Awesome Left side block
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.12), sh, accent, alpha_pct=80)
+                         0, 0, Inches(0.4), sh, accent, alpha_pct=90)
+    
+    # Large soft triangle in the background
+    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE,
+                         -Inches(2), sh - Inches(5),
+                         Inches(6), Inches(6), accent, alpha_pct=10)
 
-    # Small decorative circle (top-right)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(1.5), -Inches(0.5),
-                         Inches(2), Inches(2), accent2, alpha_pct=8)
-
-    # Bottom thin line
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.5), sh - Inches(0.04),
-                         sw - Inches(1), Inches(0.04), accent, alpha_pct=40)
+    # Top right beautiful chevron
+    _add_shape_no_border(slide, MSO_SHAPE.CHEVRON,
+                         sw - Inches(3), Inches(0.5),
+                         Inches(4), Inches(1), accent2, alpha_pct=80)
 
 
 def _decorate_content_slide_v2(slide, pal: dict, sw, sh):
     """Content slide variant 2: top bar + bottom-left shape."""
     accent = pal["accent"]
+    accent2 = pal["accent2"]
 
-    # Top horizontal accent bar
+    # Stylish Top thick bar
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, sw, Inches(0.1), accent, alpha_pct=80)
+                         0, 0, sw, Inches(0.6), accent, alpha_pct=90)
 
-    # Bottom-left decorative rounded rectangle
-    _add_shape_no_border(slide, MSO_SHAPE.ROUNDED_RECTANGLE,
-                         -Inches(1), sh - Inches(2),
-                         Inches(3), Inches(3), accent, alpha_pct=6)
+    # Cool hexagon in bottom-left
+    _add_shape_no_border(slide, MSO_SHAPE.HEXAGON,
+                         -Inches(1), sh - Inches(3),
+                         Inches(4), Inches(4), accent2, alpha_pct=15)
+                         
+    # Accent line below the title area
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(1), Inches(1.5),
+                         Inches(3), Inches(0.05), accent2, alpha_pct=100)
 
 
 def _decorate_content_slide_v3(slide, pal: dict, sw, sh):
     """Content slide variant 3: right bar + top-left corner."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
-
-    # Right vertical bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         sw - Inches(0.12), 0,
-                         Inches(0.12), sh, accent, alpha_pct=75)
-
-    # Top-left small accent square
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.4), Inches(0.4),
-                         Inches(0.5), Inches(0.08), accent2, alpha_pct=60)
+    # Left side bars
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.2), 0, Inches(0.1), sh, accent, alpha_pct=90)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.4), 0, Inches(0.05), sh, accent2, alpha_pct=70)
+    # Bottom-right geometric
+    _add_shape_no_border(slide, MSO_SHAPE.PARALLELOGRAM, sw - Inches(4), sh - Inches(2), Inches(5), Inches(3), accent, alpha_pct=15)
 
 
 def _decorate_content_slide_v4(slide, pal: dict, sw, sh):
     """Content slide variant 4: diagonal accent."""
     accent = pal["accent"]
-
-    # Bottom-right decorative triangle
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE,
-                         sw - Inches(2.5), sh - Inches(1.5),
-                         Inches(2.5), Inches(1.5), accent, alpha_pct=7)
-
-    # Left thin bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, Inches(0.5), Inches(0.08), sh - Inches(1),
-                         accent, alpha_pct=50)
+    # Floating triangles
+    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE, sw - Inches(3), sh - Inches(3), Inches(3), Inches(3), accent, alpha_pct=10)
+    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE, 0, 0, Inches(2), Inches(2), accent, alpha_pct=10)
 
 
 def _decorate_quote_slide(slide, pal: dict, sw, sh):
@@ -743,8 +737,8 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                         except Exception:
                             pass
                     
-                    # Justify body text on goals and plan slides
-                    if slide_type in ("goals", "plan"):
+                    # Justify body text on most slides
+                    if slide_type in ("goals", "plan", "content", "intro", "conclusion"):
                         para.alignment = PP_ALIGN.JUSTIFY
 
 
