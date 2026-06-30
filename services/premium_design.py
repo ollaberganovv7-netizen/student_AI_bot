@@ -236,6 +236,7 @@ _SECTION_WORDS = {"o'quv savoli", "bo'lim", "section", "qism"}
 _PLAN_WORDS = {"reja", "plan", "mundarija", "o'quv savollari"}
 _INTRO_WORDS = {"kirish", "introduction", "maqsad"}
 _CONCLUSION_WORDS = {"xulosa", "conclusion", "yakun"}
+_REFERENCE_WORDS = {"adabiyotlar", "adabiyot", "manbalar", "references", "foydalanilgan"}
 _QUOTE_WORDS = {"iqtibos", "tsitata", "quote"}
 _FINAL_WORDS = {"rahmat", "thank", "e'tibor", "yakuniy"}
 _GOAL_WORDS = {"maqsad", "maqsadlar", "tarbiyaviy"}
@@ -261,6 +262,9 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
     for w in _CONCLUSION_WORDS:
         if w in text:
             return "conclusion"
+    for w in _REFERENCE_WORDS:
+        if w in text:
+            return "references"
     for w in _GOAL_WORDS:
         if w in text:
             return "goals"
@@ -616,6 +620,33 @@ def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
                          sw - Inches(2), Inches(0.08), accent, alpha_pct=90)
 
 
+def _decorate_references_slide(slide, pal: dict, sw, sh):
+    """Premium decorations for References (Foydalanilgan adabiyotlar) slides."""
+    accent = pal["accent"]
+    accent2 = pal["accent2"]
+    
+    # Large glowing oval in the bottom left
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         -Inches(3), sh - Inches(3),
+                         Inches(6), Inches(6), accent, alpha_pct=10)
+                         
+    # Accent geometric strip on the right edge
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         sw - Inches(0.2), 0,
+                         Inches(0.2), sh, accent2, alpha_pct=80)
+                         
+    # Top left small decorative dots (using small circles)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         Inches(0.5), Inches(0.5),
+                         Inches(0.2), Inches(0.2), accent, alpha_pct=60)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         Inches(0.8), Inches(0.5),
+                         Inches(0.2), Inches(0.2), accent2, alpha_pct=40)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         Inches(1.1), Inches(0.5),
+                         Inches(0.2), Inches(0.2), accent, alpha_pct=20)
+
+
 def _decorate_final_slide(slide, pal: dict, sw, sh):
     """Premium 'Thank You' slide decorations."""
     accent = pal["accent"]
@@ -695,12 +726,12 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     else:
                         run.font.color.rgb = text1
                     run.font.bold = True
-                    # Center align title on goals, plan, section, and conclusion slides
-                    if slide_type in ("goals", "plan", "section", "conclusion"):
+                    # Center align title on goals, plan, section, conclusion, and references slides
+                    if slide_type in ("goals", "plan", "section", "conclusion", "references"):
                         para.alignment = PP_ALIGN.CENTER
                         
                     # Huge uppercase for section and conclusion titles
-                    if slide_type in ("section", "conclusion"):
+                    if slide_type in ("section", "conclusion", "references"):
                         run.text = run.text.upper()
                         try:
                             run.font.size = Pt(40)
@@ -751,7 +782,7 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                             pass
                     
                     # Justify body text on most slides
-                    if slide_type in ("goals", "plan", "content", "intro", "conclusion"):
+                    if slide_type in ("goals", "plan", "content", "intro", "conclusion", "references"):
                         para.alignment = PP_ALIGN.JUSTIFY
                         
                     # Conclusion slide body text formatting (remove bullets, bold)
@@ -865,6 +896,8 @@ def apply_premium_design(prs, topic: str = ""):
             _decorate_plan_slide(slide, palette, sw, sh)
         elif slide_type == "conclusion":
             _decorate_conclusion_slide(slide, palette, sw, sh)
+        elif slide_type == "references":
+            _decorate_references_slide(slide, palette, sw, sh)
         elif slide_type == "final":
             _decorate_final_slide(slide, palette, sw, sh)
         else:
