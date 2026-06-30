@@ -121,14 +121,14 @@ SLIDE_OPTIONS: dict[str, dict] = {
 PRES_STYLES: dict[str, dict] = {
     "classic": {
         "label": "🎨 Klassik PowerPoint uslubi",
-        "file": "templates/classic.pptx",
+        "file": "templates/power point/classic.pptx",
     },
     "modern": {
         "label": "✨ Zamonaviy uslub",
-        "file": "templates/modern.pptx",
+        "file": "templates/modern/beige-minimalism.pptx",
     },
     "test_template": {
         "label": "🎓 Test (Universitet)",
-        "file": "templates/power point/test.pptx",
+        "file": "templates/power point/1.pptx",
     },
 }

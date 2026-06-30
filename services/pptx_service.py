@@ -955,14 +955,14 @@ def generate_pptx(
                 _fill_textframe(s.text_frame, f"Bajardi: {author}")
             
             if not title_filled and shapes["other"]:
-                smart_title, smart_body = _smart_classify_textboxes(shapes["other"], ts)
+                smart_title, smart_body = _smart_classify_textboxes(shapes["other"], title_slide)
                 if smart_title:
                     _fill_textframe(smart_title.text_frame, topic, is_title=True)
                 if smart_body:
                     _fill_textframe(smart_body.text_frame, f"Bajardi: {author}")
         
         if 0 in slide_images:
-            _add_image(ts, slide_images[0], prs, "center")
+            _add_image(title_slide, slide_images[0], prs, "center")
 
     # ── 2. Content slides ─────────────────────────────────────────────────
     if tpl_content == 0:
