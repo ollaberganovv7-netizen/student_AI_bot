@@ -684,31 +684,111 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
                          sw/2 - Inches(2), sh - Inches(0.5),
                          Inches(4), Inches(0.05), accent2, alpha_pct=60)
 
+def _apply_card_shadow(shape):
+    try:
+        from pptx.oxml.xmlchemy import OxmlElement
+        spPr = shape.element.spPr
+        effectLst = OxmlElement('a:effectLst')
+        outerShdw = OxmlElement('a:outerShdw')
+        outerShdw.set('blurRad', '200000')  # 20pt blur
+        outerShdw.set('dist', '50000')      # 5pt distance
+        outerShdw.set('dir', '5400000')     # 90 degrees (straight down)
+        srgbClr = OxmlElement('a:srgbClr')
+        srgbClr.set('val', '000000')
+        alpha = OxmlElement('a:alpha')
+        alpha.set('val', '15000') # 15% opacity
+        srgbClr.append(alpha)
+        outerShdw.append(srgbClr)
+        effectLst.append(outerShdw)
+        spPr.append(effectLst)
+    except Exception:
+        pass
+
 def _decorate_goals_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for Goals/Maqsadlar slide."""
+    """Premium Card-based decorations for Goals/Maqsadlar slide."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
     
-    # Large soft glowing background circle in the center
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw/2 - Inches(3), sh/2 - Inches(3),
-                         Inches(6), Inches(6), accent, alpha_pct=10)
+    # Large soft glowing background circle in the center right
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw/2, -Inches(2), Inches(8), Inches(8), accent, alpha_pct=10)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(2), sh - Inches(4), Inches(6), Inches(6), accent2, alpha_pct=8)
     
-    # Top and bottom elegant accent lines
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(2), Inches(0.3),
-                         sw - Inches(4), Inches(0.08), accent2, alpha_pct=80)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(2), sh - Inches(0.38),
-                         sw - Inches(4), Inches(0.08), accent2, alpha_pct=80)
-                         
-    # Left and right vertical floating lines
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.2), Inches(1),
-                         Inches(0.05), sh - Inches(2), accent, alpha_pct=50)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         sw - Inches(0.25), Inches(1),
-                         Inches(0.05), sh - Inches(2), accent, alpha_pct=50)
+    title, body = _find_text_boxes(slide)
+    if not body: return
+    
+    # Extract goals from the body text frame
+    goals = []
+    for p in body.text_frame.paragraphs:
+        if p.text.strip():
+            goals.append(p.text.strip())
+            
+    # Hide the original body
+    body.left = sw + Inches(10)
+    
+    num_cards = len(goals)
+    if num_cards == 0: return
+    
+    # Vertical Card Layout Engine
+    card_width = sw - Inches(2)
+    start_x = Inches(1)
+    
+    # Dynamic height calculation
+    available_height = sh - Inches(2.5)
+    gap = Inches(0.4)
+    # Ensure cards aren't too tall
+    card_height = min(Inches(1.5), (available_height - (num_cards - 1) * gap) / num_cards)
+    start_y = Inches(2.5)
+    
+    for i, goal in enumerate(goals):
+        cy = start_y + i * (card_height + gap)
+        
+        # 1. Premium Frosted Card Background
+        card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, start_x, cy, card_width, card_height)
+        card.fill.solid()
+        card.fill.fore_color.rgb = _hex(pal["bg1"])
+        
+        # Simulate glassmorphism transparency if dark mode, otherwise solid white-ish
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '85000') # 85% opacity
+            card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except Exception:
+            pass
+            
+        card.line.color.rgb = _hex(accent)
+        card.line.width = Pt(1)
+        
+        # 2. Hover / Float Shadow Effect
+        _apply_card_shadow(card)
+        
+        # 3. Dynamic Icon (Using different shapes based on index)
+        icon_size = card_height * 0.4
+        shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON, MSO_SHAPE.OVAL]
+        shape_type = shapes[i % len(shapes)]
+        
+        icon = slide.shapes.add_shape(shape_type, start_x + Inches(0.5), cy + (card_height - icon_size)/2, icon_size, icon_size)
+        icon.fill.solid()
+        icon.fill.fore_color.rgb = _hex(accent2)
+        icon.line.fill.background()
+        
+        # 4. Goal Text
+        tb = slide.shapes.add_textbox(start_x + Inches(1.5), cy, card_width - Inches(2), card_height)
+        tf = tb.text_frame
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.add_paragraph()
+        p.text = goal
+        p.font.name = "Arial"
+        p.font.size = Pt(24)
+        p.font.color.rgb = _hex(pal["text1"])
+        p.font.bold = True
+        
+        # Ensures text z-ordering is above the card
+        _send_to_back(card)
+        # Send background elements completely to back
+        for s in slide.shapes:
+            if not s.has_text_frame and s != card and s != icon:
+                _send_to_back(s)
 
 
 def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
@@ -1033,6 +1113,8 @@ def apply_premium_transitions(prs):
             _add_transition(slide, "push", "med")
         elif slide_type == "quote":
             _add_transition(slide, "zoom", "slow") # Smooth Zoom for portrait
+        elif slide_type == "goals":
+            _add_transition(slide, "push", "med") # Simulates floating up
         elif slide_type == "final":
             _add_transition(slide, "fade", "slow")
         elif slide_type == "conclusion":
