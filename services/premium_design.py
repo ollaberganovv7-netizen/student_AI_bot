@@ -1404,14 +1404,6 @@ def apply_premium_design(prs, topic: str = ""):
                     _decorate_split_layout(slide, palette, sw, sh, is_left_image=False)
             else:
                 _decorate_minimal_typographic(slide, palette, sw, sh)
-        else:
-            # Content slides: rotate through variants (never repeat consecutively)
-            available = list(range(len(_CONTENT_DECORATORS)))
-            if prev_decorator_idx in available and len(available) > 1:
-                available.remove(prev_decorator_idx)
-            dec_idx = random.choice(available)
-            _CONTENT_DECORATORS[dec_idx](slide, palette, sw, sh)
-            prev_decorator_idx = dec_idx
 
         # 3. Reformat text
         _format_all_text(slide, palette, slide_type)
