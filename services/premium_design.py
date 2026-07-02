@@ -934,7 +934,12 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
             _apply_glow_effect(marker, accent)
         
         # Premium Block for Question
-        block_w = sw - Inches(3)
+        pic = _find_picture(slide)
+        if pic:
+            block_w = int(pic.left - line_x - Inches(0.8))
+        else:
+            block_w = int(sw - Inches(3))
+            
         block = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, line_x + Inches(0.6), cy, block_w, block_h)
         block.fill.solid()
         block.fill.fore_color.rgb = _hex(pal["bg1"])
