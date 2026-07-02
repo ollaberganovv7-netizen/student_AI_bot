@@ -56,10 +56,10 @@ def _darker(hex_color: str, factor: float = 0.2) -> str:
 
 _PALETTES = [
     {
-        "name": "midnight_tech",
-        "bg1": "0B0E1A", "bg2": "151B2E",
-        "accent": "6C63FF", "accent2": "3F3D9E",
-        "text1": "F0F0FF", "text2": "9E9EBF",
+        "name": "apple_dark_mode",
+        "bg1": "000000", "bg2": "1C1C1E",
+        "accent": "0A84FF", "accent2": "5E5CE6",
+        "text1": "FFFFFF", "text2": "EBEBF5",
         "on_accent": "FFFFFF", "is_dark": True,
         "keywords": ["texnologiya", "kompyuter", "dastur", "raqamli", "it", "sun'iy",
                      "intellekt", "robot", "axborot", "tizim", "elektron", "internet",
@@ -67,49 +67,49 @@ _PALETTES = [
                      "kiberhujum", "xavfsizlik", "programma"]
     },
     {
-        "name": "ocean_depth",
-        "bg1": "0A1929", "bg2": "0D2847",
-        "accent": "00BCD4", "accent2": "0288D1",
-        "text1": "E3F2FD", "text2": "81D4FA",
-        "on_accent": "FFFFFF", "is_dark": True,
-        "keywords": ["dengiz", "suv", "okean", "transport", "logistika",
-                     "savdo", "import", "eksport", "moliya", "bank"]
-    },
-    {
-        "name": "emerald_forest",
-        "bg1": "0D1F1A", "bg2": "133025",
-        "accent": "00E676", "accent2": "00C853",
-        "text1": "E8F5E9", "text2": "A5D6A7",
-        "on_accent": "0D1F1A", "is_dark": True,
-        "keywords": ["tabiat", "ekologiya", "atrof-muhit", "biologiya", "o'simlik",
-                     "hayvon", "qishloq", "dehqonchilik", "fermer", "yashil", "o'rmon"]
-    },
-    {
-        "name": "royal_purple",
-        "bg1": "1A0A2E", "bg2": "2D1458",
-        "accent": "BB86FC", "accent2": "7C4DFF",
-        "text1": "F3E5F5", "text2": "CE93D8",
-        "on_accent": "1A0A2E", "is_dark": True,
+        "name": "canva_minimalist",
+        "bg1": "FFFFFF", "bg2": "F5F5F7",
+        "accent": "7B61FF", "accent2": "00C4CC",
+        "text1": "1D1D1F", "text2": "424245",
+        "on_accent": "FFFFFF", "is_dark": False,
         "keywords": ["san'at", "madaniyat", "adabiyot", "musiqa", "dizayn",
-                     "ijodkorlik", "falsafa", "psixologiya", "she'riyat"]
+                     "ijodkorlik", "falsafa", "psixologiya", "she'riyat", "arxitektura"]
     },
     {
-        "name": "sunset_warm",
-        "bg1": "1A0F0A", "bg2": "2E1810",
-        "accent": "FF6D00", "accent2": "FF9100",
-        "text1": "FFF3E0", "text2": "FFCC80",
+        "name": "tedx_cinematic",
+        "bg1": "111111", "bg2": "000000",
+        "accent": "E62B1E", "accent2": "FF4D4D",
+        "text1": "FFFFFF", "text2": "CCCCCC",
         "on_accent": "FFFFFF", "is_dark": True,
-        "keywords": ["energiya", "neft", "gaz", "sanoat", "ishlab chiqarish",
-                     "quvvat", "elektr", "issiqlik"]
+        "keywords": ["jamiyat", "motivatsiya", "nutq", "liderlik", "biznes", "tadbirkor",
+                     "innovatsiya", "g'oya", "global", "inson", "ijtimoiy", "huquq"]
     },
     {
-        "name": "crimson_elegance",
-        "bg1": "1A0A0F", "bg2": "2E1018",
-        "accent": "FF1744", "accent2": "D50000",
-        "text1": "FFEBEE", "text2": "EF9A9A",
-        "on_accent": "FFFFFF", "is_dark": True,
+        "name": "corporate_prestige",
+        "bg1": "0A1128", "bg2": "1C2541",
+        "accent": "D4AF37", "accent2": "F3E5AB",
+        "text1": "FFFFFF", "text2": "E0E0E0",
+        "on_accent": "000000", "is_dark": True,
+        "keywords": ["moliya", "iqtisod", "bank", "investitsiya", "biznes", "tijorat",
+                     "menejment", "boshqaruv", "davlat", "siyosat", "huquq", "strategiya"]
+    },
+    {
+        "name": "apple_light_mode",
+        "bg1": "FBFBFD", "bg2": "FFFFFF",
+        "accent": "FF2D55", "accent2": "FF3B30",
+        "text1": "000000", "text2": "86868B",
+        "on_accent": "FFFFFF", "is_dark": False,
         "keywords": ["tibbiyot", "sog'liq", "kasallik", "dori", "shifoxona",
-                     "jarrohlik", "anatomiya", "fiziologiya"]
+                     "jarrohlik", "anatomiya", "fiziologiya", "biologiya", "kimyo"]
+    },
+    {
+        "name": "eco_minimalist",
+        "bg1": "F7F9F6", "bg2": "E8EFE6",
+        "accent": "34C759", "accent2": "28A745",
+        "text1": "1A2518", "text2": "3D4C3A",
+        "on_accent": "FFFFFF", "is_dark": False,
+        "keywords": ["tabiat", "ekologiya", "atrof-muhit", "botanika", "o'simlik",
+                     "hayvon", "qishloq", "dehqonchilik", "fermer", "yashil", "o'rmon"]
     },
     {
         "name": "arctic_ice",
@@ -416,116 +416,128 @@ def _add_shadow(shape, blur_pt: int = 5, dist_pt: int = 3, angle: int = 45):
 
 
 def _decorate_title_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for the cover/title slide."""
+    """Premium minimalist decorations for the cover/title slide."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
 
-    # Huge background sweep for dramatic effect
-    _add_shape_no_border(slide, MSO_SHAPE.PARALLELOGRAM,
-                         -Inches(2), sh - Inches(5),
-                         sw + Inches(4), Inches(8), accent, alpha_pct=15)
-                         
-    # Large decorative circle (top-right, partially off-screen)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(3), -Inches(1.5),
-                         Inches(6), Inches(6), accent2, alpha_pct=20)
-
-    # Smaller glowing inner circle
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(2.2), -Inches(0.8),
-                         Inches(4), Inches(4), accent, alpha_pct=10)
-
-    # Left vertical accent bar (very thick for impact)
+    # One very elegant, thin left accent bar
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.4), sh, accent, alpha_pct=85)
-
-    # Bottom accent line
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.4), sh - Inches(0.15),
-                         sw - Inches(0.4), Inches(0.15), accent2, alpha_pct=90)
-
-    # Decorative diamond for the topic area
-    _add_shape_no_border(slide, MSO_SHAPE.DIAMOND,
-                         Inches(0.8), sh / 2,
-                         Inches(1.2), Inches(1.2), accent, alpha_pct=25)
+                         Inches(0.5), Inches(0.5), Inches(0.05), sh - Inches(1), accent, alpha_pct=100)
+    
+    # A single subtle glowing gradient orb in the top right
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         sw - Inches(4), -Inches(2),
+                         Inches(6), Inches(6), accent2, alpha_pct=10)
 
 
 def _decorate_section_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for section/chapter header slides."""
+    """Premium minimalist decorations for section/chapter header slides."""
     accent = pal["accent"]
-
-    # Thick left accent bar
+    # Single thick accent block on the left edge
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.3), sh, accent, alpha_pct=85)
-
-    # Top-right decorative triangle
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE,
-                         sw - Inches(3), 0,
-                         Inches(3), Inches(2), accent, alpha_pct=8)
-
-    # Bottom horizontal bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.3), sh - Inches(0.06),
-                         sw, Inches(0.06), accent, alpha_pct=50)
+                         0, 0, Inches(0.2), sh, accent, alpha_pct=100)
 
 
-def _decorate_content_slide_v1(slide, pal: dict, sw, sh):
-    """Content slide variant 1: left bar + top-right circle."""
-    accent = pal["accent"]
-    accent2 = pal["accent2"]
+def _find_picture(slide):
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+    for shape in slide.shapes:
+        if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+            return shape
+    return None
 
-    # Awesome Left side block
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.4), sh, accent, alpha_pct=90)
+def _find_text_boxes(slide):
+    title = None
+    body = None
+    for shape in slide.shapes:
+        if not shape.has_text_frame:
+            continue
+        if _is_title_shape(shape, slide):
+            title = shape
+        else:
+            if not body or shape.width > body.width:
+                body = shape
+    return title, body
+
+def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
+    """Premium Split-Screen Layout (50/50). Image on one side, text on the other."""
+    pic = _find_picture(slide)
+    title, body = _find_text_boxes(slide)
     
-    # Large soft triangle in the background
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE,
-                         -Inches(2), sh - Inches(5),
-                         Inches(6), Inches(6), accent, alpha_pct=10)
+    if pic:
+        half_w = sw / 2
+        pic.top = 0
+        pic.height = sh
+        pic.width = half_w
+        pic.left = 0 if is_left_image else half_w
+        _send_to_back(pic)
 
-    # Top right beautiful chevron
-    _add_shape_no_border(slide, MSO_SHAPE.CHEVRON,
-                         sw - Inches(3), Inches(0.5),
-                         Inches(4), Inches(1), accent2, alpha_pct=80)
+    if title and body:
+        half_w = sw / 2
+        margin = Inches(0.5)
+        text_left = half_w + margin if is_left_image else margin
+        text_width = half_w - (margin * 2)
+        
+        title.left = text_left
+        title.width = text_width
+        title.top = Inches(1.5)
+        
+        body.left = text_left
+        body.width = text_width
+        body.top = title.top + title.height + Inches(0.5)
 
+def _decorate_cinematic_layout(slide, pal: dict, sw, sh):
+    """Premium Cinematic Layout. Image covers whole slide with a dark overlay."""
+    pic = _find_picture(slide)
+    title, body = _find_text_boxes(slide)
+    
+    if pic:
+        pic.left = 0
+        pic.top = 0
+        pic.width = sw
+        pic.height = sh
+        _send_to_back(pic)
+        
+        # Dark overlay
+        overlay = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+        overlay.fill.solid()
+        overlay.fill.fore_color.rgb = _hex("000000")
+        overlay.line.fill.background()
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha_elem = OxmlElement('a:alpha')
+            alpha_elem.set('val', '60000') # 60% opacity
+            srgb = overlay.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr')
+            srgb.append(alpha_elem)
+        except Exception:
+            pass
+            
+        _send_to_back(overlay)
+        _send_to_back(pic) # pic goes behind overlay
+        
+    if title and body:
+        margin = Inches(1)
+        title.left = margin
+        title.width = sw - (margin * 2)
+        title.top = Inches(2)
+        
+        body.left = margin
+        body.width = sw - (margin * 2)
+        body.top = title.top + title.height + Inches(0.5)
 
-def _decorate_content_slide_v2(slide, pal: dict, sw, sh):
-    """Content slide variant 2: top bar + bottom-left shape."""
+def _decorate_minimal_typographic(slide, pal: dict, sw, sh):
+    """Premium Minimalist text layout when no image is present."""
     accent = pal["accent"]
-    accent2 = pal["accent2"]
-
-    # Stylish Top thick bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, sw, Inches(0.6), accent, alpha_pct=90)
-
-    # Cool hexagon in bottom-left
-    _add_shape_no_border(slide, MSO_SHAPE.HEXAGON,
-                         -Inches(1), sh - Inches(3),
-                         Inches(4), Inches(4), accent2, alpha_pct=15)
-                         
-    # Accent line below the title area
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(1), Inches(1.5),
-                         Inches(3), Inches(0.05), accent2, alpha_pct=100)
-
-
-def _decorate_content_slide_v3(slide, pal: dict, sw, sh):
-    """Content slide variant 3: right bar + top-left corner."""
-    accent = pal["accent"]
-    accent2 = pal["accent2"]
-    # Left side bars
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.2), 0, Inches(0.1), sh, accent, alpha_pct=90)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.4), 0, Inches(0.05), sh, accent2, alpha_pct=70)
-    # Bottom-right geometric
-    _add_shape_no_border(slide, MSO_SHAPE.PARALLELOGRAM, sw - Inches(4), sh - Inches(2), Inches(5), Inches(3), accent, alpha_pct=15)
-
-
-def _decorate_content_slide_v4(slide, pal: dict, sw, sh):
-    """Content slide variant 4: diagonal accent."""
-    accent = pal["accent"]
-    # Floating triangles
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE, sw - Inches(3), sh - Inches(3), Inches(3), Inches(3), accent, alpha_pct=10)
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE, 0, 0, Inches(2), Inches(2), accent, alpha_pct=10)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, 0, 0, Inches(0.5), sh, accent, alpha_pct=100)
+    
+    title, body = _find_text_boxes(slide)
+    if title and body:
+        title.left = Inches(1.5)
+        title.width = sw - Inches(2)
+        title.top = Inches(1.5)
+        
+        body.left = Inches(1.5)
+        body.width = sw - Inches(2)
+        body.top = title.top + title.height + Inches(0.5)
 
 
 def _decorate_quote_slide(slide, pal: dict, sw, sh):
@@ -604,58 +616,31 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
 
 
 def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for conclusion slides."""
+    """Premium minimalist decorations for conclusion slides."""
     accent = pal["accent"]
-    accent2 = pal["accent2"]
-
-    # Awesome geometric "Sticker" background for Conclusion
-    
-    # Large angled backdrop on the left
-    _add_shape_no_border(slide, MSO_SHAPE.PARALLELOGRAM,
-                         -Inches(3), 0,
-                         Inches(6), sh, accent, alpha_pct=15)
-                         
-    # Accent glowing orb in the center right
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw/2 + Inches(1), sh/2 - Inches(2),
-                         Inches(5), Inches(5), accent2, alpha_pct=10)
-                         
-    # Top right diagonal banner/sticker
-    _add_shape_no_border(slide, MSO_SHAPE.CHEVRON,
-                         sw - Inches(3), Inches(0.5),
-                         Inches(4), Inches(1), accent2, alpha_pct=85)
-                         
-    # Bottom elegant thin lines (Underline the slide)
+    # Elegant top and bottom bars
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(1), Inches(0.5),
+                         sw - Inches(2), Inches(0.05), accent, alpha_pct=100)
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
                          Inches(1), sh - Inches(0.5),
-                         sw - Inches(2), Inches(0.08), accent, alpha_pct=90)
+                         sw - Inches(2), Inches(0.05), accent, alpha_pct=100)
 
 
 def _decorate_references_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for References (Foydalanilgan adabiyotlar) slides."""
+    """Premium minimalist decorations for References slides."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
     
-    # Large glowing oval in the bottom left
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         -Inches(3), sh - Inches(3),
-                         Inches(6), Inches(6), accent, alpha_pct=10)
-                         
-    # Accent geometric strip on the right edge
+    # Clean accent bar on the right edge
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
                          sw - Inches(0.2), 0,
-                         Inches(0.2), sh, accent2, alpha_pct=80)
+                         Inches(0.2), sh, accent2, alpha_pct=100)
                          
-    # Top left small decorative dots (using small circles)
+    # Single subtle glow bottom left
     _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         Inches(0.5), Inches(0.5),
-                         Inches(0.2), Inches(0.2), accent, alpha_pct=60)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         Inches(0.8), Inches(0.5),
-                         Inches(0.2), Inches(0.2), accent2, alpha_pct=40)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         Inches(1.1), Inches(0.5),
-                         Inches(0.2), Inches(0.2), accent, alpha_pct=20)
+                         -Inches(3), sh - Inches(3),
+                         Inches(6), Inches(6), accent, alpha_pct=5)
 
 
 def _decorate_final_slide(slide, pal: dict, sw, sh):
@@ -737,13 +722,20 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     else:
                         run.font.color.rgb = text1
                     run.font.bold = True
-                    # Center align title on goals, plan, section, conclusion, and references slides
-                    if slide_type in ("goals", "plan", "section", "conclusion", "references"):
+                    
+                    # Center align title on most premium layouts
+                    if slide_type in ("goals", "plan", "section", "conclusion", "references", "content", "intro"):
                         para.alignment = PP_ALIGN.CENTER
                         
                     # Huge uppercase for section and conclusion titles
                     if slide_type in ("section", "conclusion", "references"):
                         run.text = run.text.upper()
+                        try:
+                            run.font.size = Pt(48)
+                        except Exception:
+                            pass
+                    else:
+                        # Make other titles quite large too
                         try:
                             run.font.size = Pt(40)
                         except Exception:
@@ -904,6 +896,17 @@ def apply_premium_design(prs, topic: str = ""):
             _decorate_references_slide(slide, palette, sw, sh)
         elif slide_type == "final":
             _decorate_final_slide(slide, palette, sw, sh)
+        else:
+            has_pic = _find_picture(slide) is not None
+            if has_pic:
+                if idx % 3 == 0:
+                    _decorate_cinematic_layout(slide, palette, sw, sh)
+                elif idx % 3 == 1:
+                    _decorate_split_layout(slide, palette, sw, sh, is_left_image=True)
+                else:
+                    _decorate_split_layout(slide, palette, sw, sh, is_left_image=False)
+            else:
+                _decorate_minimal_typographic(slide, palette, sw, sh)
         else:
             # Content slides: rotate through variants (never repeat consecutively)
             available = list(range(len(_CONTENT_DECORATORS)))
