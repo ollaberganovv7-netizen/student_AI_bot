@@ -867,6 +867,12 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
         
         tf.word_wrap = True
         
+        # Force all text on the quote slide to be white so it is readable on navy background
+        for shape in (title, body):
+            for p in shape.text_frame.paragraphs:
+                for run in p.runs:
+                    run.font.color.rgb = _hex("FFFFFF")
+        
         anim_configs = []
         if pic:
             anim_configs.append({"ids": [pic.shape_id, frame.shape_id], "preset": "zoom", "on_click": False})

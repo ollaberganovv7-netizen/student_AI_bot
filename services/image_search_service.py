@@ -125,6 +125,11 @@ async def search_image(query: str) -> str | None:
     """
     if not query:
         return None
+        
+    query_lower = query.lower()
+    if "mirziyoyev" in query_lower or "prezident" in query_lower:
+        return "https://upload.wikimedia.org/wikipedia/commons/c/cd/Shavkat_Mirziyoyev_official_portrait_%28cropped_2%29.jpg"
+        
     import asyncio
     # Search both in parallel
     pexels_task = asyncio.create_task(search_pexels(query, count=3))
@@ -151,8 +156,9 @@ async def search_images_batch(queries: list[str]) -> list[str | None]:
 async def download_image(url: str) -> bytes | None:
     """Download image bytes from URL."""
     try:
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.get(url)
+            resp = await client.get(url, headers=headers)
             if resp.status_code == 200:
                 return resp.content
             return None
