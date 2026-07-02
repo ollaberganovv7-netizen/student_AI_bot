@@ -436,7 +436,7 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
     # 3. Glassmorphism overlay (simulated by a semi-transparent full screen box in front of the orbs)
     glass = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
     glass.fill.solid()
-    glass.fill.fore_color.rgb = _hex(pal["bg1"])
+    glass.fill.fore_color.rgb = _hex("000000") # Always use black for cinematic overlay
     glass.line.fill.background()
     try:
         from pptx.oxml.xmlchemy import OxmlElement
@@ -449,23 +449,37 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
     
     # 4. Correct Z-Ordering
     # Desired order (Bottom to Top): Image -> BaseOrb -> Orb1 -> Orb2 -> Glass -> Text
-    # We call _send_to_back in reverse order because each call pushes the shape to the absolute bottom.
     _send_to_back(glass)
     _send_to_back(orb2)
     _send_to_back(orb1)
     _send_to_back(base_orb)
     
-    pic = _find_picture(slide)
-    if pic:
-        _send_to_back(pic)
+    # Send ONLY fullscreen images to the back (to avoid hiding small logos)
+    from pptx.enum.shapes import MSO_SHAPE_TYPE
+    for shape in list(slide.shapes):
+        if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
+            if shape.width > sw * 0.9: # Fullscreen background image
+                _send_to_back(shape)
 
     # 5. Add a sleek vertical accent bar on the left edge over the glass
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
                          Inches(0.5), Inches(2), Inches(0.06), sh - Inches(4), accent, alpha_pct=100)
     
-    # 6. Apply Soft Shadow to Title Text
+    # 6. Force Cinematic Text Styling (White text, Rich Text for Topic, Soft Shadows)
     for shape in slide.shapes:
-        if shape.has_text_frame and _is_title_shape(shape, slide):
+        if shape.has_text_frame:
+            # Check if this is the main Topic textbox
+            is_main_topic = "MAVZU:" in shape.text_frame.text.upper() or _is_title_shape(shape, slide)
+            
+            for p in shape.text_frame.paragraphs:
+                if is_main_topic:
+                    # Apply Rich Text (Accent color for keywords)
+                    _apply_rich_text(p, p.text, pal, is_highlight=True, text_width=shape.width)
+                else:
+                    for run in p.runs:
+                        run.font.color.rgb = _hex("FFFFFF") # Force white for all other text
+            
+            # Apply shadow to all text for cinematic feel
             try:
                 from pptx.oxml.xmlchemy import OxmlElement
                 spPr = shape.element.spPr
@@ -478,7 +492,7 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
                 srgbClr = OxmlElement('a:srgbClr')
                 srgbClr.set('val', '000000')
                 alpha = OxmlElement('a:alpha')
-                alpha.set('val', '30000') # 30% transparency
+                alpha.set('val', '40000') # 40% opacity shadow (slightly darker)
                 srgbClr.append(alpha)
                 outerShdw.append(srgbClr)
                 effectLst.append(outerShdw)
