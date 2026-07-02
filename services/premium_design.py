@@ -785,6 +785,10 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
             alpha = OxmlElement('a:alpha')
             alpha.set('val', '40000') # 40% opacity
             p.runs[0].font.color._xFill.find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except:
+            pass
+
+    if title and body:
         text_left = Inches(1)
         text_width = sw - Inches(2)
         title.left = text_left
