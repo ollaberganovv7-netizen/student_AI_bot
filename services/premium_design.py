@@ -1078,27 +1078,77 @@ def _decorate_references_slide(slide, pal: dict, sw, sh):
 
 
 def _decorate_final_slide(slide, pal: dict, sw, sh):
-    """Premium 'Thank You' slide decorations."""
+    """Premium 'Thank You' slide decorations (Cinematic Ending)."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
+    
+    pic = _find_picture(slide)
+    if pic:
+        pic.left = 0
+        pic.top = 0
+        pic.width = sw
+        pic.height = sh
+        _send_to_back(pic)
+        
+        # Cinematic Gradient Overlay
+        overlay = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+        overlay.fill.solid()
+        overlay.fill.fore_color.rgb = _hex("000000")
+        overlay.line.fill.background()
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '75000') # 75% opacity dark overlay
+            overlay.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except: pass
+    
+    # Transparent Geometric Shapes / Glows
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(8)) // 2, (sh - Inches(8)) // 2, Inches(8), Inches(8), accent, alpha_pct=15)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(5)) // 2, (sh - Inches(5)) // 2, Inches(5), Inches(5), accent2, alpha_pct=10)
+    
+    # Premium glowing lines (Light rays)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), Inches(1), Inches(4), Inches(0.05), accent, alpha_pct=100)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), sh - Inches(1), Inches(4), Inches(0.05), accent2, alpha_pct=100)
 
-    # Large center circle (decorative, behind text)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         (sw - Inches(6)) // 2, (sh - Inches(6)) // 2,
-                         Inches(6), Inches(6), accent, alpha_pct=8)
-
-    # Inner circle
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         (sw - Inches(4)) // 2, (sh - Inches(4)) // 2,
-                         Inches(4), Inches(4), accent2, alpha_pct=6)
-
-    # Bottom thick accent bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, sh - Inches(0.4), sw, Inches(0.4), accent, alpha_pct=80)
-
-    # Left accent bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.2), sh - Inches(0.4), accent, alpha_pct=60)
+    title, body = _find_text_boxes(slide)
+    if title:
+        title.left = Inches(1)
+        title.width = sw - Inches(2)
+        title.top = sh / 2 - Inches(1.5)
+        
+    if body:
+        # Glassmorphism Card for Subtitle
+        card_w = sw - Inches(4)
+        card_h = Inches(1.5)
+        card_x = Inches(2)
+        card_y = sh / 2 + Inches(0.5)
+        
+        card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, card_x, card_y, card_w, card_h)
+        card.fill.solid()
+        card.fill.fore_color.rgb = _hex(pal["bg1"])
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '80000') 
+            card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except: pass
+        card.line.color.rgb = _hex(accent)
+        card.line.width = Pt(1)
+        _apply_glow_effect(card, accent)
+        
+        body.left = card_x + Inches(0.5)
+        body.width = card_w - Inches(1)
+        body.top = card_y + (card_h - Inches(0.5)) / 2
+        
+        _send_to_back(body)
+        _send_to_back(card)
+        if title: _send_to_back(title)
+        
+    for s in list(slide.shapes):
+        if not s.has_text_frame and s not in (title, body):
+            _send_to_back(s)
+    if pic:
+        _send_to_back(pic)
 
 
 _CONTENT_DECORATORS = [
@@ -1198,11 +1248,11 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                         except Exception:
                             pass
                             
-                    # Force white text and center alignment for Cinematic Section intro slides
-                    if slide_type == "section":
+                    # Force white text and center alignment for Cinematic Section intro slides and Final slides
+                    if slide_type in ("section", "final"):
                         run.font.color.rgb = _hex("FFFFFF")
                         para.alignment = PP_ALIGN.CENTER
-                        if run.font.size:
+                        if run.font.size and slide_type == "section":
                             run.font.size = Pt(int(run.font.size.pt * 1.1))
                             
                     # Section slide body text formatting (center, bold, huge)
@@ -1337,6 +1387,7 @@ def apply_premium_design(prs, topic: str = ""):
         elif slide_type == "references":
             _decorate_references_slide(slide, palette, sw, sh)
         elif slide_type == "final":
+            _add_transition(slide, "zoom", "slow") # Smooth Zoom Out for cinematic ending
             _decorate_final_slide(slide, palette, sw, sh)
         else:
             has_pic = _find_picture(slide) is not None
@@ -1386,6 +1437,8 @@ def apply_premium_transitions(prs):
             _add_transition(slide, "wipe", "med")
         elif slide_type == "references":
             _add_transition(slide, "cover", "med") # Smooth cover from side for references
+        elif slide_type == "final":
+            _add_transition(slide, "zoom", "slow") # Smooth cinematic zoom out
         else:
             # Randomize transitions for standard content slides
             options = ["morph", "fade", "zoom", "push", "wipe"]

@@ -739,16 +739,16 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
     except Exception:
         slides_data.append({"title": "Foydalanilgan adabiyotlar", "content": [
             "1. Oliy ta'lim muassasalari fan dasturi asosidagi o'quv adabiyotlari",
-            "2. Mavzuga doir xalqaro va milliy ilmiy maqolalar",
-            "3. Ziyonet.uz va milliy elektron kutubxona manbalari"
+        "3. Ziyonet.uz va milliy elektron kutubxona manbalari"
         ]})
     completed_steps += 1
 
     # ── 5. RAHMAT slide ───────────────────────────────────────
     slides_data.append({
-        "title": "E'tiboringiz uchun rahmat!",
-        "content": ["Taqdimot bo'yicha savollaringiz bo'lsa, marhamat."],
-        "needs_image": False,
+        "title": "E'TIBORINGIZ UCHUN RAHMAT!",
+        "content": ["Savollaringiz bo'lsa, mamnuniyat bilan javob beraman."],
+        "needs_image": True,
+        "image_keyword": "Beautiful cinematic abstract background ending presentation",
         "is_final": True
     })
 
