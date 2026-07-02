@@ -596,29 +596,70 @@ def _decorate_minimal_typographic(slide, pal: dict, sw, sh):
 
 
 def _decorate_quote_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for quote/iqtibos slides."""
-    accent = pal["accent"]
-    accent2 = pal["accent2"]
+    """Premium State Style Quote Slide (President Portrait with Gold/Blue accents)."""
+    # Force state colors (Gold and Deep Navy) for the quote slide background
+    accent_gold = "D4AF37"
+    navy_bg = "0F172A"
+    
+    # 1. State/Modern Background (Deep Blue)
+    bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = _hex(navy_bg)
+    bg.line.fill.background()
+    _send_to_back(bg)
+    
+    # Transparent geometric accents
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(2), -Inches(2), Inches(6), Inches(6), accent_gold, alpha_pct=10)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw - Inches(4), sh - Inches(4), Inches(8), Inches(8), "FFFFFF", alpha_pct=5)
+    
+    pic = _find_picture(slide)
+    title, body = _find_text_boxes(slide)
+    
+    if pic:
+        # 2. Premium Portrait Framing (Left side)
+        # Attempt to make it a standard portrait ratio
+        pic.height = sh - Inches(2)
+        pic.width = int(pic.height * 0.75) 
+        pic.left = Inches(1)
+        pic.top = Inches(1)
+        
+        # Add Gold Frame behind portrait
+        frame = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, pic.left - Inches(0.1), pic.top - Inches(0.1), pic.width + Inches(0.2), pic.height + Inches(0.2))
+        frame.fill.background() # transparent fill
+        frame.line.color.rgb = _hex(accent_gold)
+        frame.line.width = Pt(4)
+        
+        # Ensure proper z-ordering: Background -> Frame -> Portrait
+        _send_to_back(frame)
+        _send_to_back(bg) 
+    
+    # 3. Katta qo'shtirnoq (Huge Quotation Mark)
+    if body:
+        quote_mark = slide.shapes.add_textbox(sw / 2, Inches(0.5), Inches(2), Inches(2))
+        tf = quote_mark.text_frame
+        p = tf.paragraphs[0]
+        p.text = '“'
+        p.font.name = "Georgia"
+        p.font.size = Pt(120)
+        p.font.color.rgb = _hex(accent_gold)
+        try:
+            # Make it semi-transparent
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '40000') # 40% opacity
+            p.runs[0].font.color._xFill.find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except:
+            pass
 
-    # Large left vertical accent line
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.5), Inches(1.5),
-                         Inches(0.2), Inches(4.5), accent, alpha_pct=80)
-
-    # Top-right decorative oval (Huge and glowing)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(4), -Inches(2),
-                         Inches(6), Inches(6), accent2, alpha_pct=15)
-
-    # A decorative huge quote mark using a shape (like a block arc)
-    _add_shape_no_border(slide, MSO_SHAPE.BLOCK_ARC,
-                         Inches(1.0), Inches(1.0),
-                         Inches(1.5), Inches(1.5), accent, alpha_pct=25)
-
-    # Bottom line
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.5), sh - Inches(0.5),
-                         sw - Inches(1.0), Inches(0.15), accent2, alpha_pct=90)
+    # 4. Text Layout (Right side)
+    if title and body:
+        title.left = sw / 2 + Inches(0.5)
+        title.width = sw / 2 - Inches(1)
+        title.top = Inches(1.5)
+        
+        body.left = sw / 2 + Inches(0.5)
+        body.width = sw / 2 - Inches(1)
+        body.top = title.top + title.height + Inches(0.5)
 
 def _decorate_plan_slide(slide, pal: dict, sw, sh):
     """Premium decorations for Plan/O'quv savollari slide."""
@@ -806,12 +847,13 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     # Remove bullets and make text italic and larger for quote slides
                     if slide_type == "quote":
                         run.font.italic = True
+                        run.font.color.rgb = _hex("FFFFFF") # Force white text on the deep navy background
                         try:
                             # Increase font size for quote text if possible
                             if run.font.size:
                                 run.font.size = Pt(int(run.font.size.pt * 1.2))
                             else:
-                                run.font.size = Pt(24)
+                                run.font.size = Pt(28)
                             # Remove bullet point format if exists
                             if para.level > 0:
                                 para.level = 0
@@ -990,7 +1032,7 @@ def apply_premium_transitions(prs):
         elif slide_type == "section":
             _add_transition(slide, "push", "med")
         elif slide_type == "quote":
-            _add_transition(slide, "fade", "slow")
+            _add_transition(slide, "zoom", "slow") # Smooth Zoom for portrait
         elif slide_type == "final":
             _add_transition(slide, "fade", "slow")
         elif slide_type == "conclusion":
