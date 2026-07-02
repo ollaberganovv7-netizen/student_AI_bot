@@ -638,7 +638,8 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
         slides_data.append({
             "title": f"{ch_idx+1}-o'quv savoli",
             "content": [chapter],
-            "needs_image": False
+            "needs_image": True,
+            "image_keyword": f"Abstract dramatic cinematic background for topic: {chapter}"
         })
         
         # 5.2 INFO SLIDES

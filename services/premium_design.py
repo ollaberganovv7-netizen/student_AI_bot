@@ -486,11 +486,51 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
 
 
 def _decorate_section_slide(slide, pal: dict, sw, sh):
-    """Premium minimalist decorations for section/chapter header slides."""
+    """Cinematic Episode Intro for Section Slides."""
     accent = pal["accent"]
-    # Single thick accent block on the left edge
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         0, 0, Inches(0.2), sh, accent, alpha_pct=100)
+    accent2 = pal["accent2"]
+    
+    pic = _find_picture(slide)
+    if pic:
+        # 1. Full Screen Picture
+        pic.left = 0
+        pic.top = 0
+        pic.width = sw
+        pic.height = sh
+        _send_to_back(pic)
+        
+        # 2. Cinematic Gradient Overlay
+        overlay = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+        overlay.fill.solid()
+        overlay.fill.fore_color.rgb = _hex("050505") # pure cinematic dark
+        overlay.line.fill.background()
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '80000') # 80% opacity
+            overlay.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except:
+            pass
+            
+    # 3. Dynamic Geometric Elements (Cinematic Letterbox feel)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.5), Inches(0.5), sw - Inches(1.0), Inches(0.02), accent, alpha_pct=100)
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.5), sh - Inches(0.5), sw - Inches(1.0), Inches(0.02), accent, alpha_pct=100)
+    
+    # Center floating diamond
+    _add_shape_no_border(slide, MSO_SHAPE.DIAMOND, sw/2 - Inches(0.15), Inches(0.8), Inches(0.3), Inches(0.3), accent2, alpha_pct=100)
+    
+    title, body = _find_text_boxes(slide)
+    
+    # 4. Cinematic Typography Layout (Center Aligned)
+    if title:
+        title.left = Inches(1)
+        title.width = sw - Inches(2)
+        title.top = sh/2 - Inches(1.5)
+        
+    if body:
+        body.left = Inches(1)
+        body.width = sw - Inches(2)
+        body.top = sh/2 + Inches(0.2)
 
 
 def _find_picture(slide):
@@ -1038,6 +1078,13 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                         except Exception:
                             pass
                             
+                    # Force white text and center alignment for Cinematic Section intro slides
+                    if slide_type == "section":
+                        run.font.color.rgb = _hex("FFFFFF")
+                        para.alignment = PP_ALIGN.CENTER
+                        if run.font.size:
+                            run.font.size = Pt(int(run.font.size.pt * 1.1))
+                            
                     # Section slide body text formatting (center, bold, huge)
                     if slide_type == "section":
                         run.font.bold = True
@@ -1208,7 +1255,7 @@ def apply_premium_transitions(prs):
         if slide_type == "title":
             _add_transition(slide, "morph", "slow") # Cinematic Morph/Fade In for the title
         elif slide_type == "section":
-            _add_transition(slide, "push", "med")
+            _add_transition(slide, "fade", "slow") # Cinematic fade in for episode intros
         elif slide_type == "quote":
             _add_transition(slide, "zoom", "slow") # Smooth Zoom for portrait
         elif slide_type == "goals":
