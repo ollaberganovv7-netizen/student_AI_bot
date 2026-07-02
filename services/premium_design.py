@@ -421,15 +421,15 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
     accent2 = pal["accent2"]
 
     # 1. Base dark/light cinematic gradient background orb (Very large)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+    base_orb = _add_shape_no_border(slide, MSO_SHAPE.OVAL,
                          -Inches(4), -Inches(4),
                          sw + Inches(8), sh + Inches(8), accent, alpha_pct=12)
                          
     # 2. Floating Light Effects (3D abstract glowing orbs)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+    orb1 = _add_shape_no_border(slide, MSO_SHAPE.OVAL,
                          sw - Inches(5), -Inches(2),
                          Inches(8), Inches(8), accent2, alpha_pct=25)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+    orb2 = _add_shape_no_border(slide, MSO_SHAPE.OVAL,
                          -Inches(2), sh - Inches(4),
                          Inches(7), Inches(7), accent, alpha_pct=20)
                          
@@ -446,16 +446,18 @@ def _decorate_title_slide(slide, pal: dict, sw, sh):
         srgb.append(alpha_elem)
     except Exception:
         pass
-    _send_to_back(glass)
     
-    # 4. We must send the glowing orbs BEHIND the glass overlay!
-    # By sending glass to back, and then sending orbs to back AGAIN, the orbs are behind the glass.
-    # Actually, the shapes were added before glass. So glass is on top. We want: Background -> Orbs -> Glass -> Text.
-    # We will just leave them as is (glass is added AFTER orbs, so it's in front of orbs naturally).
-    # We must send ALL of them behind the text boxes.
-    for shape in list(slide.shapes):
-        if not shape.has_text_frame:
-            _send_to_back(shape)
+    # 4. Correct Z-Ordering
+    # Desired order (Bottom to Top): Image -> BaseOrb -> Orb1 -> Orb2 -> Glass -> Text
+    # We call _send_to_back in reverse order because each call pushes the shape to the absolute bottom.
+    _send_to_back(glass)
+    _send_to_back(orb2)
+    _send_to_back(orb1)
+    _send_to_back(base_orb)
+    
+    pic = _find_picture(slide)
+    if pic:
+        _send_to_back(pic)
 
     # 5. Add a sleek vertical accent bar on the left edge over the glass
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
@@ -1148,12 +1150,12 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
     accent2 = pal["accent2"]
     
     pic = _find_picture(slide)
+    overlay = None
     if pic:
         pic.left = 0
         pic.top = 0
         pic.width = sw
         pic.height = sh
-        _send_to_back(pic)
         
         # Cinematic Gradient Overlay
         overlay = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
@@ -1168,12 +1170,22 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
         except: pass
     
     # Transparent Geometric Shapes / Glows
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(8)) // 2, (sh - Inches(8)) // 2, Inches(8), Inches(8), accent, alpha_pct=15)
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(5)) // 2, (sh - Inches(5)) // 2, Inches(5), Inches(5), accent2, alpha_pct=10)
+    orb1 = _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(8)) // 2, (sh - Inches(8)) // 2, Inches(8), Inches(8), accent, alpha_pct=15)
+    orb2 = _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(5)) // 2, (sh - Inches(5)) // 2, Inches(5), Inches(5), accent2, alpha_pct=10)
     
     # Premium glowing lines (Light rays)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), Inches(1), Inches(4), Inches(0.05), accent, alpha_pct=100)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), sh - Inches(1), Inches(4), Inches(0.05), accent2, alpha_pct=100)
+    line1 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), Inches(1), Inches(4), Inches(0.05), accent, alpha_pct=100)
+    line2 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), sh - Inches(1), Inches(4), Inches(0.05), accent2, alpha_pct=100)
+
+    # Correct Z-Ordering
+    _send_to_back(line2)
+    _send_to_back(line1)
+    _send_to_back(orb2)
+    _send_to_back(orb1)
+    if overlay:
+        _send_to_back(overlay)
+    if pic:
+        _send_to_back(pic)
 
     title, body = _find_text_boxes(slide)
     if title:
