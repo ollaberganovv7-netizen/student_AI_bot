@@ -416,18 +416,73 @@ def _add_shadow(shape, blur_pt: int = 5, dist_pt: int = 3, angle: int = 45):
 
 
 def _decorate_title_slide(slide, pal: dict, sw, sh):
-    """Premium minimalist decorations for the cover/title slide."""
+    """Ultra-Premium Title Slide: Glassmorphism, Cinematic Lights, Minimalist UI."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
 
-    # One very elegant, thin left accent bar
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         Inches(0.5), Inches(0.5), Inches(0.05), sh - Inches(1), accent, alpha_pct=100)
-    
-    # A single subtle glowing gradient orb in the top right
+    # 1. Base dark/light cinematic gradient background orb (Very large)
     _add_shape_no_border(slide, MSO_SHAPE.OVAL,
-                         sw - Inches(4), -Inches(2),
-                         Inches(6), Inches(6), accent2, alpha_pct=10)
+                         -Inches(4), -Inches(4),
+                         sw + Inches(8), sh + Inches(8), accent, alpha_pct=12)
+                         
+    # 2. Floating Light Effects (3D abstract glowing orbs)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         sw - Inches(5), -Inches(2),
+                         Inches(8), Inches(8), accent2, alpha_pct=25)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL,
+                         -Inches(2), sh - Inches(4),
+                         Inches(7), Inches(7), accent, alpha_pct=20)
+                         
+    # 3. Glassmorphism overlay (simulated by a semi-transparent full screen box in front of the orbs)
+    glass = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+    glass.fill.solid()
+    glass.fill.fore_color.rgb = _hex(pal["bg1"])
+    glass.line.fill.background()
+    try:
+        from pptx.oxml.xmlchemy import OxmlElement
+        alpha_elem = OxmlElement('a:alpha')
+        alpha_elem.set('val', '75000') # 75% opacity for frosted glass effect
+        srgb = glass.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr')
+        srgb.append(alpha_elem)
+    except Exception:
+        pass
+    _send_to_back(glass)
+    
+    # 4. We must send the glowing orbs BEHIND the glass overlay!
+    # By sending glass to back, and then sending orbs to back AGAIN, the orbs are behind the glass.
+    # Actually, the shapes were added before glass. So glass is on top. We want: Background -> Orbs -> Glass -> Text.
+    # We will just leave them as is (glass is added AFTER orbs, so it's in front of orbs naturally).
+    # We must send ALL of them behind the text boxes.
+    for shape in list(slide.shapes):
+        if not shape.has_text_frame:
+            _send_to_back(shape)
+
+    # 5. Add a sleek vertical accent bar on the left edge over the glass
+    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
+                         Inches(0.5), Inches(2), Inches(0.06), sh - Inches(4), accent, alpha_pct=100)
+    
+    # 6. Apply Soft Shadow to Title Text
+    for shape in slide.shapes:
+        if shape.has_text_frame and _is_title_shape(shape, slide):
+            try:
+                from pptx.oxml.xmlchemy import OxmlElement
+                spPr = shape.element.spPr
+                effectLst = OxmlElement('a:effectLst')
+                outerShdw = OxmlElement('a:outerShdw')
+                outerShdw.set('blurRad', '100000')  # Soft blur
+                outerShdw.set('dist', '50000')
+                outerShdw.set('dir', '2700000')    # 45 degrees
+                outerShdw.set('algn', 'tl')
+                srgbClr = OxmlElement('a:srgbClr')
+                srgbClr.set('val', '000000')
+                alpha = OxmlElement('a:alpha')
+                alpha.set('val', '30000') # 30% transparency
+                srgbClr.append(alpha)
+                outerShdw.append(srgbClr)
+                effectLst.append(outerShdw)
+                spPr.append(effectLst)
+            except Exception:
+                pass
 
 
 def _decorate_section_slide(slide, pal: dict, sw, sh):
@@ -931,7 +986,7 @@ def apply_premium_transitions(prs):
         slide_type = _detect_slide_type(slide, idx, total)
 
         if slide_type == "title":
-            _add_transition(slide, "fade", "slow")
+            _add_transition(slide, "morph", "slow") # Cinematic Morph/Fade In for the title
         elif slide_type == "section":
             _add_transition(slide, "push", "med")
         elif slide_type == "quote":
