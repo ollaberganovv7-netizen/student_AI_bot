@@ -722,7 +722,7 @@ def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
     title, body = _find_text_boxes(slide)
     
     if pic:
-        half_w = sw / 2
+        half_w = int(sw / 2)
         pic.top = 0
         pic.height = sh
         pic.width = half_w
@@ -730,7 +730,7 @@ def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
         _send_to_back(pic)
 
     if title and body:
-        half_w = sw / 2
+        half_w = int(sw / 2)
         margin = Inches(0.5)
         text_left = half_w + margin if is_left_image else margin
         text_width = half_w - (margin * 2)
@@ -840,7 +840,7 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
     
     # 3. Katta qo'shtirnoq (Huge Quotation Mark)
     if body:
-        quote_mark = slide.shapes.add_textbox(sw / 2, Inches(0.5), Inches(2), Inches(2))
+        quote_mark = slide.shapes.add_textbox(int(sw / 2), Inches(0.5), Inches(2), Inches(2))
         tf = quote_mark.text_frame
         p = tf.paragraphs[0]
         p.text = '“'
@@ -857,13 +857,13 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
             pass
 
     if title and body:
-        title.left = sw / 2 + Inches(0.5)
-        title.width = sw / 2 - Inches(1)
-        title.top = Inches(1.5)
+        title.left = int(sw / 2 + Inches(0.5))
+        title.width = int(sw / 2 - Inches(1))
+        title.top = int(Inches(1.5))
         
-        body.left = sw / 2 + Inches(0.5)
-        body.width = sw / 2 - Inches(1)
-        body.top = title.top + title.height + Inches(0.5)
+        body.left = int(sw / 2 + Inches(0.5))
+        body.width = int(sw / 2 - Inches(1))
+        body.top = int(title.top + title.height + Inches(0.5))
         
         tf.word_wrap = True
         
@@ -1205,14 +1205,14 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
     if title:
         title.left = Inches(1)
         title.width = sw - Inches(2)
-        title.top = sh / 2 - Inches(1.5)
+        title.top = int(sh / 2 - Inches(1.5))
         
     if body:
         # Glassmorphism Card for Subtitle
         card_w = sw - Inches(4)
         card_h = Inches(1.5)
         card_x = Inches(2)
-        card_y = sh / 2 + Inches(0.5)
+        card_y = int(sh / 2 + Inches(0.5))
         
         card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, card_x, card_y, card_w, card_h)
         card.fill.solid()
@@ -1229,7 +1229,7 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
         
         body.left = card_x + Inches(0.5)
         body.width = card_w - Inches(1)
-        body.top = card_y + (card_h - Inches(0.5)) / 2
+        body.top = int(card_y + (card_h - Inches(0.5)) / 2)
         
         _send_to_back(body)
         _send_to_back(card)
