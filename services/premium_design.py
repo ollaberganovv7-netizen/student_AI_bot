@@ -572,6 +572,7 @@ def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):
         track.fill.solid()
         track.fill.fore_color.rgb = _hex(pal["bg1"])
         track.line.fill.background()
+        created = [track.shape_id]
         
         fill_w = bar_w * (pct / 100.0)
         if fill_w > 0:
@@ -580,9 +581,10 @@ def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):
             fill.fill.fore_color.rgb = _hex(accent2)
             fill.line.fill.background()
             _apply_glow_effect(fill, accent2)
+            created.append(fill.shape_id)
             
-        return True
-    return False
+        return True, created
+    return False, []
 
 def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal, highlight_last=False):
     """Convert body text paragraphs into premium interactive-looking cards."""
@@ -600,7 +602,10 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
     card_h = min(Inches(1.5), (available_h - (num_pts - 1) * gap) / num_pts)
     accent = pal["accent"]
     
+    anim_groups = []
+    
     for i, pt in enumerate(points):
+        group_ids = []
         cy = start_y + i * (card_h + gap)
         is_highlight = highlight_last and (i == num_pts - 1)
         
@@ -619,10 +624,12 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
         card.line.color.rgb = _hex(accent)
         card.line.width = Pt(1.5 if not is_highlight else 0)
         _apply_card_shadow(card)
+        group_ids.append(card.shape_id)
         
         has_chart = False
         if not is_highlight:
-            has_chart = _detect_and_draw_infographics(slide, card, text_left, cy, text_width, card_h, pt, pal)
+            has_chart, chart_ids = _detect_and_draw_infographics(slide, card, text_left, cy, text_width, card_h, pt, pal)
+            group_ids.extend(chart_ids)
         
         icon_size = Inches(0.35)
         shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON]
@@ -630,8 +637,10 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
         icon.fill.solid()
         icon.fill.fore_color.rgb = _hex(pal["bg1"] if is_highlight else accent)
         icon.line.fill.background()
+        group_ids.append(icon.shape_id)
         
         tb = slide.shapes.add_textbox(text_left + Inches(0.8), cy + Inches(0.05), text_width - Inches(1.0), card_h - (Inches(0.4) if has_chart else Inches(0.2)))
+        group_ids.append(tb.shape_id)
         tf = tb.text_frame
         tf.word_wrap = True
         tf.vertical_anchor = MSO_ANCHOR.TOP if has_chart else MSO_ANCHOR.MIDDLE
@@ -647,6 +656,9 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
         p.font.color.rgb = _hex("FFFFFF" if is_highlight else pal["text1"])
         
         _send_to_back(card)
+        anim_groups.append(group_ids)
+        
+    _apply_object_animations(slide, [{"ids": g, "preset": "fade", "on_click": True} for g in anim_groups])
 
 def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
     """Premium Split-Screen Layout (50/50). Image on one side, cards on the other."""
@@ -789,16 +801,25 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
             pass
 
     if title and body:
-        text_left = Inches(1)
-        text_width = sw - Inches(2)
-        title.left = text_left
-        title.width = text_width
-        title.top = Inches(1.0)
+        title.left = sw / 2 + Inches(0.5)
+        title.width = sw / 2 - Inches(1)
+        title.top = Inches(1.5)
         
-        start_y = title.top + title.height + Inches(0.5)
-        available_h = sh - start_y - Inches(0.5)
+        body.left = sw / 2 + Inches(0.5)
+        body.width = sw / 2 - Inches(1)
+        body.top = title.top + title.height + Inches(0.5)
         
-        _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal)
+        tf.word_wrap = True
+        
+        anim_configs = []
+        if pic:
+            anim_configs.append({"ids": [pic.shape_id, frame.shape_id], "preset": "zoom", "on_click": False})
+        
+        quote_ids = [quote_mark.shape_id, body.shape_id]
+        if title: quote_ids.append(title.shape_id)
+        anim_configs.append({"ids": quote_ids, "preset": "fade", "on_click": True})
+        
+        _apply_object_animations(slide, anim_configs)
 
 def _decorate_plan_slide(slide, pal: dict, sw, sh):
     """Premium Timeline Step Navigation for Plan/O'quv savollari slide."""
@@ -1183,6 +1204,78 @@ def _is_title_shape(shape, slide) -> bool:
     except Exception:
         pass
     return font_size >= 22 or (shape.top < Inches(2) and shape.width > Inches(5))
+
+
+def _apply_object_animations(slide, anim_configs):
+    """Injects a single XML timing tree for all object animations on the slide.
+    anim_configs is a list of dicts: {"ids": [spid1, spid2], "preset": "fade"/"zoom", "on_click": True/False}
+    """
+    if not anim_configs: return
+    try:
+        from pptx.oxml import parse_xml
+        import xml.etree.ElementTree as ET
+        
+        timing = ET.Element(f'{{{_NS_P}}}timing')
+        tnLst = ET.SubElement(timing, f'{{{_NS_P}}}tnLst')
+        par1 = ET.SubElement(tnLst, f'{{{_NS_P}}}par')
+        cTn1 = ET.SubElement(par1, f'{{{_NS_P}}}cTn', {'id': '1', 'dur': 'indefinite', 'restart': 'never', 'nodeType': 'tmRoot'})
+        childTnLst1 = ET.SubElement(cTn1, f'{{{_NS_P}}}childTnLst')
+        seq = ET.SubElement(childTnLst1, f'{{{_NS_P}}}seq', {'concurrent': '1', 'nextAc': 'seek'})
+        cTn2 = ET.SubElement(seq, f'{{{_NS_P}}}cTn', {'id': '2', 'dur': 'indefinite', 'nodeType': 'mainSeq'})
+        main_childTnLst = ET.SubElement(cTn2, f'{{{_NS_P}}}childTnLst')
+
+        current_id = 3
+        for config in anim_configs:
+            group = config.get("ids", [])
+            preset = config.get("preset", "fade")
+            on_click = config.get("on_click", False)
+            
+            preset_id = '10' # fade
+            if preset == "zoom": preset_id = '64' # Zoom is sometimes 64 or 51 or 12. Actually let's use presetClass="entr". For Zoom in Office it's 55 or 64. Let's use 10 for safety if we don't know, but 12 is Zoom in some specs. Actually, presetID="10" is Fade, presetID="1" is Appear, presetID="2" is Fly In. Let's stick to "10" for all to avoid corruption, as PowerPoint can be very strict about preset classes. Wait, we'll use 10.
+            
+            # Main paragraph for this sequence step
+            par_main = ET.SubElement(main_childTnLst, f'{{{_NS_P}}}par')
+            cTn_main = ET.SubElement(par_main, f'{{{_NS_P}}}cTn', {'id': str(current_id), 'fill': 'hold'})
+            stCondLst_main = ET.SubElement(cTn_main, f'{{{_NS_P}}}stCondLst')
+            ET.SubElement(stCondLst_main, f'{{{_NS_P}}}cond', {'delay': 'indefinite' if on_click else '0'})
+            childTnLst_main = ET.SubElement(cTn_main, f'{{{_NS_P}}}childTnLst')
+            current_id += 1
+            
+            for spid in group:
+                par_shape = ET.SubElement(childTnLst_main, f'{{{_NS_P}}}par')
+                cTn_shape = ET.SubElement(par_shape, f'{{{_NS_P}}}cTn', {'id': str(current_id), 'fill': 'hold'})
+                stCondLst_shape = ET.SubElement(cTn_shape, f'{{{_NS_P}}}stCondLst')
+                ET.SubElement(stCondLst_shape, f'{{{_NS_P}}}cond', {'delay': '0'}) # With previous within group
+                childTnLst_shape = ET.SubElement(cTn_shape, f'{{{_NS_P}}}childTnLst')
+                
+                par_effect = ET.SubElement(childTnLst_shape, f'{{{_NS_P}}}par')
+                cTn_effect = ET.SubElement(par_effect, f'{{{_NS_P}}}cTn', {
+                    'id': str(current_id+1), 'presetID': '10', 'presetClass': 'entr', 'presetSubtype': '0', 'fill': 'hold', 'nodeType': 'withEffect' if not on_click else 'clickEffect'
+                })
+                stCondLst_effect = ET.SubElement(cTn_effect, f'{{{_NS_P}}}stCondLst')
+                ET.SubElement(stCondLst_effect, f'{{{_NS_P}}}cond', {'delay': '0'})
+                childTnLst_effect = ET.SubElement(cTn_effect, f'{{{_NS_P}}}childTnLst')
+                
+                set_node = ET.SubElement(childTnLst_effect, f'{{{_NS_P}}}set')
+                cBhvr = ET.SubElement(set_node, f'{{{_NS_P}}}cBhvr')
+                cTn_dur = ET.SubElement(cBhvr, f'{{{_NS_P}}}cTn', {'id': str(current_id+2), 'dur': '800' if preset == 'zoom' else '500', 'fill': 'hold'})
+                stCondLst_dur = ET.SubElement(cTn_dur, f'{{{_NS_P}}}stCondLst')
+                ET.SubElement(stCondLst_dur, f'{{{_NS_P}}}cond', {'delay': '0'})
+                tgtEl = ET.SubElement(cBhvr, f'{{{_NS_P}}}tgtEl')
+                ET.SubElement(tgtEl, f'{{{_NS_P}}}spTgt', {'spid': str(spid)})
+                attrNameLst = ET.SubElement(cBhvr, f'{{{_NS_P}}}attrNameLst')
+                attrName = ET.SubElement(attrNameLst, f'{{{_NS_P}}}attrName')
+                attrName.text = 'style.visibility'
+                
+                to_node = ET.SubElement(set_node, f'{{{_NS_P}}}to')
+                ET.SubElement(to_node, f'{{{_NS_P}}}strVal', {'val': 'visible'})
+                
+                current_id += 3
+            
+        xml_str = ET.tostring(timing, encoding='unicode')
+        slide._element.append(parse_xml(xml_str))
+    except Exception as e:
+        pass
 
 
 def _format_all_text(slide, pal: dict, slide_type: str):
