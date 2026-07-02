@@ -584,7 +584,7 @@ def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):
         return True
     return False
 
-def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal):
+def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal, highlight_last=False):
     """Convert body text paragraphs into premium interactive-looking cards."""
     points = []
     for p in body.text_frame.paragraphs:
@@ -602,28 +602,33 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
     
     for i, pt in enumerate(points):
         cy = start_y + i * (card_h + gap)
+        is_highlight = highlight_last and (i == num_pts - 1)
         
         card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, text_left, cy, text_width, card_h)
         card.fill.solid()
-        card.fill.fore_color.rgb = _hex(pal["bg2"])
-        try:
-            from pptx.oxml.xmlchemy import OxmlElement
-            alpha = OxmlElement('a:alpha')
-            alpha.set('val', '85000') 
-            card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
-        except: pass
+        card.fill.fore_color.rgb = _hex(accent if is_highlight else pal["bg2"])
+        
+        if not is_highlight:
+            try:
+                from pptx.oxml.xmlchemy import OxmlElement
+                alpha = OxmlElement('a:alpha')
+                alpha.set('val', '85000') 
+                card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+            except: pass
             
         card.line.color.rgb = _hex(accent)
-        card.line.width = Pt(1.5)
+        card.line.width = Pt(1.5 if not is_highlight else 0)
         _apply_card_shadow(card)
         
-        has_chart = _detect_and_draw_infographics(slide, card, text_left, cy, text_width, card_h, pt, pal)
+        has_chart = False
+        if not is_highlight:
+            has_chart = _detect_and_draw_infographics(slide, card, text_left, cy, text_width, card_h, pt, pal)
         
         icon_size = Inches(0.35)
         shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON]
         icon = slide.shapes.add_shape(shapes[i % len(shapes)], text_left + Inches(0.3), cy + Inches(0.2), icon_size, icon_size)
         icon.fill.solid()
-        icon.fill.fore_color.rgb = _hex(accent)
+        icon.fill.fore_color.rgb = _hex(pal["bg1"] if is_highlight else accent)
         icon.line.fill.background()
         
         tb = slide.shapes.add_textbox(text_left + Inches(0.8), cy + Inches(0.05), text_width - Inches(1.0), card_h - (Inches(0.4) if has_chart else Inches(0.2)))
@@ -639,7 +644,7 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
         p.text = display_text
         p.font.name = "Arial"
         p.font.size = Pt(16) if text_width > Inches(6) else Pt(14)
-        p.font.color.rgb = _hex(pal["text1"])
+        p.font.color.rgb = _hex("FFFFFF" if is_highlight else pal["text1"])
         
         _send_to_back(card)
 
@@ -1042,7 +1047,7 @@ def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
         start_y = title.top + title.height + Inches(0.5)
         available_h = sh - start_y - Inches(0.8)
         
-        _convert_to_cards(slide, body, Inches(1.5), sw - Inches(3), start_y, available_h, pal)
+        _convert_to_cards(slide, body, Inches(1.5), sw - Inches(3), start_y, available_h, pal, highlight_last=True)
 
 
 def _decorate_references_slide(slide, pal: dict, sw, sh):
