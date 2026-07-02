@@ -1046,7 +1046,7 @@ def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
 
 
 def _decorate_references_slide(slide, pal: dict, sw, sh):
-    """Premium minimalist decorations for References slides."""
+    """Premium minimalist decorations for References slides with Cards list."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
     
@@ -1059,6 +1059,17 @@ def _decorate_references_slide(slide, pal: dict, sw, sh):
     _add_shape_no_border(slide, MSO_SHAPE.OVAL,
                          -Inches(3), sh - Inches(3),
                          Inches(6), Inches(6), accent, alpha_pct=5)
+                         
+    title, body = _find_text_boxes(slide)
+    if title and body:
+        title.left = Inches(1.5)
+        title.width = sw - Inches(3)
+        title.top = Inches(1.0)
+        
+        start_y = title.top + title.height + Inches(0.5)
+        available_h = sh - start_y - Inches(0.8)
+        
+        _convert_to_cards(slide, body, Inches(1.5), sw - Inches(3), start_y, available_h, pal)
 
 
 def _decorate_final_slide(slide, pal: dict, sw, sh):
@@ -1368,6 +1379,8 @@ def apply_premium_transitions(prs):
             _add_transition(slide, "wipe", "slow") # Wipe mimics a timeline drawing itself
         elif slide_type == "conclusion":
             _add_transition(slide, "wipe", "med")
+        elif slide_type == "references":
+            _add_transition(slide, "cover", "med") # Smooth cover from side for references
         else:
             # Randomize transitions for standard content slides
             options = ["morph", "fade", "zoom", "push", "wipe"]
