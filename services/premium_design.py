@@ -533,7 +533,7 @@ def _decorate_section_slide(slide, pal: dict, sw, sh):
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, Inches(0.5), sh - Inches(0.5), sw - Inches(1.0), Inches(0.02), accent, alpha_pct=100)
     
     # Center floating diamond
-    _add_shape_no_border(slide, MSO_SHAPE.DIAMOND, sw/2 - Inches(0.15), Inches(0.8), Inches(0.3), Inches(0.3), accent2, alpha_pct=100)
+    _add_shape_no_border(slide, MSO_SHAPE.DIAMOND, sw//2 - Inches(0.15), Inches(0.8), Inches(0.3), Inches(0.3), accent2, alpha_pct=100)
     
     title, body = _find_text_boxes(slide)
     
@@ -541,12 +541,12 @@ def _decorate_section_slide(slide, pal: dict, sw, sh):
     if title:
         title.left = Inches(1)
         title.width = sw - Inches(2)
-        title.top = sh/2 - Inches(1.5)
+        title.top = sh//2 - Inches(1.5)
         
     if body:
         body.left = Inches(1)
         body.width = sw - Inches(2)
-        body.top = sh/2 + Inches(0.2)
+        body.top = sh//2 + Inches(0.2)
 
 
 def _find_picture(slide):
@@ -658,7 +658,7 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
     if num_pts == 0: return
     
     gap = Inches(0.3)
-    card_h = min(Inches(1.5), (available_h - (num_pts - 1) * gap) / num_pts)
+    card_h = int(min(Inches(1.5), (available_h - (num_pts - 1) * gap) / num_pts))
     accent = pal["accent"]
     
     anim_groups = []
@@ -908,12 +908,12 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
     start_y = Inches(2.2)
     available_h = sh - Inches(2.5)
     gap = Inches(0.4)
-    block_h = min(Inches(1.2), (available_h - (num_qs - 1) * gap) / num_qs)
+    block_h = int(min(Inches(1.2), (available_h - (num_qs - 1) * gap) / num_qs))
     
     line_x = Inches(1.5)
     
     # Draw colorful progress line connecting the steps
-    timeline = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, line_x, start_y + block_h/2, Inches(0.08), max(Inches(0.1), (num_qs - 1) * (block_h + gap)))
+    timeline = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, line_x, start_y + block_h//2, Inches(0.08), max(Inches(0.1), int((num_qs - 1) * (block_h + gap))))
     timeline.fill.solid()
     timeline.fill.fore_color.rgb = _hex(accent2)
     timeline.line.fill.background()
@@ -925,7 +925,7 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
         
         # Step Marker (Circle on the line)
         marker_size = Inches(0.5)
-        marker = slide.shapes.add_shape(MSO_SHAPE.OVAL, line_x - marker_size/2 + Inches(0.04), cy + (block_h - marker_size)/2, marker_size, marker_size)
+        marker = slide.shapes.add_shape(MSO_SHAPE.OVAL, line_x - marker_size//2 + Inches(0.04), cy + (block_h - marker_size)//2, marker_size, marker_size)
         marker.fill.solid()
         marker.fill.fore_color.rgb = _hex(accent if is_active else pal["bg2"])
         marker.line.color.rgb = _hex(accent) 
@@ -961,7 +961,7 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
         icon_size = block_h * 0.4
         shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON, MSO_SHAPE.OVAL, MSO_SHAPE.PENTAGON]
         shape_type = shapes[i % len(shapes)]
-        icon = slide.shapes.add_shape(shape_type, line_x + Inches(0.9), cy + (block_h - icon_size)/2, icon_size, icon_size)
+        icon = slide.shapes.add_shape(shape_type, line_x + Inches(0.9), cy + (block_h - icon_size)//2, icon_size, icon_size)
         icon.fill.solid()
         icon.fill.fore_color.rgb = _hex(accent2 if is_active else accent)
         icon.line.fill.background()
@@ -1030,7 +1030,7 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
     accent2 = pal["accent2"]
     
     # Large soft glowing background circle in the center right
-    _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw/2, -Inches(2), Inches(8), Inches(8), accent, alpha_pct=10)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw//2, -Inches(2), Inches(8), Inches(8), accent, alpha_pct=10)
     _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(2), sh - Inches(4), Inches(6), Inches(6), accent2, alpha_pct=8)
     
     title, body = _find_text_boxes(slide)
@@ -1049,14 +1049,18 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
     if num_cards == 0: return
     
     # Vertical Card Layout Engine
-    card_width = sw - Inches(2)
+    pic = _find_picture(slide)
+    if pic:
+        card_width = int(pic.left - Inches(1.5))
+    else:
+        card_width = int(sw - Inches(2))
     start_x = Inches(1)
     
     # Dynamic height calculation
     available_height = sh - Inches(2.5)
     gap = Inches(0.4)
-    # Ensure cards aren't too tall
-    card_height = min(Inches(1.5), (available_height - (num_cards - 1) * gap) / num_cards)
+    # Ensure cards aren't too tall, explicitly cast to int to prevent python-pptx TypeError
+    card_height = int(min(Inches(1.5), (available_height - (num_cards - 1) * gap) / num_cards))
     start_y = Inches(2.5)
     
     for i, goal in enumerate(goals):
@@ -1087,7 +1091,7 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
         shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON, MSO_SHAPE.OVAL]
         shape_type = shapes[i % len(shapes)]
         
-        icon = slide.shapes.add_shape(shape_type, start_x + Inches(0.5), cy + (card_height - icon_size)/2, icon_size, icon_size)
+        icon = slide.shapes.add_shape(shape_type, start_x + Inches(0.5), cy + (card_height - icon_size)//2, icon_size, icon_size)
         icon.fill.solid()
         icon.fill.fore_color.rgb = _hex(accent2)
         icon.line.fill.background()
@@ -1194,8 +1198,8 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
     orb2 = _add_shape_no_border(slide, MSO_SHAPE.OVAL, (sw - Inches(5)) // 2, (sh - Inches(5)) // 2, Inches(5), Inches(5), accent2, alpha_pct=10)
     
     # Premium glowing lines (Light rays)
-    line1 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), Inches(1), Inches(4), Inches(0.05), accent, alpha_pct=100)
-    line2 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw/2 - Inches(2), sh - Inches(1), Inches(4), Inches(0.05), accent2, alpha_pct=100)
+    line1 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw//2 - Inches(2), Inches(1), Inches(4), Inches(0.05), accent, alpha_pct=100)
+    line2 = _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, sw//2 - Inches(2), sh - Inches(1), Inches(4), Inches(0.05), accent2, alpha_pct=100)
 
     # Correct Z-Ordering
     _send_to_back(line2)
