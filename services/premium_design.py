@@ -1020,15 +1020,29 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
 
 
 def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
-    """Premium minimalist decorations for conclusion slides."""
+    """Premium minimalist decorations for conclusion slides with Cards & Infographics."""
     accent = pal["accent"]
+    accent2 = pal["accent2"]
+    
     # Elegant top and bottom bars
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
                          Inches(1), Inches(0.5),
                          sw - Inches(2), Inches(0.05), accent, alpha_pct=100)
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
                          Inches(1), sh - Inches(0.5),
-                         sw - Inches(2), Inches(0.05), accent, alpha_pct=100)
+                         sw - Inches(2), Inches(0.05), accent2, alpha_pct=100)
+                         
+    title, body = _find_text_boxes(slide)
+    
+    if title and body:
+        title.left = Inches(1.5)
+        title.width = sw - Inches(3)
+        title.top = Inches(1.0)
+        
+        start_y = title.top + title.height + Inches(0.5)
+        available_h = sh - start_y - Inches(0.8)
+        
+        _convert_to_cards(slide, body, Inches(1.5), sw - Inches(3), start_y, available_h, pal)
 
 
 def _decorate_references_slide(slide, pal: dict, sw, sh):
