@@ -262,6 +262,9 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
     for w in _CONCLUSION_WORDS:
         if w in text:
             return "conclusion"
+    for w in _SECTION_WORDS:
+        if w in text:
+            return "section"
     for w in _REFERENCE_WORDS:
         if w in text:
             return "references"
@@ -1271,8 +1274,11 @@ def _is_title_shape(shape, slide) -> bool:
     if shape.is_placeholder:
         from pptx.enum.shapes import PP_PLACEHOLDER
         pf = shape.placeholder_format
-        if pf.type in (PP_PLACEHOLDER.TITLE, PP_PLACEHOLDER.CENTER_TITLE):
+        if pf.type in (PP_PLACEHOLDER.TITLE, PP_PLACEHOLDER.CENTER_TITLE, PP_PLACEHOLDER.SUBTITLE):
             return True
+        if pf.type in (PP_PLACEHOLDER.BODY, PP_PLACEHOLDER.OBJECT):
+            return False
+            
     font_size = 0
     try:
         for para in shape.text_frame.paragraphs:
@@ -1281,7 +1287,12 @@ def _is_title_shape(shape, slide) -> bool:
                     font_size = run.font.size.pt
     except Exception:
         pass
-    return font_size >= 22 or (shape.top < Inches(2) and shape.width > Inches(5))
+    
+    # Body text is usually ~24pt, titles are usually > 32pt
+    if font_size > 0:
+        return font_size >= 32
+        
+    return shape.top < Inches(1.5) and shape.width > Inches(5)
 
 
 def _apply_object_animations(slide, anim_configs):
