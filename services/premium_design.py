@@ -563,16 +563,27 @@ def _find_picture(slide):
     return None
 
 def _find_text_boxes(slide):
-    title = None
-    body = None
+    text_shapes = []
     for shape in slide.shapes:
-        if not shape.has_text_frame:
-            continue
-        if _is_title_shape(shape, slide):
-            title = shape
-        else:
-            if not body or shape.width > body.width:
-                body = shape
+        if shape.has_text_frame and shape.text_frame.text.strip():
+            text_shapes.append(shape)
+            
+    if not text_shapes:
+        return None, None
+        
+    if len(text_shapes) == 1:
+        # If only one text shape, usually it's the body if it has multiple paragraphs or long text
+        if len(text_shapes[0].text_frame.text.strip()) > 50:
+            return None, text_shapes[0]
+        return text_shapes[0], None
+        
+    # Sort by top coordinate (highest is title)
+    text_shapes.sort(key=lambda s: s.top)
+    title = text_shapes[0]
+    
+    # The body is the one with the most text among the remaining shapes
+    body = max(text_shapes[1:], key=lambda s: len(s.text_frame.text.strip()))
+    
     return title, body
 
 def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):

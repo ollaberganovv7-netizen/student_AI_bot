@@ -290,12 +290,6 @@ def _fill_textframe(tf, content, is_title=False, compact=False):
             if len(words) > max_words:
                 text = ' '.join(words[:max_words]) + '...'
 
-            # Add bullet if not already present
-            if text and not text[0] in ('•', '–', '-', '✓', '✔', '►', '▸', '●'):
-                # Don't add bullet to numbered items like "1." "2."
-                if not (len(text) > 1 and text[0].isdigit() and text[1] in '.):'):
-                    text = '•  ' + text
-
             # Paragraph spacing for body items
             para.space_after = Pt(8)
             para.space_before = Pt(2)
