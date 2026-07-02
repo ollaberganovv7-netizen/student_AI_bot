@@ -554,6 +554,9 @@ def _find_picture(slide):
     for shape in slide.shapes:
         if shape.shape_type == MSO_SHAPE_TYPE.PICTURE:
             return shape
+        if shape.shape_type == MSO_SHAPE_TYPE.PLACEHOLDER:
+            if hasattr(shape, "image") and getattr(shape, "image", None) is not None:
+                return shape
     return None
 
 def _find_text_boxes(slide):
@@ -1424,7 +1427,10 @@ def _format_all_text(slide, pal: dict, slide_type: str):
                     if slide_type in ("section", "final"):
                         run.font.color.rgb = _hex("FFFFFF")
                         para.alignment = PP_ALIGN.CENTER
-                        if run.font.size and slide_type == "section":
+                        if slide_type == "section":
+                            run.font.size = Pt(36)
+                            run.font.bold = True
+                        elif run.font.size and slide_type == "final":
                             run.font.size = Pt(int(run.font.size.pt * 1.1))
                             
                     # Section slide body text formatting (center, bold, huge)
