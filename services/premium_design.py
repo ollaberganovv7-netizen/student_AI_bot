@@ -553,8 +553,98 @@ def _find_text_boxes(slide):
                 body = shape
     return title, body
 
+def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):
+    """Draw a mini visual chart if the text contains a percentage or number."""
+    accent = pal["accent"]
+    accent2 = pal["accent2"]
+    
+    match = re.search(r'(\d{1,3})%', text)
+    if match:
+        pct = int(match.group(1))
+        if pct > 100: pct = 100
+        
+        bar_w = cw - Inches(1.0)
+        bar_h = Inches(0.12)
+        bar_x = cx + Inches(0.8)
+        bar_y = cy + ch - Inches(0.4)
+        
+        track = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, bar_x, bar_y, bar_w, bar_h)
+        track.fill.solid()
+        track.fill.fore_color.rgb = _hex(pal["bg1"])
+        track.line.fill.background()
+        
+        fill_w = bar_w * (pct / 100.0)
+        if fill_w > 0:
+            fill = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, bar_x, bar_y, fill_w, bar_h)
+            fill.fill.solid()
+            fill.fill.fore_color.rgb = _hex(accent2)
+            fill.line.fill.background()
+            _apply_glow_effect(fill, accent2)
+            
+        return True
+    return False
+
+def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal):
+    """Convert body text paragraphs into premium interactive-looking cards."""
+    points = []
+    for p in body.text_frame.paragraphs:
+        if p.text.strip():
+            points.append(p.text.strip())
+            
+    body.left = slide.part.part.package.presentation_part.presentation.slide_width + Inches(10) # Hide original
+    
+    num_pts = len(points)
+    if num_pts == 0: return
+    
+    gap = Inches(0.3)
+    card_h = min(Inches(1.5), (available_h - (num_pts - 1) * gap) / num_pts)
+    accent = pal["accent"]
+    
+    for i, pt in enumerate(points):
+        cy = start_y + i * (card_h + gap)
+        
+        card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, text_left, cy, text_width, card_h)
+        card.fill.solid()
+        card.fill.fore_color.rgb = _hex(pal["bg2"])
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', '85000') 
+            card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except: pass
+            
+        card.line.color.rgb = _hex(accent)
+        card.line.width = Pt(1.5)
+        _apply_card_shadow(card)
+        
+        has_chart = _detect_and_draw_infographics(slide, card, text_left, cy, text_width, card_h, pt, pal)
+        
+        icon_size = Inches(0.35)
+        shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON]
+        icon = slide.shapes.add_shape(shapes[i % len(shapes)], text_left + Inches(0.3), cy + Inches(0.2), icon_size, icon_size)
+        icon.fill.solid()
+        icon.fill.fore_color.rgb = _hex(accent)
+        icon.line.fill.background()
+        
+        tb = slide.shapes.add_textbox(text_left + Inches(0.8), cy + Inches(0.05), text_width - Inches(1.0), card_h - (Inches(0.4) if has_chart else Inches(0.2)))
+        tf = tb.text_frame
+        tf.word_wrap = True
+        tf.vertical_anchor = MSO_ANCHOR.TOP if has_chart else MSO_ANCHOR.MIDDLE
+        p = tf.add_paragraph()
+        
+        display_text = pt
+        if len(display_text) > 180:
+            display_text = display_text[:177] + "..."
+            
+        p.text = display_text
+        p.font.name = "Arial"
+        p.font.size = Pt(16) if text_width > Inches(6) else Pt(14)
+        p.font.color.rgb = _hex(pal["text1"])
+        
+        _send_to_back(card)
+
 def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
-    """Premium Split-Screen Layout (50/50). Image on one side, text on the other."""
+    """Premium Split-Screen Layout (50/50). Image on one side, cards on the other."""
     pic = _find_picture(slide)
     title, body = _find_text_boxes(slide)
     
@@ -574,11 +664,12 @@ def _decorate_split_layout(slide, pal: dict, sw, sh, is_left_image=True):
         
         title.left = text_left
         title.width = text_width
-        title.top = Inches(1.5)
+        title.top = Inches(1.0)
         
-        body.left = text_left
-        body.width = text_width
-        body.top = title.top + title.height + Inches(0.5)
+        start_y = title.top + title.height + Inches(0.5)
+        available_h = sh - start_y - Inches(0.5)
+        
+        _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal)
 
 def _decorate_cinematic_layout(slide, pal: dict, sw, sh):
     """Premium Cinematic Layout. Image covers whole slide with a dark overlay."""
@@ -620,19 +711,20 @@ def _decorate_cinematic_layout(slide, pal: dict, sw, sh):
         body.top = title.top + title.height + Inches(0.5)
 
 def _decorate_minimal_typographic(slide, pal: dict, sw, sh):
-    """Premium Minimalist text layout when no image is present."""
+    """Premium Minimalist text layout (Cards) when no image is present."""
     accent = pal["accent"]
     _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE, 0, 0, Inches(0.5), sh, accent, alpha_pct=100)
     
     title, body = _find_text_boxes(slide)
     if title and body:
         title.left = Inches(1.5)
-        title.width = sw - Inches(2)
-        title.top = Inches(1.5)
+        title.width = sw - Inches(2.5)
+        title.top = Inches(1.0)
         
-        body.left = Inches(1.5)
-        body.width = sw - Inches(2)
-        body.top = title.top + title.height + Inches(0.5)
+        start_y = title.top + title.height + Inches(0.5)
+        available_h = sh - start_y - Inches(0.5)
+        
+        _convert_to_cards(slide, body, Inches(1.5), sw - Inches(2.5), start_y, available_h, pal)
 
 
 def _decorate_quote_slide(slide, pal: dict, sw, sh):
@@ -688,18 +780,16 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
             alpha = OxmlElement('a:alpha')
             alpha.set('val', '40000') # 40% opacity
             p.runs[0].font.color._xFill.find(f'{{{_NS_A}}}srgbClr').append(alpha)
-        except:
-            pass
-
-    # 4. Text Layout (Right side)
-    if title and body:
-        title.left = sw / 2 + Inches(0.5)
-        title.width = sw / 2 - Inches(1)
-        title.top = Inches(1.5)
+        text_left = Inches(1)
+        text_width = sw - Inches(2)
+        title.left = text_left
+        title.width = text_width
+        title.top = Inches(1.0)
         
-        body.left = sw / 2 + Inches(0.5)
-        body.width = sw / 2 - Inches(1)
-        body.top = title.top + title.height + Inches(0.5)
+        start_y = title.top + title.height + Inches(0.5)
+        available_h = sh - start_y - Inches(0.5)
+        
+        _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal)
 
 def _decorate_plan_slide(slide, pal: dict, sw, sh):
     """Premium Timeline Step Navigation for Plan/O'quv savollari slide."""
@@ -1265,6 +1355,7 @@ def apply_premium_transitions(prs):
         elif slide_type == "conclusion":
             _add_transition(slide, "wipe", "med")
         else:
-            # Alternate between transitions for content slides
-            options = ["fade", "cover", "push", "wipe"]
-            _add_transition(slide, options[idx % len(options)], "med")
+            # Randomize transitions for standard content slides
+            options = ["morph", "fade", "zoom", "push", "wipe"]
+            t = options[idx % len(options)]
+            _add_transition(slide, t, "slow" if t in ["morph", "zoom"] else "med")
