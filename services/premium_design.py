@@ -1176,12 +1176,6 @@ def _decorate_final_slide(slide, pal: dict, sw, sh):
         _send_to_back(pic)
 
 
-_CONTENT_DECORATORS = [
-    _decorate_content_slide_v1,
-    _decorate_content_slide_v2,
-    _decorate_content_slide_v3,
-    _decorate_content_slide_v4,
-]
 
 
 # ════════════════════════════════════════════════════════════════════════════════
