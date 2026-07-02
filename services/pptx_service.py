@@ -435,7 +435,9 @@ def _add_image(slide, img_bytes, prs, position="right"):
         # ── PHASE 2: Fallback — overlay image at top-right, compact size ──
         stream = io.BytesIO(img_bytes)
         w, h = prs.slide_width, prs.slide_height
-        if position == "center":
+        if position == "fullscreen":
+            slide.shapes.add_picture(stream, 0, 0, w, h)
+        elif position == "center":
             iw, ih = int(w * 0.30), int(h * 0.30)
             slide.shapes.add_picture(stream, int((w - iw) / 2), int(h * 0.55), iw, ih)
         else:
@@ -962,7 +964,7 @@ def generate_pptx(
                     _fill_textframe(smart_body.text_frame, f"Bajardi: {author}")
         
         if 0 in slide_images:
-            _add_image(title_slide, slide_images[0], prs, "center")
+            _add_image(title_slide, slide_images[0], prs, "fullscreen")
 
     # ── 2. Content slides ─────────────────────────────────────────────────
     if tpl_content == 0:

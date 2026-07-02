@@ -586,6 +586,49 @@ def _detect_and_draw_infographics(slide, card, cx, cy, cw, ch, text, pal):
         return True, created
     return False, []
 
+def _apply_rich_text(p, text, pal, is_highlight, text_width):
+    """Parses text and applies colors to key words (prefixes, quotes, numbers)."""
+    import re
+    p.text = ""
+    font_size = Pt(16) if text_width > Inches(6) else Pt(14)
+    base_color = "FFFFFF" if is_highlight else pal["text1"]
+    accent_color = "FFFFFF" if is_highlight else pal["accent"] # accent1 looks better for highlighting than accent2 usually
+    
+    match = re.match(r'^(.*?)([:\-—])(.*)$', text)
+    if match and len(match.group(1).split()) <= 4: # Only highlight if prefix is short (max 4 words)
+        prefix, sep, suffix = match.groups()
+        run1 = p.add_run()
+        run1.text = prefix + sep
+        run1.font.name = "Arial"
+        run1.font.size = font_size
+        run1.font.color.rgb = _hex(accent_color)
+        run1.font.bold = True
+        
+        run2 = p.add_run()
+        run2.text = suffix
+        run2.font.name = "Arial"
+        run2.font.size = font_size
+        run2.font.color.rgb = _hex(base_color)
+    else:
+        pattern = re.compile(r'("[^"]+"|\d+(?:\.\d+)?%?|\b[A-ZА-ЯO\'G\'SH]{3,}\b)')
+        parts = pattern.split(text)
+        for part in parts:
+            if not part: continue
+            run = p.add_run()
+            run.font.name = "Arial"
+            run.font.size = font_size
+            if part.startswith('"') and part.endswith('"'):
+                run.text = part[1:-1]
+                run.font.color.rgb = _hex(accent_color)
+                run.font.bold = True
+            elif re.match(r'^\d+(?:\.\d+)?%?$', part) or re.match(r'^[A-ZА-ЯO\'G\'SH]{3,}$', part):
+                run.text = part
+                run.font.color.rgb = _hex(accent_color)
+                run.font.bold = True
+            else:
+                run.text = part
+                run.font.color.rgb = _hex(base_color)
+
 def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, pal, highlight_last=False):
     """Convert body text paragraphs into premium interactive-looking cards."""
     points = []
@@ -650,10 +693,7 @@ def _convert_to_cards(slide, body, text_left, text_width, start_y, available_h, 
         if len(display_text) > 180:
             display_text = display_text[:177] + "..."
             
-        p.text = display_text
-        p.font.name = "Arial"
-        p.font.size = Pt(16) if text_width > Inches(6) else Pt(14)
-        p.font.color.rgb = _hex("FFFFFF" if is_highlight else pal["text1"])
+        _apply_rich_text(p, display_text, pal, is_highlight, text_width)
         
         _send_to_back(card)
         anim_groups.append(group_ids)
