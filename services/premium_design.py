@@ -662,27 +662,125 @@ def _decorate_quote_slide(slide, pal: dict, sw, sh):
         body.top = title.top + title.height + Inches(0.5)
 
 def _decorate_plan_slide(slide, pal: dict, sw, sh):
-    """Premium decorations for Plan/O'quv savollari slide."""
+    """Premium Timeline Step Navigation for Plan/O'quv savollari slide."""
     accent = pal["accent"]
     accent2 = pal["accent2"]
     
-    # Large soft triangle on the left side pointing right
-    _add_shape_no_border(slide, MSO_SHAPE.RIGHT_TRIANGLE,
-                         -Inches(1), Inches(1),
-                         Inches(3), sh - Inches(2), accent, alpha_pct=15)
-                         
-    # Top right floating banner/ribbon
-    _add_shape_no_border(slide, MSO_SHAPE.CHEVRON,
-                         sw - Inches(3), Inches(0.5),
-                         Inches(3.5), Inches(0.8), accent2, alpha_pct=60)
-                         
-    # Bottom elegant thin lines
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         sw/2 - Inches(3), sh - Inches(0.6),
-                         Inches(6), Inches(0.05), accent, alpha_pct=80)
-    _add_shape_no_border(slide, MSO_SHAPE.RECTANGLE,
-                         sw/2 - Inches(2), sh - Inches(0.5),
-                         Inches(4), Inches(0.05), accent2, alpha_pct=60)
+    # Premium Gradient Background using large soft shapes
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw - Inches(4), -Inches(4), Inches(8), Inches(8), accent, alpha_pct=15)
+    _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(3), sh - Inches(3), Inches(6), Inches(6), accent2, alpha_pct=10)
+    
+    title, body = _find_text_boxes(slide)
+    if not body: return
+    
+    questions = []
+    for p in body.text_frame.paragraphs:
+        if p.text.strip():
+            questions.append(p.text.strip())
+            
+    body.left = sw + Inches(10) # Hide original
+    
+    num_qs = len(questions)
+    if num_qs == 0: return
+    
+    start_y = Inches(2.2)
+    available_h = sh - Inches(2.5)
+    gap = Inches(0.4)
+    block_h = min(Inches(1.2), (available_h - (num_qs - 1) * gap) / num_qs)
+    
+    line_x = Inches(1.5)
+    
+    # Draw colorful progress line connecting the steps
+    timeline = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, line_x, start_y + block_h/2, Inches(0.08), max(Inches(0.1), (num_qs - 1) * (block_h + gap)))
+    timeline.fill.solid()
+    timeline.fill.fore_color.rgb = _hex(accent2)
+    timeline.line.fill.background()
+    _send_to_back(timeline)
+    
+    for i, q in enumerate(questions):
+        cy = start_y + i * (block_h + gap)
+        is_active = (i == 0) # The first item acts as the "Active" glowing point on the timeline
+        
+        # Step Marker (Circle on the line)
+        marker_size = Inches(0.5)
+        marker = slide.shapes.add_shape(MSO_SHAPE.OVAL, line_x - marker_size/2 + Inches(0.04), cy + (block_h - marker_size)/2, marker_size, marker_size)
+        marker.fill.solid()
+        marker.fill.fore_color.rgb = _hex(accent if is_active else pal["bg2"])
+        marker.line.color.rgb = _hex(accent) 
+        marker.line.width = Pt(2)
+        if is_active:
+            _apply_glow_effect(marker, accent)
+        
+        # Premium Block for Question
+        block_w = sw - Inches(3)
+        block = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, line_x + Inches(0.6), cy, block_w, block_h)
+        block.fill.solid()
+        block.fill.fore_color.rgb = _hex(pal["bg1"])
+        
+        # Glassmorphism effect
+        alpha_val = '90000' if is_active else '75000'
+        try:
+            from pptx.oxml.xmlchemy import OxmlElement
+            alpha = OxmlElement('a:alpha')
+            alpha.set('val', alpha_val)
+            block.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
+        except:
+            pass
+            
+        block.line.color.rgb = _hex(accent2 if is_active else accent)
+        block.line.width = Pt(2 if is_active else 1)
+        
+        if is_active:
+            _apply_glow_effect(block, accent2) # Active item glows!
+        else:
+            _apply_card_shadow(block)
+        
+        # AI Icon (Simulated geometric icons)
+        icon_size = block_h * 0.4
+        shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON, MSO_SHAPE.OVAL, MSO_SHAPE.PENTAGON]
+        shape_type = shapes[i % len(shapes)]
+        icon = slide.shapes.add_shape(shape_type, line_x + Inches(0.9), cy + (block_h - icon_size)/2, icon_size, icon_size)
+        icon.fill.solid()
+        icon.fill.fore_color.rgb = _hex(accent2 if is_active else accent)
+        icon.line.fill.background()
+        
+        # Text
+        tb = slide.shapes.add_textbox(line_x + Inches(1.5), cy, block_w - Inches(1.6), block_h)
+        tf = tb.text_frame
+        tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+        p = tf.add_paragraph()
+        p.text = q
+        p.font.name = "Arial"
+        p.font.size = Pt(22)
+        p.font.color.rgb = _hex(pal["text1"])
+        if is_active:
+            p.font.bold = True
+            
+        _send_to_back(block)
+        
+    # Order background properly
+    for s in list(slide.shapes):
+        if not s.has_text_frame and s != timeline:
+            _send_to_back(s)
+    _send_to_back(timeline)
+
+def _apply_glow_effect(shape, color_hex):
+    try:
+        from pptx.oxml.xmlchemy import OxmlElement
+        spPr = shape.element.spPr
+        effectLst = OxmlElement('a:effectLst')
+        glow = OxmlElement('a:glow')
+        glow.set('rad', '150000')  # 15pt blur radius for glow
+        srgbClr = OxmlElement('a:srgbClr')
+        srgbClr.set('val', color_hex)
+        alpha = OxmlElement('a:alpha')
+        alpha.set('val', '60000') # 60% opacity glow
+        srgbClr.append(alpha)
+        glow.append(srgbClr)
+        effectLst.append(glow)
+        spPr.append(effectLst)
+    except Exception:
+        pass
 
 def _apply_card_shadow(shape):
     try:
@@ -1115,8 +1213,8 @@ def apply_premium_transitions(prs):
             _add_transition(slide, "zoom", "slow") # Smooth Zoom for portrait
         elif slide_type == "goals":
             _add_transition(slide, "push", "med") # Simulates floating up
-        elif slide_type == "final":
-            _add_transition(slide, "fade", "slow")
+        elif slide_type == "plan":
+            _add_transition(slide, "wipe", "slow") # Wipe mimics a timeline drawing itself
         elif slide_type == "conclusion":
             _add_transition(slide, "wipe", "med")
         else:
