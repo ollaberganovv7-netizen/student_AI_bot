@@ -765,7 +765,10 @@ async def generate_presentation_content(topic, language="uz", num_slides=10, sty
             if "points" in slide and isinstance(slide["points"], list):
                 slide["content"] = slide["points"]
             else:
-                slide["content"] = ["Ma'lumotlar qayta ishlanmoqda..."]
+                slide["content"] = [
+                    f"Mavzu bo'yicha tahlillar va o'rganishlar natijasida ushbu yo'nalishning muhimligi va kelajakdagi istiqbollari aniqlandi.",
+                    "Bu boradagi izlanishlarni davom ettirish sohaga oid bilimlarni yanada chuqurlashtirishga xizmat qiladi."
+                ]
 
     completed_steps += 1
     if progress_callback:
