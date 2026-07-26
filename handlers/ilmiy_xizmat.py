@@ -251,7 +251,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     price_text = "🎁 BEPUL (birinchi marta)" if free_trial else f"💳 {format_price(price)}"
 
     # WebApp URL
-    base_url = os.getenv("WEBAPP_URL", "https://arslon.github.io/student_bot/webapp/").split("?")[0]
+    base_url = os.getenv("WEBAPP_URL", "https://ollaberganovv7-netizen.github.io/student_AI_bot").split("?")[0]
     if not base_url.endswith("/"):
         base_url += "/"
     webapp_url = f"{base_url}ilmiy_xizmat.html?service={service_key}"
