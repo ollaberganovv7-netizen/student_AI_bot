@@ -18,7 +18,7 @@ from database.db import init_db
 from middlewares.register import RegisterMiddleware
 from middlewares.throttling import ThrottlingMiddleware, GenerationLockMiddleware
 
-from handlers import start, presentation, documents, payment, admin, coursework, tezis, maqola, uslubiy, template_fill, quiz, reactions
+from handlers import start, presentation, documents, payment, admin, coursework, tezis, maqola, uslubiy, template_fill, quiz, reactions, ilmiy_xizmat
 from utils.scanner import update_templates_json
 
 logging.basicConfig(
@@ -79,6 +79,7 @@ async def main():
     dp.include_router(coursework.router)
     dp.include_router(tezis.router)       # Tezis handler
     dp.include_router(maqola.router)      # Maqola handler
+    dp.include_router(ilmiy_xizmat.router)  # 8 yangi xizmat (OAK talablari)
     dp.include_router(uslubiy.router)     # Uslubiy ishlanma handler
     dp.include_router(quiz.router)        # Quiz handler
     dp.include_router(reactions.router)    # Channel reactions handler

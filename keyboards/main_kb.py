@@ -1,4 +1,3 @@
-from __future__ import annotations
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from config import SERVICE_NAMES, PRICING
 from utils.i18n import btn
@@ -7,9 +6,9 @@ from utils.i18n import btn
 def lang_select_kb() -> InlineKeyboardMarkup:
     """Language selection keyboard."""
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="\U0001f1fa\U0001f1ff O'zbekcha", callback_data="set_lang:uz")],
-        [InlineKeyboardButton(text="\U0001f1f7\U0001f1fa \u0420\u0443\u0441\u0441\u043a\u0438\u0439", callback_data="set_lang:ru")],
-        [InlineKeyboardButton(text="\U0001f1ec\U0001f1e7 English", callback_data="set_lang:en")]
+        [InlineKeyboardButton(text="🇺🇿 O'zbekcha", callback_data="set_lang:uz")],
+        [InlineKeyboardButton(text="🇷🇺 Русский", callback_data="set_lang:ru")],
+        [InlineKeyboardButton(text="🇬🇧 English", callback_data="set_lang:en")]
     ])
 
 
@@ -17,9 +16,14 @@ def main_menu_kb(lang: str = "uz") -> ReplyKeyboardMarkup:
     """Main menu with core services (Reply Keyboard)."""
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text=btn("referat", lang)), KeyboardButton(text=btn("mustaqil", lang))],
-            [KeyboardButton(text=btn("presentation", lang)), KeyboardButton(text=btn("kurs", lang))],
-            [KeyboardButton(text=btn("diplom", lang)), KeyboardButton(text=btn("quiz", lang))],
+            # 1-qator: Tezis (Chapda) | Maqola (O'ngda)
+            [KeyboardButton(text=btn("t_conf", lang)), KeyboardButton(text=btn("a_sci", lang))],
+            # 2-qator
+            [KeyboardButton(text=btn("t_art", lang)), KeyboardButton(text=btn("a_pop_sci", lang))],
+            # 3-qator
+            [KeyboardButton(text=btn("t_diss", lang)), KeyboardButton(text=btn("a_pop", lang))],
+            # 4-qator
+            [KeyboardButton(text=btn("t_pop", lang)), KeyboardButton(text=btn("a_art", lang))],
         ],
         resize_keyboard=True,
         is_persistent=True,

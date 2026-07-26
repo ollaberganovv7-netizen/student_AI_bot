@@ -1009,6 +1009,20 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                            "plan", "conclusion", "introduction", "mundarija"}
         auto_img_count = 0
 
+        # Always generate a cinematic cover image for the Title Slide (index 0) if missing
+        if ai_images_count > 0 and 0 not in slide_images:
+            try:
+                await wait_msg.edit_text("🎨 <b>Muqova uchun AI rasm chizilmoqda...</b>", parse_mode="HTML")
+            except TelegramBadRequest:
+                pass
+            title_query = f"Beautiful dark cinematic ultra-premium abstract background for academic presentation topic: '{topic}'. Professional, sleek, no text, empty space."
+            try:
+                img_bytes = await generate_image_gemini(title_query)
+                if img_bytes:
+                    slide_images[0] = img_bytes
+            except Exception as e:
+                logger.error(f"Title image gen error: {e}")
+
         # Collect eligible slides (skip title/reja/xulosa + already have image)
         eligible = []
         for idx, sd in enumerate(slides_data):

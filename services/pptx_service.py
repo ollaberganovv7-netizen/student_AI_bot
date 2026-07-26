@@ -932,8 +932,13 @@ def generate_pptx(
     # ── 1. Title slide ────────────────────────────────────────────────────
     title_slide = prs.slides[0] if prs.slides else None
     if title_slide:
-        # Always use the simple title + author layout for a premium minimalist design
-        if True:
+        if subject or university:
+            build_academic_title_slide(
+                title_slide, topic=topic, author=author,
+                subject=subject, university=university,
+                doc_type_label=doc_type_label, reviewer=reviewer, prs=prs
+            )
+        else:
             # Legacy: simple title + author
             shapes = _classify_shapes(title_slide)
             title_filled = False

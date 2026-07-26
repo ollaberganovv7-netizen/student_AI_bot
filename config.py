@@ -8,6 +8,7 @@ load_dotenv()
 BOT_TOKEN: str = os.getenv("BOT_TOKEN", "")
 ADMIN_IDS: list[int] = [int(x) for x in os.getenv("ADMIN_IDS", "").split(",") if x.strip()]
 ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "@admin_username")
+WEBAPP_URL: str = os.getenv("WEBAPP_URL", "")
 
 # Claude (primary)
 ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")

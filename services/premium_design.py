@@ -16,7 +16,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
-from pptx.enum.text import PP_ALIGN, MSO_AUTO_SIZE
+from pptx.enum.text import PP_ALIGN, MSO_AUTO_SIZE, MSO_ANCHOR
 from pptx.oxml import parse_xml
 
 
@@ -255,6 +255,8 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
             text += " " + shape.text_frame.text.lower()
 
     text = text.strip()
+    # Normalize apostrophes to fix detection issues
+    text = text.replace("‘", "'").replace("`", "'").replace("’", "'")
 
     for w in _QUOTE_WORDS:
         if w in text:
@@ -262,6 +264,9 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
     for w in _CONCLUSION_WORDS:
         if w in text:
             return "conclusion"
+    for w in _PLAN_WORDS:
+        if w in text:
+            return "plan"
     for w in _SECTION_WORDS:
         if w in text:
             return "section"
@@ -271,9 +276,7 @@ def _detect_slide_type(slide, idx: int, total: int) -> str:
     for w in _GOAL_WORDS:
         if w in text:
             return "goals"
-    for w in _PLAN_WORDS:
-        if w in text:
-            return "plan"
+
     for w in _INTRO_WORDS:
         if w in text:
             return "intro"
@@ -296,73 +299,57 @@ _NS_A = "http://schemas.openxmlformats.org/drawingml/2006/main"
 
 
 def _set_gradient_bg(slide, c1: str, c2: str, angle: int = 5400000):
-    """Apply 2-stop gradient background. Falls back to solid on error."""
+    """Apply 2-stop gradient background by drawing a full-screen rectangle sent to the back."""
     try:
-        slide.follow_master_background = False
-        bg = slide.background
-        fill = bg.fill
-        fill.solid()
-        fill.fore_color.rgb = _hex(c1)
-
-        bg_elem = slide._element.find(f'{{{_NS_P}}}bg')
-        if bg_elem is not None:
-            bgPr = bg_elem.find(f'{{{_NS_P}}}bgPr')
-            if bgPr is not None:
-                for child in list(bgPr):
-                    local = child.tag.split('}')[-1] if '}' in child.tag else child.tag
-                    if 'Fill' in local or 'fill' in local:
-                        bgPr.remove(child)
-
-                grad = parse_xml(
-                    f'<a:gradFill xmlns:a="{_NS_A}" rotWithShape="1">'
-                    f'<a:gsLst>'
-                    f'<a:gs pos="0"><a:srgbClr val="{c1}"/></a:gs>'
-                    f'<a:gs pos="100000"><a:srgbClr val="{c2}"/></a:gs>'
-                    f'</a:gsLst>'
-                    f'<a:lin ang="{angle}" scaled="0"/>'
-                    f'</a:gradFill>'
-                )
-                bgPr.insert(0, grad)
+        sw = slide.part.part.package.presentation_part.presentation.slide_width
+        sh = slide.part.part.package.presentation_part.presentation.slide_height
+        bg_shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+        bg_shape.fill.solid()
+        bg_shape.fill.fore_color.rgb = _hex(c1)
+        bg_shape.line.fill.background()
+        
+        # Apply gradient via XML
+        grad = parse_xml(
+            f'<a:gradFill xmlns:a="{_NS_A}" rotWithShape="1">'
+            f'<a:gsLst>'
+            f'<a:gs pos="0"><a:srgbClr val="{c1}"/></a:gs>'
+            f'<a:gs pos="100000"><a:srgbClr val="{c2}"/></a:gs>'
+            f'</a:gsLst>'
+            f'<a:lin ang="{angle}" scaled="0"/>'
+            f'</a:gradFill>'
+        )
+        bg_shape.fill._xPr.find(f'{{{_NS_A}}}solidFill').addprevious(grad)
+        bg_shape.fill._xPr.remove(bg_shape.fill._xPr.find(f'{{{_NS_A}}}solidFill'))
+        _send_to_back(bg_shape)
     except Exception:
-        try:
-            slide.follow_master_background = False
-            slide.background.fill.solid()
-            slide.background.fill.fore_color.rgb = _hex(c1)
-        except Exception:
-            pass
+        pass
 
 
 def _set_gradient_3stop(slide, c1: str, c2: str, c3: str, angle: int = 5400000):
-    """Apply 3-stop gradient background for extra premium feel."""
+    """Apply 3-stop gradient background by drawing a full-screen rectangle sent to the back."""
     try:
-        slide.follow_master_background = False
-        bg = slide.background
-        fill = bg.fill
-        fill.solid()
-        fill.fore_color.rgb = _hex(c1)
+        sw = slide.part.part.package.presentation_part.presentation.slide_width
+        sh = slide.part.part.package.presentation_part.presentation.slide_height
+        bg_shape = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+        bg_shape.fill.solid()
+        bg_shape.fill.fore_color.rgb = _hex(c1)
+        bg_shape.line.fill.background()
 
-        bg_elem = slide._element.find(f'{{{_NS_P}}}bg')
-        if bg_elem is not None:
-            bgPr = bg_elem.find(f'{{{_NS_P}}}bgPr')
-            if bgPr is not None:
-                for child in list(bgPr):
-                    local = child.tag.split('}')[-1] if '}' in child.tag else child.tag
-                    if 'Fill' in local or 'fill' in local:
-                        bgPr.remove(child)
-
-                grad = parse_xml(
-                    f'<a:gradFill xmlns:a="{_NS_A}" rotWithShape="1">'
-                    f'<a:gsLst>'
-                    f'<a:gs pos="0"><a:srgbClr val="{c1}"/></a:gs>'
-                    f'<a:gs pos="50000"><a:srgbClr val="{c2}"/></a:gs>'
-                    f'<a:gs pos="100000"><a:srgbClr val="{c3}"/></a:gs>'
-                    f'</a:gsLst>'
-                    f'<a:lin ang="{angle}" scaled="0"/>'
-                    f'</a:gradFill>'
-                )
-                bgPr.insert(0, grad)
+        grad = parse_xml(
+            f'<a:gradFill xmlns:a="{_NS_A}" rotWithShape="1">'
+            f'<a:gsLst>'
+            f'<a:gs pos="0"><a:srgbClr val="{c1}"/></a:gs>'
+            f'<a:gs pos="50000"><a:srgbClr val="{c2}"/></a:gs>'
+            f'<a:gs pos="100000"><a:srgbClr val="{c3}"/></a:gs>'
+            f'</a:gsLst>'
+            f'<a:lin ang="{angle}" scaled="0"/>'
+            f'</a:gradFill>'
+        )
+        bg_shape.fill._xPr.find(f'{{{_NS_A}}}solidFill').addprevious(grad)
+        bg_shape.fill._xPr.remove(bg_shape.fill._xPr.find(f'{{{_NS_A}}}solidFill'))
+        _send_to_back(bg_shape)
     except Exception:
-        _set_gradient_bg(slide, c1, c3, angle)
+        pass
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -816,46 +803,69 @@ def _decorate_minimal_typographic(slide, pal: dict, sw, sh):
         
         _convert_to_cards(slide, body, Inches(1.5), sw - Inches(2.5), start_y, available_h, pal)
 
-
 def _decorate_quote_slide(slide, pal: dict, sw, sh):
     """Premium State Style Quote Slide (President Portrait with Gold/Blue accents)."""
-    # Force state colors (Gold and Deep Navy) for the quote slide background
     accent_gold = "D4AF37"
     navy_bg = "0F172A"
     
-    # 1. State/Modern Background (Deep Blue)
     bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
     bg.fill.solid()
     bg.fill.fore_color.rgb = _hex(navy_bg)
     bg.line.fill.background()
     _send_to_back(bg)
     
-    # Transparent geometric accents
     _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(2), -Inches(2), Inches(6), Inches(6), accent_gold, alpha_pct=10)
     _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw - Inches(4), sh - Inches(4), Inches(8), Inches(8), "FFFFFF", alpha_pct=5)
     
     pic = _find_picture(slide)
     title, body = _find_text_boxes(slide)
     
+    anim_groups = []
+    
     if pic:
-        # 2. Premium Portrait Framing (Left side)
-        # Attempt to make it a standard portrait ratio
         pic.height = sh - Inches(2)
         pic.width = int(pic.height * 0.75) 
         pic.left = Inches(1)
         pic.top = Inches(1)
         
-        # Add Gold Frame behind portrait
         frame = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, pic.left - Inches(0.1), pic.top - Inches(0.1), pic.width + Inches(0.2), pic.height + Inches(0.2))
-        frame.fill.background() # transparent fill
+        frame.fill.background()
         frame.line.color.rgb = _hex(accent_gold)
         frame.line.width = Pt(4)
         
-        # Ensure proper z-ordering: Background -> Frame -> Portrait
         _send_to_back(frame)
         _send_to_back(bg) 
+        
+        anim_groups.append({"ids": [pic.shape_id], "preset": "zoom", "on_click": False})
+    else:
+        ph_width = int((sh - Inches(2)) * 0.75)
+        ph_height = sh - Inches(2)
+        pic_left = Inches(1)
+        pic_top = Inches(1)
+        
+        pic_ph = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, pic_left, pic_top, ph_width, ph_height)
+        pic_ph.fill.solid()
+        pic_ph.fill.fore_color.rgb = _hex("1A2238")
+        pic_ph.line.fill.background()
+        
+        tf = pic_ph.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = "Prezident Portreti\n(AI rasm limiti tugagan)"
+        p.font.size = Pt(16)
+        p.font.color.rgb = _hex(accent_gold)
+        p.alignment = PP_ALIGN.CENTER
+        
+        frame = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, pic_left - Inches(0.1), pic_top - Inches(0.1), ph_width + Inches(0.2), ph_height + Inches(0.2))
+        frame.fill.background()
+        frame.line.color.rgb = _hex(accent_gold)
+        frame.line.width = Pt(4)
+        
+        _send_to_back(frame)
+        _send_to_back(bg)
+        
+        anim_groups.append({"ids": [pic_ph.shape_id], "preset": "zoom", "on_click": False})
     
-    # 3. Katta qo'shtirnoq (Huge Quotation Mark)
     if body:
         quote_mark = slide.shapes.add_textbox(int(sw / 2), Inches(0.5), Inches(2), Inches(2))
         tf = quote_mark.text_frame
@@ -936,9 +946,13 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
     timeline.line.fill.background()
     _send_to_back(timeline)
     
+    anim_groups = []
+    
     for i, q in enumerate(questions):
         cy = start_y + i * (block_h + gap)
         is_active = (i == 0) # The first item acts as the "Active" glowing point on the timeline
+        
+        anim_group_ids = []
         
         # Step Marker (Circle on the line)
         marker_size = Inches(0.5)
@@ -1002,6 +1016,12 @@ def _decorate_plan_slide(slide, pal: dict, sw, sh):
             
         _send_to_back(block)
         
+        anim_group_ids.extend([marker.shape_id, block.shape_id, icon.shape_id, tb.shape_id])
+        anim_groups.append({"ids": anim_group_ids, "preset": "fade", "on_click": False})
+        
+    if anim_groups:
+        _inject_animation_tree(slide, anim_groups)
+        
     # Order background properly
     for s in list(slide.shapes):
         if not s.has_text_frame and s != timeline:
@@ -1051,6 +1071,13 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
     accent = pal["accent"]
     accent2 = pal["accent2"]
     
+    # 1. Slide Background Guarantee (Solid base to ensure visibility)
+    bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, sw, sh)
+    bg.fill.solid()
+    bg.fill.fore_color.rgb = _hex(pal["bg1"])
+    bg.line.fill.background()
+    _send_to_back(bg)
+    
     # Large soft glowing background circle in the center right
     _add_shape_no_border(slide, MSO_SHAPE.OVAL, sw//2, -Inches(2), Inches(8), Inches(8), accent, alpha_pct=10)
     _add_shape_no_border(slide, MSO_SHAPE.OVAL, -Inches(2), sh - Inches(4), Inches(6), Inches(6), accent2, alpha_pct=8)
@@ -1064,8 +1091,21 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
         if p.text.strip():
             goals.append(p.text.strip())
             
-    # Hide the original body
+    # Hide the original body and title
     body.left = sw + Inches(10)
+    if title:
+        title_text = title.text_frame.text.strip()
+        title.left = sw + Inches(10)
+        
+        # Recreate title for perfect z-ordering and styling
+        new_title = slide.shapes.add_textbox(Inches(1), Inches(0.5), sw - Inches(2), Inches(1))
+        tf = new_title.text_frame
+        p = tf.paragraphs[0]
+        p.text = title_text
+        p.font.name = "Arial"
+        p.font.size = Pt(36)
+        p.font.bold = True
+        p.font.color.rgb = _hex(pal["text1"])
     
     num_cards = len(goals)
     if num_cards == 0: return
@@ -1079,25 +1119,25 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
     start_x = Inches(1)
     
     # Dynamic height calculation
-    available_height = sh - Inches(2.5)
+    available_height = sh - Inches(2.0)
     gap = Inches(0.4)
-    # Ensure cards aren't too tall, explicitly cast to int to prevent python-pptx TypeError
     card_height = int(min(Inches(1.5), (available_height - (num_cards - 1) * gap) / num_cards))
-    start_y = Inches(2.5)
+    start_y = Inches(1.8)
+    
+    anim_groups = []
     
     for i, goal in enumerate(goals):
         cy = start_y + i * (card_height + gap)
         
-        # 1. Premium Frosted Card Background
+        # 1. Premium Frosted Card Background (Glassmorphism)
         card = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, start_x, cy, card_width, card_height)
         card.fill.solid()
-        card.fill.fore_color.rgb = _hex(pal["bg1"])
+        card.fill.fore_color.rgb = _hex("FFFFFF" if pal["is_dark"] else "000000")
         
-        # Simulate glassmorphism transparency if dark mode, otherwise solid white-ish
         try:
             from pptx.oxml.xmlchemy import OxmlElement
             alpha = OxmlElement('a:alpha')
-            alpha.set('val', '85000') # 85% opacity
+            alpha.set('val', '15000' if pal["is_dark"] else '5000') # 15% opacity on dark, 5% on light
             card.fill._xPr.find(f'{{{_NS_A}}}solidFill').find(f'{{{_NS_A}}}srgbClr').append(alpha)
         except Exception:
             pass
@@ -1105,10 +1145,10 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
         card.line.color.rgb = _hex(accent)
         card.line.width = Pt(1)
         
-        # 2. Hover / Float Shadow Effect
+        # Hover / Float Shadow Effect
         _apply_card_shadow(card)
         
-        # 3. Dynamic Icon (Using different shapes based on index)
+        # 2. Dynamic Icon (Using different shapes based on index)
         icon_size = card_height * 0.4
         shapes = [MSO_SHAPE.STAR_5_POINT, MSO_SHAPE.DIAMOND, MSO_SHAPE.HEXAGON, MSO_SHAPE.OVAL]
         shape_type = shapes[i % len(shapes)]
@@ -1118,23 +1158,23 @@ def _decorate_goals_slide(slide, pal: dict, sw, sh):
         icon.fill.fore_color.rgb = _hex(accent2)
         icon.line.fill.background()
         
-        # 4. Goal Text
+        # 3. Goal Text
         tb = slide.shapes.add_textbox(start_x + Inches(1.5), cy, card_width - Inches(2), card_height)
         tf = tb.text_frame
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-        p = tf.add_paragraph()
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
         p.text = goal
         p.font.name = "Arial"
-        p.font.size = Pt(24)
+        p.font.size = Pt(22)
         p.font.color.rgb = _hex(pal["text1"])
         p.font.bold = True
         
-        # Ensures text z-ordering is above the card
-        _send_to_back(card)
-        # Send background elements completely to back
-        for s in slide.shapes:
-            if not s.has_text_frame and s != card and s != icon:
-                _send_to_back(s)
+        # Floating animation for Card + Text + Icon sequentially
+        anim_groups.append({"ids": [card.shape_id, icon.shape_id, tb.shape_id], "preset": "fade", "on_click": False})
+
+    if anim_groups:
+        _inject_animation_tree(slide, anim_groups)
 
 
 def _decorate_conclusion_slide(slide, pal: dict, sw, sh):
@@ -1500,6 +1540,7 @@ def _add_transition(slide, transition_type: str = "fade", speed: str = "med"):
             "cover": f'<p:transition xmlns:p="{_NS_P}" spd="{speed}"><p:cover dir="l"/></p:transition>',
             "wipe": f'<p:transition xmlns:p="{_NS_P}" spd="{speed}"><p:wipe dir="d"/></p:transition>',
             "split": f'<p:transition xmlns:p="{_NS_P}" spd="{speed}"><p:split orient="horz" dir="out"/></p:transition>',
+            "zoom": f'<p:transition xmlns:p="{_NS_P}" spd="{speed}"><p:zoom/></p:transition>',
         }
         xml_str = transitions.get(transition_type, transitions["fade"])
         slide._element.insert(1, parse_xml(xml_str))
@@ -1616,7 +1657,7 @@ def apply_premium_transitions(prs):
         slide_type = _detect_slide_type(slide, idx, total)
 
         if slide_type == "title":
-            _add_transition(slide, "morph", "slow") # Cinematic Morph/Fade In for the title
+            _add_transition(slide, "zoom", "slow") # Cinematic Zoom/Fade In for the title
         elif slide_type == "section":
             _add_transition(slide, "fade", "slow") # Cinematic fade in for episode intros
         elif slide_type == "quote":

@@ -46,7 +46,7 @@ def build_welcome_text(db_user: User = None) -> str:
 
 # Legacy fallback (used in places without user object)
 WELCOME_TEXT = (
-    "\U0001f393 <b>STUDENT(AI) BOT</b>\n\n"
+    "\U0001f393 <b>USTOZ AI BOT</b>\n\n"
     "Akademik ishlaringiz uchun AI yordamchisi.\n\n"
     "\U0001f680 <b>Quyidagi tugmalardan birini tanlang:</b>"
 )
@@ -393,7 +393,6 @@ async def cmd_start(message: Message, db_user: User, state: FSMContext):
     lang = _lang(db_user)
     # Show language selection
     await message.answer(t("lang_prompt", lang), reply_markup=lang_select_kb(), parse_mode="HTML")
-
 
 # ─── Navigation ──────────────────────────────────────────────────────────────
 

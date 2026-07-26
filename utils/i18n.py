@@ -20,49 +20,61 @@ TEXTS = {
     # ─── Welcome / Main menu ─────────────────────────────────────────────
     "welcome": {
         "uz": (
-            "ㅤㅤㅤㅤㅤ🎓 <b>STUDENT AI</b>\n\n"
-            "✨ㅤㅤㅤㅤSalom, <b>{name}</b>! 👋ㅤㅤㅤㅤ✨\n\n"
-            "▸ 📄 <b>Referat</b>\n"
-            "▸ 📚 <b>Mustaqil ish</b>\n"
-            "▸ 🎨 <b>Taqdimot</b>\n"
-            "▸ 📘 <b>Kurs ishi</b>\n"
-            "▸ 🎓 <b>Diplom ishi</b>\n"
-            "▸ 📋 <b>Avtomatik quiz tuzish</b>\n\n"
-            "┌ 💎 <b>Afzalliklar</b>\n"
-            "├ ⚡ 5 daqiqada tayyor\n"
-            "├ 🏛 Akademik formatga mos\n"
-            "├ 🇺🇿 O'zbek tilida sifatli\n"
-            "└ 🔄 24/7 ishlaymiz"
+            "🌟 <b>U S T O Z   A I</b> 🌟\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>Intellektual yordamchingizga xush kelibsiz, <b>{name}</b>!</i> 👋\n\n"
+            "<b>🎓 ILMIY YO'NALISHLAR:</b>\n"
+            " ┣ 📝 <i>Konferensiya tezisi</i>\n"
+            " ┣ 🔬 <i>Ilmiy maqola tezisi & maqola</i>\n"
+            " ┗ 🎓 <i>Dissertatsiya / Malakaviy ish</i>\n\n"
+            "<b>📰 OMMABOP YO'NALISHLAR:</b>\n"
+            " ┣ 📊 <i>Tahliliy tezislar</i>\n"
+            " ┣ 🔭 <i>Ilmiy-ommabop maqolalar</i>\n"
+            " ┗ 🎭 <i>Badiiy-publitsistik maqolalar</i>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<b>💎 Nega aynan biz?</b>\n"
+            " 🚀 <i>Tezkor natija (5 daqiqa)</i>\n"
+            " 🏛 <i>Mukammal akademik format</i>\n"
+            " 🇺🇿 <i>O'zbek tilida yuqori sifat</i>\n\n"
+            "👇 <b>Iltimos, pastdagi menyudan xizmat turini tanlang:</b>"
         ),
         "ru": (
-            "ㅤㅤㅤㅤㅤ🎓 <b>STUDENT AI</b>\n\n"
-            "✨ㅤㅤㅤㅤПривет, <b>{name}</b>! 👋ㅤㅤㅤㅤ✨\n\n"
-            "▸ 📄 <b>Реферат</b>\n"
-            "▸ 📚 <b>Самост. работа</b>\n"
-            "▸ 🎨 <b>Презентация</b>\n"
-            "▸ 📘 <b>Курсовая</b>\n"
-            "▸ 🎓 <b>Дипломная работа</b>\n"
-            "▸ 📋 <b>Автоматическое создание квизов</b>\n\n"
-            "┌ 💎 <b>Преимущества</b>\n"
-            "├ ⚡ Готово за 5 минут\n"
-            "├ 🏛 Академический формат\n"
-            "├ 📝 Качественный текст\n"
-            "└ 🔄 Работаем 24/7"
+            "🌟 <b>U S T O Z   A I</b> 🌟\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>Добро пожаловать, <b>{name}</b>!</i> 👋\n\n"
+            "<b>🎓 НАУЧНЫЕ НАПРАВЛЕНИЯ:</b>\n"
+            " ┣ 📝 <i>Тезис для конференции</i>\n"
+            " ┣ 🔬 <i>Научная статья и тезис</i>\n"
+            " ┗ 🎓 <i>Диссертация / ВКР</i>\n\n"
+            "<b>📰 ПОПУЛЯРНЫЕ НАПРАВЛЕНИЯ:</b>\n"
+            " ┣ 📊 <i>Аналитические тезисы</i>\n"
+            " ┣ 🔭 <i>Научно-популярные статьи</i>\n"
+            " ┗ 🎭 <i>Художественные статьи</i>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<b>💎 Почему именно мы?</b>\n"
+            " 🚀 <i>Быстрый результат (5 минут)</i>\n"
+            " 🏛 <i>Идеальный академический формат</i>\n"
+            " 🇺🇿 <i>Высокое качество текста</i>\n\n"
+            "👇 <b>Пожалуйста, выберите услугу в меню ниже:</b>"
         ),
         "en": (
-            "ㅤㅤㅤㅤㅤ🎓 <b>STUDENT AI</b>\n\n"
-            "✨ㅤㅤㅤㅤHello, <b>{name}</b>! 👋ㅤㅤㅤㅤ✨\n\n"
-            "▸ 📄 <b>Essay</b>\n"
-            "▸ 📚 <b>Independent work</b>\n"
-            "▸ 🎨 <b>Presentation</b>\n"
-            "▸ 📘 <b>Coursework</b>\n"
-            "▸ 🎓 <b>Diploma work</b>\n"
-            "▸ 📋 <b>Automatic quiz creation</b>\n\n"
-            "┌ 💎 <b>Why choose us</b>\n"
-            "├ ⚡ Ready in 5 minutes\n"
-            "├ 🏛 Academic format\n"
-            "├ 📝 High quality text\n"
-            "└ 🔄 Available 24/7"
+            "🌟 <b>U S T O Z   A I</b> 🌟\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<i>Welcome to your intellectual assistant, <b>{name}</b>!</i> 👋\n\n"
+            "<b>🎓 SCIENTIFIC DIRECTIONS:</b>\n"
+            " ┣ 📝 <i>Conference Thesis</i>\n"
+            " ┣ 🔬 <i>Scientific Article & Thesis</i>\n"
+            " ┗ 🎓 <i>Dissertation / Thesis</i>\n\n"
+            "<b>📰 POPULAR DIRECTIONS:</b>\n"
+            " ┣ 📊 <i>Analytical Theses</i>\n"
+            " ┣ 🔭 <i>Popular Science Articles</i>\n"
+            " ┗ 🎭 <i>Artistic Articles</i>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "<b>💎 Why choose us?</b>\n"
+            " 🚀 <i>Fast results (5 minutes)</i>\n"
+            " 🏛 <i>Perfect academic format</i>\n"
+            " 🇺🇿 <i>High quality output</i>\n\n"
+            "👇 <b>Please select a service from the menu below:</b>"
         ),
     },
 
@@ -141,9 +153,9 @@ TEXTS = {
         "en": "🎉 <b>Congratulations!</b>\n\nYour friend invited you and you received\n💰 <b>{bonus}</b> bonus!",
     },
     "referral_share": {
-        "uz": "\nStudent(AI) Bot - akademik ishlar uchun AI yordamchi! 🎓\n\nMana havola: {link}",
-        "ru": "\nStudent(AI) Bot - AI помощник для учёбы! 🎓\n\nСсылка: {link}",
-        "en": "\nStudent(AI) Bot - AI assistant for academics! 🎓\n\nLink: {link}",
+        "uz": "\nUstoz AI Bot - akademik ishlar uchun AI yordamchi! 🎓\n\nMana havola: {link}",
+        "ru": "\nUstoz AI Bot - AI помощник для учёбы! 🎓\n\nСсылка: {link}",
+        "en": "\nUstoz AI Bot - AI assistant for academics! 🎓\n\nLink: {link}",
     },
     "referral_btn": {
         "uz": "📤 Do'stga yuborish",
@@ -785,6 +797,17 @@ BUTTONS = {
     "tezis": {"uz": "🎓 Tezis yaratish", "ru": "🎓 Тезис", "en": "🎓 Thesis"},
     "maqola": {"uz": "📝 Maqola yaratish", "ru": "📝 Статья", "en": "📝 Article"},
     "uslubiy": {"uz": "📗 Uslubiy ishlanma", "ru": "📗 Метод. пособие", "en": "📗 Methodical Guide"},
+    
+    # --- New 8 Thesis & Article Types ---
+    "t_conf": {"uz": "📝 Ilmiy konferensiya tezisi", "ru": "📝 Тезис для научной конференции", "en": "📝 Scientific Conference Thesis"},
+    "t_art": {"uz": "📝 Ilmiy maqola tezisi", "ru": "📝 Тезис научной статьи", "en": "📝 Scientific Article Thesis"},
+    "t_diss": {"uz": "🎓 Dissertatsiya / Bitiruv malakaviy ishi tezisi", "ru": "🎓 Тезис диссертации / ВКР", "en": "🎓 Dissertation / Graduation Thesis"},
+    "t_pop": {"uz": "📊 Ommabop / Tahliliy tezislar", "ru": "📊 Популярные / Аналитические тезисы", "en": "📊 Popular / Analytical Theses"},
+    "a_sci": {"uz": "🔬 Ilmiy maqola", "ru": "🔬 Научная статья", "en": "🔬 Scientific Article"},
+    "a_pop_sci": {"uz": "🔭 Ilmiy-ommabop maqola", "ru": "🔭 Научно-популярная статья", "en": "🔭 Popular Science Article"},
+    "a_pop": {"uz": "📰 Ommabop maqola", "ru": "📰 Популярная статья", "en": "📰 Popular Article"},
+    "a_art": {"uz": "🎭 Badiiy-publitsistik maqola", "ru": "🎭 Художественно-публицистическая статья", "en": "🎭 Artistic-journalistic Article"},
+
     "topup": {"uz": "💳 Hisobni to'ldirish", "ru": "💳 Пополнить баланс", "en": "💳 Top Up Balance"},
     "receipt": {"uz": "📸 Chekni yuborish", "ru": "📸 Отправить чек", "en": "📸 Send Receipt"},
     "referral": {"uz": "👥 Do'stni taklif qilish", "ru": "👥 Пригласить друга", "en": "👥 Invite Friend"},
