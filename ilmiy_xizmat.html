@@ -145,6 +145,17 @@
         </select>
     </div>
 
+    <!-- Qo'shimcha ilmiy ma'lumotlar -->
+    <div class="input-group animate-in">
+        <label>🔑 Kalit so'zlar <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
+        <input type="text" id="keywords" placeholder="Kiritilmasa, AI mustaqil tanlaydi">
+    </div>
+
+    <div class="input-group animate-in">
+        <label>🧠 Tadqiqot maqsadi va natijalari <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
+        <textarea id="research_details" class="textarea-field" placeholder="Kiritilmasa, AI mavzudan kelib chiqib o'zi tahlil qiladi va natija yaratadi..."></textarea>
+    </div>
+
     <!-- Sahifalar (faqat maqola uchun) -->
     <div class="card animate-in" id="pages-card" style="padding:14px 16px;">
         <div class="slider-header">
@@ -259,7 +270,9 @@
                 author: author,
                 university: document.getElementById('university').value.trim(),
                 language: document.getElementById('language').value,
-                pages: parseInt(pagesInput.value)
+                pages: parseInt(pagesInput.value),
+                keywords: document.getElementById('keywords').value.trim(),
+                research_details: document.getElementById('research_details').value.trim()
             };
 
             tg.sendData(JSON.stringify(data));
