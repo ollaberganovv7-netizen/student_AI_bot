@@ -250,11 +250,12 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
 
     price_text = "🎁 BEPUL (birinchi marta)" if free_trial else f"💳 {format_price(price)}"
 
-    # WebApp URL
+    # WebApp URL - maqola_settings.html bilan bir xil format (root papka)
     base_url = os.getenv("WEBAPP_URL", "https://ollaberganovv7-netizen.github.io/student_AI_bot").split("?")[0]
     if not base_url.endswith("/"):
         base_url += "/"
-    webapp_url = f"{base_url}ilmiy_xizmat.html?service={service_key}"
+    import time as _time
+    webapp_url = f"{base_url}ilmiy_xizmat.html?service={service_key}&t={int(_time.time())}"
 
     await message.answer(
         f"{icon} <b>{name_uz}</b>\n"
@@ -355,6 +356,8 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             topic=topic,
             author=author,
             university=university,
+            keywords=data_in.get("keywords", "").strip(),
+            research_details=data_in.get("research_details", "").strip()
         )
         await state.set_state(IlmiyXizmatStates.waiting_confirm)
 
@@ -543,6 +546,8 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
     author  = data.get("author", "Tadqiqotchi")
     pages   = data.get("pages_default", pages_default)
     lang    = data.get("lang", "uz")
+    keywords = data.get("keywords", "")
+    research_details = data.get("research_details", "")
     is_admin   = db_user.id in ADMIN_IDS
     free_trial = is_free_trial(db_user) and not is_admin
 
@@ -587,6 +592,13 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
     lang_instruction = lang_map.get(lang, "O'zbek tilida")
 
     system_prompt = build_system_prompt(service_key, lang_instruction)
+    extra_context = ""
+    if keywords:
+        extra_context += f"Kalit so'zlar: {keywords}\n"
+    if research_details:
+        extra_context += f"Tadqiqot maqsadi va natijalari: {research_details}\n"
+    if extra_context:
+        system_prompt += "\n\nMUHIM QO'SHIMCHA MA'LUMOTLAR (Foydalanuvchi taqdim etgan va barcha yozuv jarayonida albatta inobatga olinishi shart! Aslo o'zingizdan mos kelmaydigan boshqa fakt to'qib chiqarmang):\n" + extra_context
 
     try:
         from services.ai_service import _call_ai
