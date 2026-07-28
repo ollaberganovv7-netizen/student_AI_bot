@@ -129,21 +129,13 @@
         <input type="text" id="author" placeholder="Masalan: Karimov Bobur Rashidovich">
     </div>
 
-    <!-- Tashkilot -->
+    <!-- Tashkilot va Ish joyi -->
     <div class="input-group animate-in">
-        <label>🏛️ Tashkilot / Universitet <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
-        <input type="text" id="university" placeholder="Masalan: Toshkent davlat texnika universiteti">
+        <label>🏛️ Tashkilot / Ish joyi va lavozimi <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
+        <input type="text" id="workplace" placeholder="Masalan: Toshkent davlat texnika universiteti, dotsent">
     </div>
 
-    <!-- Til -->
-    <div class="input-group animate-in">
-        <label>🌐 Til</label>
-        <select id="language">
-            <option value="uz">O'zbekcha 🇺🇿</option>
-            <option value="ru">Русский 🇷🇺</option>
-            <option value="en">English 🇬🇧</option>
-        </select>
-    </div>
+
 
     <!-- Sahifalar (faqat maqola uchun) -->
     <div class="card animate-in" id="pages-card" style="padding:14px 16px;">
@@ -257,9 +249,11 @@
                 service_key: serviceKey,
                 topic: topic,
                 author: author,
-                university: document.getElementById('university').value.trim(),
-                language: document.getElementById('language').value,
-                pages: parseInt(pagesInput.value)
+                workplace: document.getElementById('workplace').value.trim(),
+                language: 'uz',
+                pages: parseInt(pagesInput.value),
+                keywords: '',
+                research_details: ''
             };
 
             tg.sendData(JSON.stringify(data));
