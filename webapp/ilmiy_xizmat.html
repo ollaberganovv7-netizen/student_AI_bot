@@ -129,11 +129,13 @@
         <input type="text" id="author" placeholder="Masalan: Karimov Bobur Rashidovich">
     </div>
 
-    <!-- Tashkilot -->
+    <!-- Tashkilot va Ish joyi -->
     <div class="input-group animate-in">
-        <label>🏛️ Tashkilot / Universitet <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
-        <input type="text" id="university" placeholder="Masalan: Toshkent davlat texnika universiteti">
+        <label>🏛️ Tashkilot / Ish joyi va lavozimi <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
+        <input type="text" id="workplace" placeholder="Masalan: Toshkent davlat texnika universiteti, dotsent">
     </div>
+
+
 
     <!-- Til -->
     <div class="input-group animate-in">
@@ -268,7 +270,7 @@
                 service_key: serviceKey,
                 topic: topic,
                 author: author,
-                university: document.getElementById('university').value.trim(),
+                workplace: document.getElementById('workplace').value.trim(),
                 language: document.getElementById('language').value,
                 pages: parseInt(pagesInput.value),
                 keywords: document.getElementById('keywords').value.trim(),
