@@ -364,28 +364,19 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
         )
         await state.set_state(IlmiyXizmatStates.waiting_confirm)
 
-        # To'g'ridan-to'g'ri generatsiyaga o'tish
-        is_admin   = db_user.id in ADMIN_IDS
-        free_trial = is_free_trial(db_user) and not is_admin
-        price      = PRICING.get(price_key, 3000)
-        if free_trial or is_admin:
+        # To'lov tekshiruvi
+        is_admin = False # Hozircha admin tekshiruvini o'chirib turamiz, test qilishlari uchun
+        free_trial = is_free_trial(db_user)
+        price = PRICING.get(price_key, 3000)
+        
+        if free_trial:
             price = 0
 
-        if not is_admin and not free_trial and (db_user.balance or 0) < price:
-            await message.answer(
-                f"❌ <b>Balans yetarli emas!</b>\n"
-                f"Kerak: {format_price(price)}\n"
-                f"Mavjud: {format_price(db_user.balance or 0)}\n\n"
-                f"💳 /buy orqali to'ldiring.",
-                reply_markup=main_menu_kb(lang),
-                parse_mode="HTML"
-            )
-            await state.clear()
-            return
-
-        # ── To'lov oqimi ──────────────────────────────────────────────────
-        # Admin va bepul foydalanuvchilar to'g'ridan-to'g'ri yaratadi
-        if is_admin or free_trial:
+        # Agar yetarli balans bo'lsa yoki tekin bo'lsa, to'g'ridan-to'g'ri yaratish
+        if (db_user.balance or 0) >= price or price == 0:
+            if price > 0:
+                await deduct_balance(db_user.id, price)
+                
             cancel_flag = {"cancelled": False}
             await state.update_data(cancel_flag=cancel_flag)
             await state.set_state(IlmiyXizmatStates.generating)
@@ -410,20 +401,20 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
                 "en": "Ingliz tilida (In English)"
             }
             lang_instruction = lang_map.get(lang, "O'zbek tilida")
-            system_prompt    = build_system_prompt(service_key, lang_instruction)
+            system_prompt = build_system_prompt(service_key, lang_instruction)
 
             await _run_generation(
                 message=message, state=state, db_user=db_user,
                 wait_msg=wait_msg, cancel_flag=cancel_flag, cancel_kb=cancel_kb,
                 service_key=service_key, name_uz=name_uz, icon=icon,
                 svc_type=svc_type, topic=topic, author=author, pages=pages,
-                price_key=price_key, price=0, lang=lang,
+                price_key=price_key, price=price, lang=lang,
                 lang_instruction=lang_instruction, system_prompt=system_prompt,
                 is_admin=is_admin, free_trial=free_trial,
             )
             return
 
-        # ── Tolov tugmasi ──────────────────────────────────────────────────
+        # ── Balans yetarli bo'lmasa To'lov tugmasi chiqadi ─────────────────
         from config import CARDS
         await state.update_data(
             pending_price=price,
@@ -528,7 +519,107 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
                 json={
-                    "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+                    "model": "qwen/qwen3.8-27b",
+                    "messages": [{"role": "user", "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}}
+                    ]}],
+                    "max_tokens": 200,
+                    "temperature": 0
+                }
+            )
+        result_text = resp.json()["choices"][0]["message"]["content"]
+        # Extract JSON
+        import re as _re
+        json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+        if json_match:
+            result_json = json.loads(json_match.group())
+            verified = result_json.get("verified", False)
+            found_amount = result_json.get("found_amount")
+            reason = result_json.get("reason", "")
+    except Exception as e:
+        reason = f"AI xatolik: {e}"
+        verified = False
+
+    if verified:
+        # AI tasdiqladi - generatsiyani boshlash
+        await check_msg.edit_text(
+            f"✅ <b>To'lov tasdiqlandi!</b>\n"
+            f"💵 Miqdor: {price_fmt} so'm\n"
+            f"🚀 Hujjat yaratilmoqda...",
+            parse_mode="HTML"
+        )
+        await _start_generation_after_payment(message, state, db_user)
+    else:
+        # Adminga yuborish
+        from config import ADMIN_IDS
+        admin_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"admin_pay_ok:{message.from_user.id}"),
+                InlineKeyboardButton(text="❌ Rad etish", callback_data=f"admin_pay_no:{message.from_user.id}")
+            ]
+        ])
+        
+        import json as _json
+        state_data_str = _json.dumps({
+            "user_id": message.from_user.id,
+            "user_name": message.from_user.full_name,
+            "price": price,
+            "pages": pages,
+            "service_name": service_name,
+            "reason": reason,
+            "found_amount": found_amount
+        })
+        
+        sent_to_admin = False
+        from aiogram.exceptions import TelegramBadRequest
+        for admin_id in ADMIN_IDS:
+            try:
+                await message.bot.send_photo(
+                    chat_id=admin_id,
+                    photo=photo.file_id,
+                    caption=(
+                        f"⚠️ <b>To'lov tekshirish talab etiladi</b>\n\n"
+                        f"👤 Foydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\n"
+                        f"🆔 ID: <code>{message.from_user.id}</code>\n"
+                        f"📄 Xizmat: {service_name} ({pages} bet)\n"
+                        f"💵 Kerakli summa: <b>{price_fmt} so'm</b>\n"
+                        f"🔍 AI topgani: {found_amount or 'topilmadi'}\n"
+                        f"📝 Sabab: {reason}"
+                    ),
+                    parse_mode="HTML",
+                    reply_markup=admin_kb
+                )
+                sent_to_admin = True
+            except Exception:
+                continue
+
+        await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
+        return
+
+    # Groq vision check
+    from config import ADMIN_IDS
+    import os
+    groq_key = os.getenv("GROQ_API_KEY", "")
+
+    prompt = (
+        f"Bu to'lov cheki (skrinshoti). Tekshir:\n"
+        f"1) Aynan {price_fmt} so'm o'tkazilganmi?\n"
+        f"2) To'lov muvaffaqiyatli yakunlanganmi?\n"
+        f"Faqat JSON qaytargin: {{\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}}"
+    )
+
+    verified = False
+    found_amount = None
+    reason = "AI tekshirishda xatolik"
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as hclient:
+            resp = await hclient.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "qwen/qwen3.8-27b",
                     "messages": [{"role": "user", "content": [
                         {"type": "text", "text": prompt},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}}
