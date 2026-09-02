@@ -251,7 +251,14 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     )
     await state.set_state(IlmiyXizmatStates.waiting_topic)
 
-    price_text = "🎁 BEPUL (birinchi marta)" if free_trial else f"💳 {format_price(price)}"
+    if free_trial:
+        price_text = "🎁 BEPUL (birinchi marta)"
+    else:
+        # User requested 5000 - 15000 for this
+        if "maqola" in svc_type:
+            price_text = "💳 5 000 - 15 000 so'm (sahifa soniga qarab)"
+        else:
+            price_text = f"💳 {format_price(price)} so'mdan boshlab"
 
     # WebApp URL - maqola_settings.html bilan bir xil format (root papka)
     base_url = os.getenv("WEBAPP_URL", "https://ollaberganovv7-netizen.github.io/student_AI_bot").split("?")[0]
@@ -261,12 +268,11 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     webapp_url = f"{base_url}ilmiy_xizmat.html?service={service_key}&t={int(_time.time())}"
 
     await message.answer(
-        f"{icon} <b>{name_uz}</b>\n"
-        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"{icon} <b>{name_uz}</b>\n\n"
         f"<i>{description}</i>\n\n"
         f"💰 <b>Narxi:</b> {price_text}\n"
-        f"📊 <b>Balansingiz:</b> {format_price(balance)}\n\n"
-        f"👇 <b>Quyidagi tugmani bosib ma'lumotlarni to'ldiring:</b>",
+        f"📊 <b>Balansingiz:</b> {format_price(balance)} so'm\n\n"
+        f"👇 <b>Ma'lumotlarni to'ldirish uchun pastdagi tugmani bosing:</b>",
         reply_markup=ReplyKeyboardMarkup(
             keyboard=[
                 [KeyboardButton(
