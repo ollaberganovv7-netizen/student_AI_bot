@@ -276,7 +276,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
         reply_markup=ReplyKeyboardMarkup(
             keyboard=[
                 [KeyboardButton(
-                    text=f"{icon} To'ldirish va Yaratish",
+                    text=f"{icon} Ma'lumotlarni to'ldirish",
                     web_app=WebAppInfo(url=webapp_url)
                 )],
                 [KeyboardButton(text="❌ Bekor qilish")],
