@@ -135,7 +135,7 @@
     tg.MainButton.color = "#7c3aed";
     tg.MainButton.show();
     const SERVICES = {
-        "a_sci":     {icon:"\uD83D\uDD2C",name:"Ilmiy maqola",              desc:"OAK talablariga mos IMRAD strukturasi",       minP:5,maxP:15,basePrice:4000},
+        "a_sci": {name:"Ilmiy maqola", desc:"OAK talablariga mos IMRAD strukturasi", minP:8, maxP:15, basePrice:5000},
         "a_pop_sci": {icon:"\uD83D\uDD2D",name:"Ilmiy-ommabop maqola",      desc:"Storytelling uslubida, keng kitobxon uchun",  minP:3,maxP:10,basePrice:3000},
         "a_pop":     {icon:"\uD83D\uDCF0",name:"Ommabop maqola",            desc:"Jurnalistik uslub \u2014 fakt, tahlil, ta'sir",minP:3,maxP:10,basePrice:3000},
         "a_art":     {icon:"\uD83C\uDFAD",name:"Badiiy-publitsistik maqola",desc:"Obrazlar, metaforalar, emotsional ta'sir",   minP:3,maxP:10,basePrice:3000},
@@ -161,7 +161,7 @@
         const p=+slider.value;
         document.getElementById('page-count').innerHTML=p+'<span class="unit">bet</span>';
         document.getElementById('words-info').textContent='\uD83D\uDCCA Taxminiy hajm: ~'+(p*250).toLocaleString('ru-RU')+' ta so\u02BCz';
-        const price=svc.basePrice+(p-svc.minP)*500;
+        let price; if (key === "a_sci") { price = 5000 + Math.round((p - 8) * (10000 / 7) / 1000) * 1000; } else { price = svc.basePrice + (p - svc.minP) * 500; }
         document.getElementById('price-display').textContent=price<=0?'Bepul \u2728':price.toLocaleString('ru-RU')+" so'm";
         document.getElementById('price-note').textContent=price<=0?'Birinchi marta tekin!':'Sahifalar soniga qarab o\u02BCzgaradi';
         fill();
