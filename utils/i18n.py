@@ -22,14 +22,15 @@ TEXTS = {
         "uz": (
             "<b>USTOZ AI</b>\n\n"
             "<i>Assalomu alaykum xush kelibsiz, <b>{name}</b>!</i> 👋\n\n"
-            "<b>🎓 ILMIY YO'NALISHLAR:</b>\n"
-            " ┣ 📝 <i>Konferensiya tezisi</i>\n"
-            " ┣ 🔬 <i>Ilmiy maqola tezisi & maqola</i>\n"
-            " ┗ 🎓 <i>Dissertatsiya / Malakaviy ish</i>\n\n"
-            "<b>📰 OMMABOP YO'NALISHLAR:</b>\n"
-            " ┣ 📊 <i>Tahliliy tezislar</i>\n"
-            " ┣ 🔭 <i>Ilmiy-ommabop maqolalar</i>\n"
-            " ┗ 🎭 <i>Badiiy-publitsistik maqolalar</i>\n\n"
+            "<b>📚 XIZMATLARIMIZ:</b>\n"
+            " 📝 <i>Ilmiy konferensiya tezisi</i>\n"
+            " 📝 <i>Ilmiy maqola tezisi</i>\n"
+            " 🎓 <i>Dissertatsiya / Bitiruv malakaviy ishi</i>\n"
+            " 📊 <i>Ommabop / Tahliliy tezislar</i>\n"
+            " 🔬 <i>Ilmiy maqola</i>\n"
+            " 🔭 <i>Ilmiy-ommabop maqola</i>\n"
+            " 📰 <i>Ommabop maqola</i>\n"
+            " 🎭 <i>Badiiy-publitsistik maqola</i>\n\n"
             "👇 <b>Iltimos, pastdagi menyudan xizmat turini tanlang:</b>"
         ),
         "ru": (
