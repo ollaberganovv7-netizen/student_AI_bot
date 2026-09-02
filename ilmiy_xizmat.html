@@ -151,16 +151,12 @@
     document.getElementById('svc-desc').textContent = svc.desc;
     const slider = document.getElementById('pages');
     slider.min = svc.minP; slider.max = svc.maxP; slider.value = svc.minP;
-    const lc = Math.min(5, svc.maxP - svc.minP + 1);
-    const st = (svc.maxP - svc.minP) / Math.max(lc-1,1);
     const ticks = document.getElementById('range-labels');
     ticks.innerHTML = '';
-    
     ticks.style.display = 'block';
     ticks.style.position = 'relative';
     ticks.style.height = '15px';
-    for(let i=0; i<lc; i++) {
-        let val = Math.round(svc.minP + st*i);
+    for(let val = svc.minP; val <= svc.maxP; val++) {
         let pct = ((val - svc.minP) / (svc.maxP - svc.minP)) * 100;
         const s = document.createElement('span');
         s.textContent = val;
