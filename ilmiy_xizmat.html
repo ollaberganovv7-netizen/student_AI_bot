@@ -95,7 +95,6 @@
 <body>
 <div class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-icon" id="svc-icon">📝</div>
     <h1 id="svc-name">Ilmiy xizmat</h1>
     <p id="svc-desc">Sozlamalarni to'ldiring va yaratishni boshlang</p>
 </div>
@@ -148,7 +147,6 @@
     const params = new URLSearchParams(window.location.search);
     const key = params.get('service') || 'a_sci';
     const svc = SERVICES[key] || SERVICES['a_sci'];
-    document.getElementById('svc-icon').textContent = svc.icon;
     document.getElementById('svc-name').textContent = svc.name;
     document.getElementById('svc-desc').textContent = svc.desc;
     const slider = document.getElementById('pages');
