@@ -20,8 +20,8 @@ TEXTS = {
     # ─── Welcome / Main menu ─────────────────────────────────────────────
     "welcome": {
         "uz": (
-            "ㅤㅤㅤㅤㅤㅤㅤㅤ<b>USTOZ AI</b>\n\n"
-            "<i>Intellektual yordamchingizga xush kelibsiz, <b>{name}</b>!</i> 👋\n\n"
+            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<b>USTOZ AI</b>\n\n"
+            "<i>Assalomu alaykum xush kelibsiz, <b>{name}</b>!</i> 👋\n\n"
             "<b>🎓 ILMIY YO'NALISHLAR:</b>\n"
             " ┣ 📝 <i>Konferensiya tezisi</i>\n"
             " ┣ 🔬 <i>Ilmiy maqola tezisi & maqola</i>\n"
@@ -33,7 +33,7 @@ TEXTS = {
             "👇 <b>Iltimos, pastdagi menyudan xizmat turini tanlang:</b>"
         ),
         "ru": (
-            "ㅤㅤㅤㅤㅤㅤㅤㅤ<b>USTOZ AI</b>\n\n"
+            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<b>USTOZ AI</b>\n\n"
             "<i>Добро пожаловать, <b>{name}</b>!</i> 👋\n\n"
             "<b>🎓 НАУЧНЫЕ НАПРАВЛЕНИЯ:</b>\n"
             " ┣ 📝 <i>Тезис для конференции</i>\n"
@@ -46,7 +46,7 @@ TEXTS = {
             "👇 <b>Пожалуйста, выберите услугу из меню ниже:</b>"
         ),
         "en": (
-            "ㅤㅤㅤㅤㅤㅤㅤㅤ<b>USTOZ AI</b>\n\n"
+            "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀<b>USTOZ AI</b>\n\n"
             "<i>Welcome to your intellectual assistant, <b>{name}</b>!</i> 👋\n\n"
             "<b>🎓 SCIENTIFIC DIRECTIONS:</b>\n"
             " ┣ 📝 <i>Conference thesis</i>\n"
