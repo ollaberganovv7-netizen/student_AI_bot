@@ -5,8 +5,7 @@ import asyncio
 import logging
 from openai import AsyncOpenAI
 
-import os
-GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
+from config import GROQ_API_KEY
 if GROQ_API_KEY:
     groq_client = AsyncOpenAI(api_key=GROQ_API_KEY, base_url='https://api.groq.com/openai/v1')
 else:

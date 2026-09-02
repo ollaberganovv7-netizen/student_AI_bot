@@ -11,6 +11,7 @@ ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "@admin_username")
 WEBAPP_URL: str = os.getenv("WEBAPP_URL", "")
 
 # Claude (primary)
+GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
 ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL: str = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 
