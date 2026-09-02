@@ -155,7 +155,23 @@
     const st = (svc.maxP - svc.minP) / Math.max(lc-1,1);
     const ticks = document.getElementById('range-labels');
     ticks.innerHTML = '';
-    for(let i=0;i<lc;i++){const s=document.createElement('span');s.textContent=Math.round(svc.minP+st*i);ticks.appendChild(s);}
+    
+    ticks.style.display = 'block';
+    ticks.style.position = 'relative';
+    ticks.style.height = '15px';
+    for(let i=0; i<lc; i++) {
+        let val = Math.round(svc.minP + st*i);
+        let pct = ((val - svc.minP) / (svc.maxP - svc.minP)) * 100;
+        const s = document.createElement('span');
+        s.textContent = val;
+        s.style.position = 'absolute';
+        s.style.left = pct + '%';
+        if (pct === 0) s.style.transform = 'translateX(0)';
+        else if (pct === 100) s.style.transform = 'translateX(-100%)';
+        else s.style.transform = 'translateX(-50%)';
+        ticks.appendChild(s);
+    }
+    
     function fill(){const v=+slider.value,mn=+slider.min,mx=+slider.max;const p=mx===mn?100:((v-mn)/(mx-mn))*100;slider.style.background=`linear-gradient(to right,#7c3aed ${p}%,rgba(99,102,241,0.2) ${p}%)`;}
     function update(){
         const p=+slider.value;
