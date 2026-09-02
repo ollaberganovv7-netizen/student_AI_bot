@@ -1,264 +1,207 @@
 <!DOCTYPE html>
 <html lang="uz">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ilmiy Xizmat Sozlamalari</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Ilmiy Xizmat</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="static/styles.css">
     <style>
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            padding-bottom: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0f1e; color: #e2e8f0;
+            padding: 16px; padding-bottom: 90px; min-height: 100vh;
         }
-
-        .service-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 14px;
-            padding: 14px 16px;
+        body::before {
+            content:''; position:fixed; top:-80px; right:-80px; width:260px; height:260px;
+            background: radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%);
+            pointer-events:none; z-index:0;
         }
-
-        .service-badge .icon {
-            font-size: 28px;
-            line-height: 1;
+        body::after {
+            content:''; position:fixed; bottom:-80px; left:-80px; width:260px; height:260px;
+            background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
+            pointer-events:none; z-index:0;
         }
-
-        .service-badge .info {
-            flex: 1;
+        .content { position:relative; z-index:1; display:flex; flex-direction:column; gap:12px; }
+        .service-header {
+            background: linear-gradient(135deg, rgba(99,102,241,0.22) 0%, rgba(139,92,246,0.12) 100%);
+            border: 1px solid rgba(139,92,246,0.35); border-radius:20px; padding:16px;
+            display:flex; align-items:center; gap:14px; animation:slideDown 0.35s ease;
         }
-
-        .service-badge .info h2 {
-            margin: 0;
-            font-size: 15px;
-            font-weight: 700;
-            color: #e2e8f0;
+        .icon-wrap {
+            width:50px; height:50px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(139,92,246,0.25));
+            border-radius:14px; display:flex; align-items:center; justify-content:center;
+            font-size:24px; flex-shrink:0; border:1px solid rgba(139,92,246,0.25);
         }
-
-        .service-badge .info p {
-            margin: 3px 0 0;
-            font-size: 11px;
-            color: #94a3b8;
-            line-height: 1.4;
+        .svc-title { font-size:16px; font-weight:700; color:#f1f5f9; margin-bottom:3px; }
+        .svc-desc  { font-size:12px; color:#a78bfa; line-height:1.3; }
+        .input-card {
+            background: rgba(30,41,59,0.75); border:1px solid rgba(51,65,85,0.7);
+            border-radius:16px; padding:13px 15px;
+            transition: border-color 0.2s, background 0.2s; animation: fadeUp 0.4s ease both;
         }
-
-        .price-display {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--success, #10b981);
-            padding: 10px 0;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
-            border-radius: 12px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
+        .input-card:focus-within { border-color:rgba(99,102,241,0.55); background:rgba(30,41,59,0.95); }
+        .input-card label {
+            display:block; font-size:10px; font-weight:700; color:#64748b;
+            text-transform:uppercase; letter-spacing:0.8px; margin-bottom:7px;
         }
-
-        .words-box {
-            background: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.15);
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #93c5fd;
-            text-align: center;
+        .req { color:#ef4444; }
+        .opt { color:#475569; font-weight:400; text-transform:none; font-size:10px; letter-spacing:0; }
+        .input-card input {
+            width:100%; background:transparent; border:none; outline:none;
+            color:#f1f5f9; font-size:15px; font-family:inherit;
         }
-
-        .range-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: #64748b;
-            margin-top: 4px;
+        .input-card input::placeholder { color:#2d3f55; font-size:13px; }
+        .slider-card {
+            background: rgba(30,41,59,0.75); border:1px solid rgba(51,65,85,0.7);
+            border-radius:16px; padding:15px; animation: fadeUp 0.4s ease both;
         }
-
-        input[type="text"],
-        input[type="text"]:focus,
-        select {
-            width: 100%;
-            box-sizing: border-box;
+        .slider-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+        .slider-label { font-size:13px; color:#94a3b8; font-weight:500; }
+        .slider-val { font-size:26px; font-weight:800; color:#818cf8; line-height:1; }
+        .slider-val .unit { font-size:12px; color:#475569; font-weight:500; margin-left:3px; }
+        input[type="range"] {
+            -webkit-appearance:none; width:100%; height:5px;
+            background:rgba(51,65,85,0.9); border-radius:99px; outline:none; margin:4px 0;
         }
-
-        .textarea-field {
-            width: 100%;
-            box-sizing: border-box;
-            min-height: 70px;
-            resize: vertical;
-            background: var(--input-bg, #1e293b);
-            border: 1px solid var(--border, #334155);
-            border-radius: 10px;
-            padding: 10px 14px;
-            color: #e2e8f0;
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance:none; width:24px; height:24px; border-radius:50%;
+            background:linear-gradient(135deg,#818cf8,#6366f1); cursor:pointer;
+            border:3px solid #0a0f1e;
+            box-shadow:0 0 0 2px rgba(99,102,241,0.5),0 2px 8px rgba(99,102,241,0.3);
         }
-
-        .textarea-field:focus {
-            border-color: #6366f1;
+        .range-ticks { display:flex; justify-content:space-between; margin-top:7px; }
+        .range-ticks span { font-size:10px; color:#334155; }
+        .info-box {
+            background:rgba(59,130,246,0.07); border:1px solid rgba(59,130,246,0.15);
+            border-radius:12px; padding:10px 16px; font-size:12px; color:#7dd3fc;
+            text-align:center; animation:fadeUp 0.4s ease both;
         }
+        .price-box {
+            background:linear-gradient(135deg,rgba(16,185,129,0.13),rgba(5,150,105,0.06));
+            border:1px solid rgba(16,185,129,0.28); border-radius:18px; padding:20px;
+            text-align:center; animation:fadeUp 0.4s ease both;
+        }
+        .price-label { font-size:10px; font-weight:700; color:#6ee7b7; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+        .price-value { font-size:30px; font-weight:800; color:#10b981; letter-spacing:-0.5px; }
+        .price-note  { font-size:11px; color:#34d399; margin-top:5px; opacity:0.65; }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp    { from{opacity:0;transform:translateY(10px)}  to{opacity:1;transform:translateY(0)} }
+        .d1{animation-delay:.05s} .d2{animation-delay:.10s} .d3{animation-delay:.15s}
+        .d4{animation-delay:.20s} .d5{animation-delay:.25s} .d6{animation-delay:.30s}
     </style>
 </head>
-
 <body>
-
-    <!-- Xizmat badge -->
-    <div class="service-badge animate-in" id="service-badge">
-        <div class="icon" id="svc-icon">📝</div>
-        <div class="info">
-            <h2 id="svc-name">Ilmiy xizmat</h2>
-            <p id="svc-desc">Sozlamalarni to'ldiring va yaratishni boshlang</p>
+<div class="content">
+    <div class="service-header">
+        <div class="icon-wrap" id="svc-icon">📝</div>
+        <div>
+            <div class="svc-title" id="svc-name">Ilmiy xizmat</div>
+            <div class="svc-desc"  id="svc-desc">Sozlamalarni to'ldiring</div>
         </div>
     </div>
-
-    <!-- Mavzu -->
-    <div class="input-group animate-in">
-        <label>📌 Mavzu <span style="color:#ef4444">*</span></label>
-        <input type="text" id="topic" placeholder="Masalan: Sun'iy intellektning ta'limdagi o'rni">
+    <div class="input-card d1">
+        <label>📌 Mavzu <span class="req">*</span></label>
+        <input type="text" id="topic" placeholder="Masalan: Sun'iy intellektning ta'limdagi o'rni" autocomplete="off">
     </div>
-
-    <!-- Muallif -->
-    <div class="input-group animate-in">
-        <label>👤 Muallif ism-sharifi <span style="color:#ef4444">*</span></label>
-        <input type="text" id="author" placeholder="Masalan: Karimov Bobur Rashidovich">
+    <div class="input-card d2">
+        <label>👤 Muallif ism-sharifi <span class="req">*</span></label>
+        <input type="text" id="author" placeholder="Masalan: Karimov Bobur Rashidovich" autocomplete="off">
     </div>
-
-    <!-- Tashkilot va Ish joyi -->
-    <div class="input-group animate-in">
-        <label>🏛️ Tashkilot / Ish joyi va lavozimi <span style="color:#94a3b8; font-weight:400">(ixtiyoriy)</span></label>
-        <input type="text" id="workplace" placeholder="Masalan: Toshkent davlat texnika universiteti, dotsent">
+    <div class="input-card d3">
+        <label>🏛 Tashkilot / Lavozim <span class="opt">(ixtiyoriy)</span></label>
+        <input type="text" id="workplace" placeholder="Masalan: ToshDTU, dotsent" autocomplete="off">
     </div>
-
-
-
-    <!-- Sahifalar (faqat maqola uchun) -->
-    <div class="card animate-in" id="pages-card" style="padding:14px 16px;">
-        <div class="slider-header">
-            <span>📄 Hajmi (Sahifalar):</span>
-            <span class="slider-value" id="page-count">5</span>
+    <div class="slider-card d4">
+        <div class="slider-top">
+            <span class="slider-label">📄 Hajmi (sahifalar)</span>
+            <div class="slider-val" id="page-count">5<span class="unit">bet</span></div>
         </div>
         <input type="range" id="pages" min="3" max="15" step="1" value="5">
-        <div class="range-labels" id="range-labels">
+        <div class="range-ticks" id="range-labels">
             <span>3</span><span>6</span><span>9</span><span>12</span><span>15</span>
         </div>
     </div>
-
-    <!-- So'z soni va narx -->
-    <div class="words-box animate-in" id="words-info">
-        Hajmi: ~1 250 ta so'z
+    <div class="info-box d5" id="words-info">📊 Taxminiy hajm: ~1 250 ta so'z</div>
+    <div class="price-box d6">
+        <div class="price-label">💰 Xizmat narxi</div>
+        <div class="price-value" id="price-display">4 000 so'm</div>
+        <div class="price-note"  id="price-note">Sahifalar soniga qarab</div>
     </div>
+</div>
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.setBackgroundColor('#0a0f1e');
+    tg.setHeaderColor('#0a0f1e');
+    tg.MainButton.setText("\u2705 Yaratishni boshlash");
+    tg.MainButton.show();
 
-    <div class="price-display animate-in" id="price-display">
-        Bepul ✨
-    </div>
+    const SERVICES = {
+        "a_sci":     {icon:"\uD83D\uDD2C",name:"Ilmiy maqola",             desc:"OAK talablariga mos IMRAD strukturasi",       minP:5,maxP:15,basePrice:4000},
+        "a_pop_sci": {icon:"\uD83D\uDD2D",name:"Ilmiy-ommabop maqola",     desc:"Storytelling uslubida, keng kitobxon uchun",  minP:3,maxP:10,basePrice:3000},
+        "a_pop":     {icon:"\uD83D\uDCF0",name:"Ommabop maqola",           desc:"Jurnalistik uslub — fakt, tahlil, ta'sir",    minP:3,maxP:10,basePrice:3000},
+        "a_art":     {icon:"\uD83C\uDFAD",name:"Badiiy-publitsistik maqola",desc:"Obrazlar, metaforalar, emotsional ta'sir",   minP:3,maxP:10,basePrice:3000},
+        "t_conf":    {icon:"\uD83D\uDCDD",name:"Konferensiya tezisi",       desc:"OAK/Konferensiya talablari, 200-500 so'z",   minP:1,maxP:3, basePrice:2000},
+        "t_art":     {icon:"\uD83D\uDCC4",name:"Maqola tezisi (Abstract)",  desc:"3 tilda annotatsiya, kalit so'zlar",         minP:1,maxP:2, basePrice:1500},
+        "t_diss":    {icon:"\uD83C\uDF93",name:"Dissertatsiya tezisi",      desc:"Avtoreferat uslubi — pasport, natijalar",    minP:2,maxP:5, basePrice:3500},
+        "t_pop":     {icon:"\uD83D\uDCCA",name:"Ommabop / Tahliliy tezis", desc:"Executive Summary — bullet points, faktlar", minP:1,maxP:3, basePrice:2000},
+    };
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.setBackgroundColor('#0f172a');
-        tg.setHeaderColor('#0f172a');
-        tg.MainButton.text = "✅ Yaratishni boshlash";
-        tg.MainButton.show();
+    const params = new URLSearchParams(window.location.search);
+    const serviceKey = params.get('service') || 'a_sci';
+    const svc = SERVICES[serviceKey] || SERVICES['a_sci'];
 
-        // Xizmat turlari
-        const SERVICES = {
-            // Maqolalar
-            "a_sci":     { icon: "🔬", name: "Ilmiy maqola",              desc: "OAK talablariga mos IMRAD strukturasi", type: "maqola", minP: 5, maxP: 15, basePrice: 4000 },
-            "a_pop_sci": { icon: "🔭", name: "Ilmiy-ommabop maqola",      desc: "Storytelling uslubida, keng kitobxon uchun", type: "maqola", minP: 3, maxP: 10, basePrice: 3000 },
-            "a_pop":     { icon: "📰", name: "Ommabop maqola",            desc: "Jurnalistik uslub — fakt, tahlil, ta'sir", type: "maqola", minP: 3, maxP: 10, basePrice: 3000 },
-            "a_art":     { icon: "🎭", name: "Badiiy-publitsistik maqola", desc: "Obrazlar, metaforalar, emotsional ta'sir", type: "maqola", minP: 3, maxP: 10, basePrice: 3000 },
-            // Tezislar
-            "t_conf":    { icon: "📝", name: "Konferensiya tezisi",        desc: "OAK/Konferensiya talablari, 200-500 so'z", type: "tezis", minP: 1, maxP: 3, basePrice: 2000 },
-            "t_art":     { icon: "📝", name: "Maqola tezisi (Abstract)",   desc: "3 tilda annotatsiya, kalit so'zlar", type: "tezis", minP: 1, maxP: 2, basePrice: 1500 },
-            "t_diss":    { icon: "🎓", name: "Dissertatsiya tezisi",       desc: "Avtoreferat uslubi — pasport, natijalar, tavsiya", type: "tezis", minP: 2, maxP: 5, basePrice: 3500 },
-            "t_pop":     { icon: "📊", name: "Ommabop / Tahliliy tezis",   desc: "Executive Summary — bullet points, faktlar", type: "tezis", minP: 1, maxP: 3, basePrice: 2000 },
-        };
+    document.getElementById('svc-icon').textContent = svc.icon;
+    document.getElementById('svc-name').textContent = svc.name;
+    document.getElementById('svc-desc').textContent = svc.desc;
 
-        // URL parametridan xizmat turini aniqlash
-        const urlParams = new URLSearchParams(window.location.search);
-        const serviceKey = urlParams.get('service') || 'a_sci';
-        const svc = SERVICES[serviceKey] || SERVICES['a_sci'];
+    const pagesInput  = document.getElementById('pages');
+    const rangeLabels = document.getElementById('range-labels');
+    pagesInput.min = svc.minP; pagesInput.max = svc.maxP; pagesInput.value = svc.minP;
 
-        // Xizmat badge'ini yangilash
-        document.getElementById('svc-icon').textContent = svc.icon;
-        document.getElementById('svc-name').textContent = svc.name;
-        document.getElementById('svc-desc').textContent = svc.desc;
+    const lc = Math.min(5, svc.maxP - svc.minP + 1);
+    const st = (svc.maxP - svc.minP) / Math.max(lc - 1, 1);
+    rangeLabels.innerHTML = '';
+    for (let i = 0; i < lc; i++) {
+        const s = document.createElement('span');
+        s.textContent = Math.round(svc.minP + st * i);
+        rangeLabels.appendChild(s);
+    }
 
-        // Tezislar uchun sahifa diapazonini moslash
-        const pagesInput = document.getElementById('pages');
-        const rangeLabels = document.getElementById('range-labels');
-        pagesInput.min = svc.minP;
-        pagesInput.max = svc.maxP;
-        pagesInput.value = svc.minP;
+    function fill() {
+        const v = parseInt(pagesInput.value), mn = parseInt(pagesInput.min), mx = parseInt(pagesInput.max);
+        const p = mx === mn ? 100 : ((v - mn) / (mx - mn)) * 100;
+        pagesInput.style.background = `linear-gradient(to right,#6366f1 ${p}%,rgba(51,65,85,0.9) ${p}%)`;
+    }
 
-        // Range labels yangilash
-        const labelCount = Math.min(5, svc.maxP - svc.minP + 1);
-        const step = (svc.maxP - svc.minP) / (labelCount - 1);
-        rangeLabels.innerHTML = '';
-        for (let i = 0; i < labelCount; i++) {
-            const val = Math.round(svc.minP + step * i);
-            const span = document.createElement('span');
-            span.textContent = val;
-            rangeLabels.appendChild(span);
-        }
+    function updateUI() {
+        const p = parseInt(pagesInput.value);
+        document.getElementById('page-count').innerHTML = p + '<span class="unit">bet</span>';
+        document.getElementById('words-info').textContent = '\uD83D\uDCCA Taxminiy hajm: ~' + (p * 250).toLocaleString('ru-RU') + ' ta so\'z';
+        const price = svc.basePrice + (p - svc.minP) * 500;
+        document.getElementById('price-display').textContent = price <= 0 ? 'Bepul \u2728' : price.toLocaleString('ru-RU') + " so'm";
+        document.getElementById('price-note').textContent   = price <= 0 ? 'Birinchi marta tekin!' : 'Sahifalar soniga qarab';
+        fill();
+    }
 
-        const pageCountDisp = document.getElementById('page-count');
-        const priceDisp = document.getElementById('price-display');
-        const wordsInfo = document.getElementById('words-info');
+    pagesInput.addEventListener('input', updateUI);
+    updateUI();
 
-        function updateUI() {
-            const pages = parseInt(pagesInput.value);
-            pageCountDisp.textContent = pages;
-
-            const words = pages * 250;
-            wordsInfo.textContent = `Hajmi: ~${words.toLocaleString()} ta so'z`;
-
-            const price = svc.basePrice + (pages - svc.minP) * 500;
-            if (price <= 0) {
-                priceDisp.textContent = "Bepul ✨";
-            } else {
-                priceDisp.textContent = price.toLocaleString() + " so'm";
-            }
-        }
-
-        pagesInput.addEventListener('input', updateUI);
-        updateUI();
-
-        // Yuborish
-        tg.MainButton.onClick(() => {
-            const topic = document.getElementById('topic').value.trim();
-            const author = document.getElementById('author').value.trim();
-
-            if (topic.length < 5) {
-                tg.showAlert("❌ Iltimos, mavzuni to'liqroq kiriting (kamida 5 ta belgi).");
-                return;
-            }
-            if (author.length < 3) {
-                tg.showAlert("❌ Iltimos, muallif ismini kiriting.");
-                return;
-            }
-
-            const data = {
-                type: "ilmiy_xizmat",
-                service_key: serviceKey,
-                topic: topic,
-                author: author,
-                workplace: document.getElementById('workplace').value.trim(),
-                language: 'uz',
-                pages: parseInt(pagesInput.value),
-                keywords: '',
-                research_details: ''
-            };
-
-            tg.sendData(JSON.stringify(data));
-        });
-    </script>
+    tg.MainButton.onClick(() => {
+        const topic  = document.getElementById('topic').value.trim();
+        const author = document.getElementById('author').value.trim();
+        if (topic.length  < 5) { tg.showAlert("\u274C Iltimos, mavzuni to\'liqroq kiriting (kamida 5 ta belgi)."); return; }
+        if (author.length < 3) { tg.showAlert("\u274C Iltimos, muallif ismini kiriting."); return; }
+        tg.sendData(JSON.stringify({
+            type: "ilmiy_xizmat", service_key: serviceKey,
+            topic, author,
+            workplace: document.getElementById('workplace').value.trim(),
+            language: 'uz', pages: parseInt(pagesInput.value),
+            keywords: '', research_details: ''
+        }));
+    });
+</script>
 </body>
-
 </html>
