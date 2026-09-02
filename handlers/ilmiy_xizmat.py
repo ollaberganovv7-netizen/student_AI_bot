@@ -271,7 +271,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
         f"{icon} <b>{name_uz}</b>\n\n"
         f"<i>{description}</i>\n\n"
         f"💰 <b>Narxi:</b> {price_text}\n"
-        f"📊 <b>Balansingiz:</b> {format_price(balance)} so'm\n\n"
+        f"📊 <b>Balansingiz:</b> {format_price(balance)}\n\n"
         f"👇 <b>Ma'lumotlarni to'ldirish uchun pastdagi tugmani bosing:</b>",
         reply_markup=ReplyKeyboardMarkup(
             keyboard=[
