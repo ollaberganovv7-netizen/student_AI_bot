@@ -4,6 +4,32 @@ import json
 import asyncio
 import logging
 from openai import AsyncOpenAI
+
+import os
+GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
+if GROQ_API_KEY:
+    groq_client = AsyncOpenAI(api_key=GROQ_API_KEY, base_url='https://api.groq.com/openai/v1')
+else:
+    groq_client = None
+
+async def _call_groq(messages, max_tokens=3000, temperature=0.8, json_mode=False):
+    if not groq_client:
+        raise RuntimeError('Groq not configured')
+    
+    model = 'qwen/qwen3.8-27b' # good default for Groq
+    
+    kwargs = {
+        'model': model,
+        'messages': messages,
+        'temperature': temperature,
+        'max_tokens': max_tokens
+    }
+    if json_mode:
+        kwargs['response_format'] = {'type': 'json_object'}
+        
+    resp = await groq_client.chat.completions.create(**kwargs)
+    return resp.choices[0].message.content
+
 from config import OPENAI_API_KEY, OPENAI_MODEL, ANTHROPIC_API_KEY, CLAUDE_MODEL
 
 logger = logging.getLogger(__name__)
@@ -204,20 +230,25 @@ async def _call_openai(messages, max_tokens=3000, temperature=0.8, json_mode=Fal
 
 
 async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=2):
-    """Call Claude (primary) → OpenAI (fallback) with retries."""
-    # Try Claude first
+    # 1. Try Groq first
+    if groq_client:
+        for attempt in range(1):
+            try:
+                result = await _call_groq(messages, max_tokens, temperature, json_mode)
+                return result
+            except Exception as e:
+                logger.warning(f"Groq attempt failed: {e}")
+    
+    # 2. Try Claude
     if _claude_client:
-        for attempt in range(retries):
+        for attempt in range(1):
             try:
                 result = await _call_claude(messages, max_tokens, temperature, json_mode)
                 return result
             except Exception as e:
-                logger.warning(f"Claude attempt {attempt+1}/{retries} failed: {e}")
-                if attempt < retries - 1:
-                    await asyncio.sleep(1)
-        logger.warning("Claude failed, falling back to OpenAI...")
-    
-    # Fallback to OpenAI
+                logger.warning(f"Claude attempt failed: {e}")
+
+    # 3. Try OpenAI
     for attempt in range(retries):
         try:
             result = await _call_openai(messages, max_tokens, temperature, json_mode)
@@ -225,6 +256,7 @@ async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, 
         except Exception as e:
             logger.warning(f"OpenAI attempt {attempt+1}/{retries} failed: {e}")
             if attempt < retries - 1:
+                import asyncio
                 await asyncio.sleep(2 ** attempt)
             else:
                 raise

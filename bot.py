@@ -55,6 +55,7 @@ async def main():
     )
     fsm_storage = SQLiteStorage(db_path="fsm_storage.db")
     dp = Dispatcher(storage=fsm_storage)
+    bot.fsm_storage = fsm_storage
 
     # Register middleware on all updates
     # Order matters: throttling FIRST (to drop spam early), then register, then lock

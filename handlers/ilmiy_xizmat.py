@@ -22,6 +22,8 @@ Tugmalar:
 import os
 import asyncio
 import json
+import base64
+import httpx
 from aiogram import Router, F
 from aiogram.types import (
     Message, CallbackQuery, BufferedInputFile,
@@ -45,11 +47,12 @@ router = Router()
 # ─── FSM States ──────────────────────────────────────────────────────────────
 
 class IlmiyXizmatStates(StatesGroup):
-    waiting_topic   = State()   # Mavzu kutilmoqda
-    waiting_pages   = State()   # Sahifa soni kutilmoqda
-    waiting_author  = State()   # Muallif ismi kutilmoqda
-    waiting_confirm = State()   # Tasdiqlash kutilmoqda
-    generating      = State()   # AI yozmoqda
+    waiting_topic         = State()   # Mavzu kutilmoqda
+    waiting_pages         = State()   # Sahifa soni kutilmoqda
+    waiting_author        = State()   # Muallif ismi kutilmoqda
+    waiting_confirm       = State()   # Tasdiqlash kutilmoqda
+    waiting_payment_check = State()   # To'lov cheki kutilmoqda
+    generating            = State()   # AI yozmoqda
 
 
 # ─── Service config ───────────────────────────────────────────────────────────
@@ -380,55 +383,81 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             await state.clear()
             return
 
-        # Tasdiqlash xabari va generatsiyani boshlash
-        cancel_flag = {"cancelled": False}
-        await state.update_data(cancel_flag=cancel_flag)
-        await state.set_state(IlmiyXizmatStates.generating)
+        # ── To'lov oqimi ──────────────────────────────────────────────────
+        # Admin va bepul foydalanuvchilar to'g'ridan-to'g'ri yaratadi
+        if is_admin or free_trial:
+            cancel_flag = {"cancelled": False}
+            await state.update_data(cancel_flag=cancel_flag)
+            await state.set_state(IlmiyXizmatStates.generating)
 
-        cancel_kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="❌ To'xtatish", callback_data="ilmiy_stop")]
+            cancel_kb = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="❌ To'xtatish", callback_data="ilmiy_stop")]
+            ])
+
+            wait_msg = await message.answer(
+                f"⏳ <b>{name_uz} yaratilmoqda...</b>\n"
+                f"📌 Mavzu: <i>{topic}</i>\n"
+                f"👤 Muallif: {author}\n\n"
+                f"🧠 AI yozmoqda... 3-5 daqiqa sabr qiling.\n"
+                f"⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+                parse_mode="HTML",
+                reply_markup=cancel_kb
+            )
+
+            lang_map = {
+                "uz": "O'zbek tilida (Lotin alifbosida)",
+                "ru": "Rus tilida (На русском языке)",
+                "en": "Ingliz tilida (In English)"
+            }
+            lang_instruction = lang_map.get(lang, "O'zbek tilida")
+            system_prompt    = build_system_prompt(service_key, lang_instruction)
+
+            await _run_generation(
+                message=message, state=state, db_user=db_user,
+                wait_msg=wait_msg, cancel_flag=cancel_flag, cancel_kb=cancel_kb,
+                service_key=service_key, name_uz=name_uz, icon=icon,
+                svc_type=svc_type, topic=topic, author=author, pages=pages,
+                price_key=price_key, price=0, lang=lang,
+                lang_instruction=lang_instruction, system_prompt=system_prompt,
+                is_admin=is_admin, free_trial=free_trial,
+            )
+            return
+
+        # ── Tolov tugmasi ──────────────────────────────────────────────────
+        from config import CARDS
+        await state.update_data(
+            pending_price=price,
+            pending_service_key=service_key,
+            pending_name_uz=name_uz,
+            pending_icon=icon,
+            pending_svc_type=svc_type,
+            pending_topic=topic,
+            pending_author=author,
+            pending_pages=pages,
+            pending_price_key=price_key,
+            pending_lang=lang,
+        )
+        await state.set_state(IlmiyXizmatStates.waiting_payment_check)
+
+        # Kartalar matni
+        cards_text = ""
+        for i, card in enumerate(CARDS[:2], 1):
+            cards_text += f"\n🏦 <b>{i}-Karta:</b> <code>{card['number']}</code>\n👤 <b>Ega:</b> {card['holder']}\n"
+
+        price_fmt = f"{price:,}".replace(",", " ")
+        pay_kb = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="💳 Hisobni to'ldirish (Chek yuborish)", callback_data="ilmiy_pay_upload")]
         ])
 
-        wait_msg = await message.answer(
-            f"⏳ <b>{name_uz} yaratilmoqda...</b>\n"
-            f"📌 Mavzu: <i>{topic}</i>\n"
-            f"👤 Muallif: {author}\n\n"
-            f"🧠 AI yozmoqda... 3-5 daqiqa sabr qiling.\n"
-            f"⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+        await message.answer(
+            f"💰 <b>To'lov ma'lumotlari</b>\n\n"
+            f"📌 Xizmat: <b>{icon} {name_uz}</b>\n"
+            f"📄 Sahifalar: <b>{pages} bet</b>\n"
+            f"💵 To'lov miqdori: <b>{price_fmt} so'm</b>\n\n"
+            f"Quyidagi kartalardan biriga o'tkazing:{cards_text}\n"
+            f"✅ To'lovni amalga oshirgach, <b>to'lov cheki (skrinshotini)</b> yuboring.",
             parse_mode="HTML",
-            reply_markup=cancel_kb
-        )
-
-        # Tilga mos yo'riqnoma
-        lang_map = {
-            "uz": "O'zbek tilida (Lotin alifbosida)",
-            "ru": "Rus tilida (На русском языке)",
-            "en": "Ingliz tilida (In English)"
-        }
-        lang_instruction = lang_map.get(lang, "O'zbek tilida")
-        system_prompt    = build_system_prompt(service_key, lang_instruction)
-
-        await _run_generation(
-            message=message,
-            state=state,
-            db_user=db_user,
-            wait_msg=wait_msg,
-            cancel_flag=cancel_flag,
-            cancel_kb=cancel_kb,
-            service_key=service_key,
-            name_uz=name_uz,
-            icon=icon,
-            svc_type=svc_type,
-            topic=topic,
-            author=author,
-            pages=pages,
-            price_key=price_key,
-            price=price,
-            lang=lang,
-            lang_instruction=lang_instruction,
-            system_prompt=system_prompt,
-            is_admin=is_admin,
-            free_trial=free_trial,
+            reply_markup=pay_kb
         )
 
     except Exception as e:
@@ -438,6 +467,263 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             reply_markup=main_menu_kb(),
             parse_mode="HTML"
         )
+
+
+
+
+# ─── To'lov cheki yutish handler ─────────────────────────────────────────────
+
+@router.callback_query(F.data == "ilmiy_pay_upload", IlmiyXizmatStates.waiting_payment_check)
+async def ilmiy_pay_upload(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(
+        "📸 Iltimos, <b>to'lov cheki (skrinshot)</b>ini yuboring.\n"
+        "Bot uni avtomatik tekshiradi.",
+        parse_mode="HTML"
+    )
+    await callback.answer()
+
+
+@router.message(IlmiyXizmatStates.waiting_payment_check, F.photo)
+async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User):
+    """Foydalanuvchi to'lov skrinshotini yubordi. AI tekshiradi."""
+    data = await state.get_data()
+    price = data.get("pending_price", 0)
+    pages = data.get("pending_pages", 8)
+    service_name = data.get("pending_name_uz", "Xizmat")
+    price_fmt = f"{price:,}".replace(",", " ")
+
+    check_msg = await message.answer("🔍 <b>To'lov tekshirilmoqda...</b>", parse_mode="HTML")
+
+    # Download photo
+    try:
+        photo = message.photo[-1]
+        from aiogram import Bot
+        bot: Bot = message.bot
+        file = await bot.get_file(photo.file_id)
+        file_bytes = await bot.download_file(file.file_path)
+        img_b64 = base64.b64encode(file_bytes.read()).decode()
+    except Exception as e:
+        await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
+        return
+
+    # Groq vision check
+    from config import ADMIN_IDS
+    import os
+    groq_key = os.getenv("GROQ_API_KEY", "")
+
+    prompt = (
+        f"Bu to'lov cheki (skrinshoti). Tekshir:\n"
+        f"1) Aynan {price_fmt} so'm o'tkazilganmi?\n"
+        f"2) To'lov muvaffaqiyatli yakunlanganmi?\n"
+        f"Faqat JSON qaytargin: {{\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}}"
+    )
+
+    verified = False
+    found_amount = None
+    reason = "AI tekshirishda xatolik"
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as hclient:
+            resp = await hclient.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+                    "messages": [{"role": "user", "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}}
+                    ]}],
+                    "max_tokens": 200,
+                    "temperature": 0
+                }
+            )
+        result_text = resp.json()["choices"][0]["message"]["content"]
+        # Extract JSON
+        import re as _re
+        json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+        if json_match:
+            result_json = json.loads(json_match.group())
+            verified = result_json.get("verified", False)
+            found_amount = result_json.get("found_amount")
+            reason = result_json.get("reason", "")
+    except Exception as e:
+        reason = f"AI xatolik: {e}"
+        verified = False
+
+    if verified:
+        # AI tasdiqladi - generatsiyani boshlash
+        await check_msg.edit_text(
+            f"✅ <b>To'lov tasdiqlandi!</b>\n"
+            f"💵 Miqdor: {price_fmt} so'm\n"
+            f"🚀 Hujjat yaratilmoqda...",
+            parse_mode="HTML"
+        )
+        await _start_generation_after_payment(message, state, db_user)
+    else:
+        # Adminga yuborish
+        admin_id = ADMIN_IDS[0] if ADMIN_IDS else None
+        if admin_id:
+            admin_kb = InlineKeyboardMarkup(inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"admin_pay_ok:{message.from_user.id}"),
+                    InlineKeyboardButton(text="❌ Rad etish", callback_data=f"admin_pay_no:{message.from_user.id}")
+                ]
+            ])
+            # Store user data for admin approval
+            import json as _json
+            state_data_str = _json.dumps({
+                "user_id": message.from_user.id,
+                "user_name": message.from_user.full_name,
+                "price": price,
+                "pages": pages,
+                "service_name": service_name,
+                "reason": reason,
+                "found_amount": found_amount
+            })
+            # Forward photo to admin
+            await bot.send_photo(
+                admin_id,
+                photo.file_id,
+                caption=(
+                    f"⚠️ <b>To'lov tekshirish talab etiladi</b>\n\n"
+                    f"👤 Foydalanuvchi: {message.from_user.full_name} (@{message.from_user.username})\n"
+                    f"🆔 ID: <code>{message.from_user.id}</code>\n"
+                    f"📄 Xizmat: {service_name} ({pages} bet)\n"
+                    f"💵 Kerakli summa: <b>{price_fmt} so'm</b>\n"
+                    f"🔍 AI topgani: {found_amount or 'topilmadi'}\n"
+                    f"📝 Sabab: {reason}"
+                ),
+                parse_mode="HTML",
+                reply_markup=admin_kb
+            )
+
+        await check_msg.edit_text(
+            f"⚠️ <b>To'lov avtomatik tasdiqlanmadi.</b>\n\n"
+            f"🔍 Sabab: {reason}\n\n"
+            f"📨 Administrator tekshirmoqda. 5-10 daqiqa kuting.",
+            parse_mode="HTML"
+        )
+
+
+async def _start_generation_after_payment(message: Message, state: FSMContext, db_user: User):
+    """To'lov tasdiqlangandan keyin generatsiyani boshlash."""
+    data = await state.get_data()
+    service_key = data.get("pending_service_key")
+    name_uz     = data.get("pending_name_uz")
+    icon        = data.get("pending_icon")
+    svc_type    = data.get("pending_svc_type")
+    topic       = data.get("pending_topic")
+    author      = data.get("pending_author")
+    pages       = data.get("pending_pages")
+    price_key   = data.get("pending_price_key")
+    price       = data.get("pending_price", 0)
+    lang        = data.get("pending_lang", "uz")
+
+    lang_map = {
+        "uz": "O'zbek tilida (Lotin alifbosida)",
+        "ru": "Rus tilida (На русском языке)",
+        "en": "Ingliz tilida (In English)"
+    }
+    lang_instruction = lang_map.get(lang, "O'zbek tilida")
+    system_prompt    = build_system_prompt(service_key, lang_instruction)
+
+    cancel_flag = {"cancelled": False}
+    await state.update_data(cancel_flag=cancel_flag)
+    await state.set_state(IlmiyXizmatStates.generating)
+
+    cancel_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="❌ To'xtatish", callback_data="ilmiy_stop")]
+    ])
+
+    wait_msg = await message.answer(
+        f"⏳ <b>{name_uz} yaratilmoqda...</b>\n"
+        f"📌 Mavzu: <i>{topic}</i>\n"
+        f"👤 Muallif: {author}\n\n"
+        f"🧠 AI yozmoqda... 3-5 daqiqa sabr qiling.\n"
+        f"⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+        parse_mode="HTML",
+        reply_markup=cancel_kb
+    )
+
+    await _run_generation(
+        message=message, state=state, db_user=db_user,
+        wait_msg=wait_msg, cancel_flag=cancel_flag, cancel_kb=cancel_kb,
+        service_key=service_key, name_uz=name_uz, icon=icon,
+        svc_type=svc_type, topic=topic, author=author, pages=pages,
+        price_key=price_key, price=price, lang=lang,
+        lang_instruction=lang_instruction, system_prompt=system_prompt,
+        is_admin=False, free_trial=False,
+    )
+
+
+# ─── Admin tasdiqlash/rad etish handler ──────────────────────────────────────
+
+@router.callback_query(F.data.startswith("admin_pay_ok:"))
+async def admin_approve_payment(callback: CallbackQuery, state: FSMContext):
+    """Admin to'lovni tasdiqladi."""
+    user_id = int(callback.data.split(":")[1])
+    await callback.message.edit_caption(
+        callback.message.caption + "\n\n✅ <b>ADMIN TASDIQLADI</b>",
+        parse_mode="HTML",
+        reply_markup=None
+    )
+    # User'ga xabar
+    bot = callback.message.bot
+    await bot.send_message(
+        user_id,
+        "✅ <b>To'lovingiz tasdiqlandi!</b>\n🚀 Hujjat yaratilmoqda...",
+        parse_mode="HTML"
+    )
+    # Generatsiyani boshlash - FSM storage dan o'qib
+    from aiogram.fsm.storage.base import StorageKey
+    storage = getattr(callback.bot, 'fsm_storage', None)
+    if storage:
+        key = StorageKey(bot_id=callback.bot.id, chat_id=user_id, user_id=user_id)
+        
+        # We need db_user and state
+        from database.db import get_user
+        from aiogram.fsm.context import FSMContext
+        db_user = await get_user(user_id)
+        
+        # Create a mock state
+        user_state = FSMContext(storage=storage, key=key)
+        
+        # Create a mock message to pass to _start_generation_after_payment
+        class MockMessage:
+            def __init__(self, bot, chat_id):
+                self.bot = bot
+                self.chat = type('Chat', (), {'id': chat_id})
+                self.from_user = type('User', (), {'id': chat_id})
+                
+            async def answer(self, text, **kwargs):
+                return await self.bot.send_message(self.chat.id, text, **kwargs)
+                
+        mock_msg = MockMessage(callback.bot, user_id)
+        
+        import asyncio
+        asyncio.create_task(_start_generation_after_payment(mock_msg, user_state, db_user))
+        
+    await callback.answer("✅ Tasdiqlandi, hujjat yaratilmoqda!")
+
+
+@router.callback_query(F.data.startswith("admin_pay_no:"))
+async def admin_reject_payment(callback: CallbackQuery):
+    """Admin to'lovni rad etdi."""
+    user_id = int(callback.data.split(":")[1])
+    await callback.message.edit_caption(
+        callback.message.caption + "\n\n❌ <b>ADMIN RAD ETDI</b>",
+        parse_mode="HTML",
+        reply_markup=None
+    )
+    bot = callback.message.bot
+    await bot.send_message(
+        user_id,
+        "❌ <b>To'lovingiz tasdiqlanmadi.</b>\n\n"
+        "Sabab: Yuborilgan summa yoki karta raqami mos kelmadi.\n"
+        "To'g'ri to'lov qilib, yana chek yuboring.",
+        parse_mode="HTML"
+    )
+    await callback.answer("❌ Rad etildi!")
 
 
 # ─── Topic received (fallback uchun) ─────────────────────────────────────────
@@ -858,6 +1144,274 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             text="🏠 Bosh menyu:",
             reply_markup=main_menu_kb()
         )
+
+
+
+async def _run_generation(
+    message, state, db_user, wait_msg, cancel_flag, cancel_kb,
+    service_key, name_uz, icon, svc_type, topic, author, pages,
+    price_key, price, lang, lang_instruction, system_prompt,
+    is_admin, free_trial
+):
+    try:
+        from services.ai_service import _call_ai
+
+        # ── Tezis: oddiy bir qadamli generatsiya ─────────────────────────────
+        if svc_type == "tezis":
+            user_prompt = (
+                f"Mavzu: {topic}\n"
+                f"Muallif: {author}\n"
+                f"Iltimos, yuqorida berilgan ko'rsatmalarga qat'iy amal qilib yoz."
+            )
+            content = await _call_ai(
+                [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                max_tokens=3000,
+                temperature=0.65
+            )
+
+            if cancel_flag.get("cancelled"):
+                await state.clear()
+                return
+
+            try:
+                await wait_msg.edit_text(
+                    "📝 <b>Tezis yozildi!</b> Hujjat tayyorlanmoqda...",
+                    parse_mode="HTML"
+                )
+            except:
+                pass
+
+            # DOCX yaratish
+            title_line = f"{icon} {name_uz.upper()}"
+            author_line = f"Muallif: {author}"
+            full_text = f"{title_line}\n{author_line}\n\nMavzu: {topic}\n\n{content}"
+
+            doc_buf = await asyncio.get_event_loop().run_in_executor(
+                None, generate_docx, full_text, topic
+            )
+            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+
+            # To'lov va yozuv
+            if not is_admin:
+                if free_trial:
+                    await mark_free_used(db_user.id)
+                elif price > 0:
+                    await deduct_balance(db_user.id, price)
+
+            if not is_admin:
+                await create_request(
+                    user_id=db_user.id,
+                    service_type=service_key,
+                    topic=topic,
+                    pages=pages,
+                    price=price
+                )
+
+            await wait_msg.delete()
+            await wait_msg.bot.send_document(
+                chat_id=wait_msg.chat.id,
+                document=doc_file,
+                caption=(
+                    f"✅ <b>{name_uz} tayyor!</b>\n"
+                    f"📌 Mavzu: <i>{topic}</i>\n"
+                    f"👤 Muallif: {author}\n"
+                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                    f"🌟 <b>USTOZ AI</b> — Professional akademik yordamchi"
+                ),
+                parse_mode="HTML",
+                reply_markup=main_menu_kb(lang)
+            )
+            await state.clear()
+
+        # ── Maqola: bo'limma-bo'lim generatsiya ──────────────────────────────
+        else:
+            total_words = pages * 250
+
+            # Step 1: Reja tuzish
+            try:
+                await wait_msg.edit_text(
+                    f"🧠 <b>Reja tuzilmoqda...</b>\n"
+                    f"⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+                    parse_mode="HTML", reply_markup=cancel_kb
+                )
+            except:
+                pass
+
+            plan_prompt = (
+                f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                "Ushbu mavzu uchun ilmiy maqola reja tuzing. FAQAT shu formatda:\n"
+                "1. [Birinchi asosiy bo'lim]\n"
+                "1.1. [Kichik bo'lim]\n"
+                "1.2. [Kichik bo'lim]\n"
+                "2. [Ikkinchi asosiy bo'lim]\n"
+                "2.1. [Kichik bo'lim]\n"
+                "2.2. [Kichik bo'lim]\n"
+                "Boshqa hech narsa yozma."
+            )
+            plan_text = await _call_ai(
+                [{"role": "user", "content": plan_prompt}],
+                max_tokens=400, temperature=0.5
+            )
+
+            import re as re_mod
+            plan_titles = {}
+            for line in plan_text.split("\n"):
+                line = line.strip()
+                m = re_mod.match(r'^(\d+(?:\.\d+)?)\.?\s+(.+)', line)
+                if m:
+                    plan_titles[m.group(1)] = m.group(2).strip()
+
+            if cancel_flag.get("cancelled"):
+                await state.clear()
+                return
+
+            w = max(200, total_words // 7)
+
+            sections = [
+                ("annotatsiya", "ANNOTATSIYA",
+                 f"'{topic}' maqolasi uchun annotatsiya yoz (100-250 so'z). "
+                 f"Format: Muammo -> Maqsad -> Metod -> Natija -> Xulosa. "
+                 f"Muallif: {author}. Sarlavha YOZMA."),
+                ("kalit", "KALIT SO'ZLAR",
+                 f"'{topic}' mavzusiga oid 7 ta kalit so'z yoz. "
+                 f"Faqat vergul bilan ajratilgan so'zlar."),
+                ("kirish", "KIRISH",
+                 f"'{topic}' maqolasining KIRISH qismini yoz. "
+                 f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA."),
+                ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun akademik matn. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun nazariy tahlil. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun empirik tahlil. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur tahlil. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun amaliy misollar. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
+                 f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun taqqoslash. "
+                 f"{w} so'z. Sarlavha YOZMA."),
+                ("xulosa", "XULOSA",
+                 f"'{topic}' maqolasining XULOSA va TAVSIYALAR qismini yoz. "
+                 f"{max(100, w//2)} so'z. Sarlavha YOZMA."),
+                ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                 f"'{topic}' mavzusiga oid 10-15 ta REAL ilmiy manba ro'yxati. "
+                 f"APA yoki GOST formatida. 4-5 ta O'zbek muallifi bo'lsin. "
+                 f"Faqat ro'yxat — hech narsa qo'shma."),
+            ]
+
+            sections_content = {}
+            total_sections = len(sections)
+            progress_chars = ["⬛", "🟩"]
+
+            for idx, (key, section_name, user_prompt_text) in enumerate(sections, 1):
+                if cancel_flag.get("cancelled"):
+                    await state.clear()
+                    return
+
+                progress = int((idx / total_sections) * 10)
+                bar = "🟩" * progress + "⬜" * (10 - progress)
+                try:
+                    await wait_msg.edit_text(
+                        f"✍️ <b>Yozilmoqda: {section_name}</b>\n"
+                        f"{bar} {idx}/{total_sections}\n\n"
+                        f"📌 <i>{topic}</i>",
+                        parse_mode="HTML", reply_markup=cancel_kb
+                    )
+                except:
+                    pass
+
+                section_content = await _call_ai(
+                    [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt_text}
+                    ],
+                    max_tokens=2500,
+                    temperature=0.7
+                )
+                sections_content[key] = (section_name, section_content)
+                await asyncio.sleep(0.3)
+
+            if cancel_flag.get("cancelled"):
+                await state.clear()
+                return
+
+            # Hujjatni yig'ish
+            try:
+                await wait_msg.edit_text(
+                    "📄 <b>Hujjat tayyorlanmoqda...</b>\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩",
+                    parse_mode="HTML"
+                )
+            except:
+                pass
+
+            full_parts = [f"{icon} {name_uz.upper()}\n\nMavzu: {topic}\nMuallif: {author}\n"]
+            for key, (sec_name, sec_content) in sections_content.items():
+                full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
+            full_text = "\n".join(full_parts)
+
+            doc_buf = await asyncio.get_event_loop().run_in_executor(
+                None, generate_docx, full_text, topic
+            )
+            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+
+            # To'lov va yozuv
+            if not is_admin:
+                if free_trial:
+                    await mark_free_used(db_user.id)
+                elif price > 0:
+                    await deduct_balance(db_user.id, price)
+
+            if not is_admin:
+                await create_request(
+                    user_id=db_user.id,
+                    service_type=service_key,
+                    topic=topic,
+                    pages=pages,
+                    price=price
+                )
+
+            await wait_msg.delete()
+            await wait_msg.bot.send_document(
+                chat_id=wait_msg.chat.id,
+                document=doc_file,
+                caption=(
+                    f"✅ <b>{name_uz} tayyor!</b>\n"
+                    f"📌 Mavzu: <i>{topic}</i>\n"
+                    f"👤 Muallif: {author}\n"
+                    f"📄 ~{pages} sahifa\n"
+                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                    f"🌟 <b>USTOZ AI</b> — Professional akademik yordamchi"
+                ),
+                parse_mode="HTML",
+                reply_markup=main_menu_kb(lang)
+            )
+            await state.clear()
+
+    except Exception as e:
+        await state.clear()
+        try:
+            await wait_msg.edit_text(
+                f"❌ <b>Xatolik yuz berdi:</b>\n<code>{str(e)[:200]}</code>\n\n"
+                f"Qayta urinib ko'ring.",
+                parse_mode="HTML"
+            )
+        except:
+            pass
+        await wait_msg.bot.send_message(
+            chat_id=wait_msg.chat.id,
+            text="🏠 Bosh menyu:",
+            reply_markup=main_menu_kb()
+        )
+
 
 
 # ─── Stop generation ──────────────────────────────────────────────────────────
