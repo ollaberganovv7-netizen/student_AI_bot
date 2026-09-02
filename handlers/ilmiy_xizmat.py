@@ -61,7 +61,7 @@ SERVICE_CONFIG = {
     # KEY: (icon, display_name_uz, pages_default, price_key, type)
     # type: "maqola" | "tezis"
     "a_sci": (
-        "🔬", "Ilmiy maqola", 7, "maqola_7", "maqola",
+        "🔬", "Ilmiy maqola", 8, "maqola_7", "maqola",
         "OAK (Oliy attestatsiya komissiyasi) talablariga mos TO'LIQ ilmiy maqola",
     ),
     "a_pop_sci": (
@@ -373,7 +373,35 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
         # To'lov tekshiruvi
         is_admin = False # Hozircha admin tekshiruvini o'chirib turamiz, test qilishlari uchun
         free_trial = is_free_trial(db_user)
-        price = PRICING.get(price_key, 3000)
+        
+        # Dynamic pricing based on pages (matching WebApp)
+        if service_key == "a_sci":
+            min_p = 8
+            base = 5000
+            step = 1400
+        elif service_key in ["a_pop_sci", "a_pop", "a_art"]:
+            min_p = 3
+            base = 3000
+            step = 500
+        elif service_key in ["t_conf", "t_pop"]:
+            min_p = 1
+            base = 2000
+            step = 500
+        elif service_key == "t_art":
+            min_p = 1
+            base = 1500
+            step = 500
+        elif service_key == "t_diss":
+            min_p = 2
+            base = 3500
+            step = 500
+        else:
+            min_p = 1
+            base = 3000
+            step = 500
+            
+        calc_price = base + max(0, (pages - min_p)) * step
+        price = round(calc_price / 1000) * 1000
         
         if free_trial:
             price = 0
