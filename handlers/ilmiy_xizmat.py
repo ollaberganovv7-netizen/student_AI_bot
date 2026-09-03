@@ -1499,13 +1499,17 @@ async def _run_generation(
             w = max(200, total_words // 7)
 
             sections = [
-                ("annotatsiya", "ANNOTATSIYA",
-                 f"'{topic}' maqolasi uchun annotatsiya yoz (100-250 so'z). "
-                 f"Format: Muammo -> Maqsad -> Metod -> Natija -> Xulosa. "
-                 f"Muallif: {author}. Sarlavha YOZMA."),
-                ("kalit", "KALIT SO'ZLAR",
-                 f"'{topic}' mavzusiga oid 7 ta kalit so'z yoz. "
-                 f"Faqat vergul bilan ajratilgan so'zlar."),
+                ("barcha_annotatsiyalar", "ANNOTATSIYA",
+                 f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\\n"
+                 f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\\n"
+                 f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\\n"
+                 f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\\n"
+                 f"ABSTRACT\\n"
+                 f"[English abstract 100-150 words]\\n"
+                 f"KEYWORDS: [5-8 english keywords]\\n"
+                 f"АННОТАЦИЯ\\n"
+                 f"[Аннотация на русском 100-150 слов]\\n"
+                 f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
                 ("kirish", "KIRISH",
                  f"'{topic}' maqolasining KIRISH qismini yoz. "
                  f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA."),

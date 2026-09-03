@@ -229,32 +229,34 @@ async def _call_openai(messages, max_tokens=3000, temperature=0.8, json_mode=Fal
 
 
 async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=5):
-    # FAQAT GROQ ishlatiladi — Claude va OpenAI fallback o'chirilgan (kreditlarsiz)
+    # FAQAT GROQ ishlatiladi
     if groq_client:
+        # Fallback list of models to avoid TPD limits on a single model
+        models_to_try = [
+            'llama-3.3-70b-versatile',
+            'llama-3.1-70b-versatile',
+            'mixtral-8x7b-32768',
+            'gemma2-9b-it',
+            'llama-3.1-8b-instant'
+        ]
+        
         for attempt in range(retries):
+            current_model = models_to_try[attempt % len(models_to_try)]
             try:
-                result = await _call_groq(messages, max_tokens, temperature, json_mode)
+                result = await _call_groq(messages, max_tokens, temperature, json_mode, model=current_model)
                 return result
             except Exception as e:
                 err_str = str(e)
-                logger.warning(f"Groq attempt {attempt+1}/{retries} failed: {e}")
+                logger.warning(f"Groq attempt {attempt+1}/{retries} with {current_model} failed: {err_str[:100]}")
+                
                 if attempt < retries - 1:
-                    import re
-                    # Check if error message tells us how long to wait
-                    match = re.search(r'try again in ([\d\.]+)s', err_str)
-                    if match:
-                        sleep_time = float(match.group(1)) + 1.0
-                    elif "429" in err_str or "rate limit" in err_str.lower():
-                        sleep_time = 20.0  # default large wait for rate limits
-                    else:
-                        sleep_time = 3.0 * (attempt + 1)
-                    
-                    logger.info(f"Sleeping for {sleep_time}s before retry...")
-                    await asyncio.sleep(sleep_time)
+                    # Switch model and retry quickly
+                    await asyncio.sleep(2.0)
                     continue
+                
                 raise RuntimeError(
-                    f"AI xizmati hozirda bandlik tufayli javob bermayapdi. "
-                    f"Iltimos, 1-2 daqiqadan keyin qayta urinib ko'ring. "
+                    f"AI xizmatining kunlik so'rovlar limiti tugadi! "
+                    f"Barcha modellar band. Iltimos, keyinroq qayta urinib ko'ring."
                 )
 
     raise RuntimeError(
