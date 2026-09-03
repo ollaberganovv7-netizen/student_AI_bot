@@ -1050,7 +1050,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             doc_buf = await asyncio.get_event_loop().run_in_executor(
                 None, generate_docx, service_key, topic, content, author
             )
-            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+            doc_file = BufferedInputFile(doc_buf, filename=f"{name_uz[:25]}.docx")
 
             # To'lov va yozuv
             if not is_admin:
@@ -1219,7 +1219,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             doc_buf = await asyncio.get_event_loop().run_in_executor(
                 None, generate_docx, service_key, topic, full_text, author
             )
-            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+            doc_file = BufferedInputFile(doc_buf, filename=f"{name_uz[:25]}.docx")
 
             # To'lov va yozuv
             if not is_admin:
@@ -1317,7 +1317,7 @@ async def _run_generation(
             doc_buf = await asyncio.get_event_loop().run_in_executor(
                 None, generate_docx, service_key, topic, content, author
             )
-            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+            doc_file = BufferedInputFile(doc_buf, filename=f"{name_uz[:25]}.docx")
 
             # To'lov va yozuv
             if not is_admin:
@@ -1486,7 +1486,7 @@ async def _run_generation(
             doc_buf = await asyncio.get_event_loop().run_in_executor(
                 None, generate_docx, service_key, topic, full_text, author
             )
-            doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
+            doc_file = BufferedInputFile(doc_buf, filename=f"{name_uz[:25]}.docx")
 
             # To'lov va yozuv
             if not is_admin:
