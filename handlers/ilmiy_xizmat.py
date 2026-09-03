@@ -100,9 +100,13 @@ def build_system_prompt(service_key: str, lang_instruction: str) -> str:
     """Har bir xizmat turi uchun OAK talablariga mos system prompt."""
 
     base = (
-        "Sen professional O'zbekiston akademik muhitini yaxshi biluvchi mutaxassissen. "
+        "Sen professional O'zbekiston akademik muhitini yaxshi biluvchi ilmiy tadqiqotchisen. "
         "Markdown belgilarini (**, ##, ```) ISHLATMA. Faqat oddiy matn yoz. "
         "QAT'IY TAQIQ: 'Mavzu:', 'Muallif:', sarlavhani qayta yozma.\n\n"
+        "MUHIM — ANIQLIK TALABLARI:\n"
+        "- Barcha raqamlar, sanalar, faktlar REAL va HAQIQIY bo'lsin\n"
+        "- Nomalum narsani to'qib chiqarma — faqat isbotlangan faktlarni yoz\n"
+        "- Adabiyotlar ro'yxatida HAQIQIY nashrlar ko'rsatilsin\n\n"
     )
 
     prompts = {
@@ -113,11 +117,14 @@ def build_system_prompt(service_key: str, lang_instruction: str) -> str:
             "2. Kalit so'zlar: 5-10 ta atama\n"
             "3. Kirish: Dolzarblik, o'rganilganlik darajasi, maqsad\n"
             "4. Tadqiqot metodologiyasi\n"
-            "5. Natijalar va muhokama (jadvallar, tahlil)\n"
+            "5. Natijalar va muhokama (jadvallar, statistik tahlil bilan)\n"
             "6. Xulosa\n"
-            "7. Adabiyotlar (10-20 ta, APA/GOST)\n"
-            "ILMIY YANGILIK bo'lishi shart. Plagiat qabul qilinmaydi (70-80% originallik).\n"
-            "Har bir fikrga manba ko'rsatilsin [1, 12-b.] formatida.\n"
+            "7. Adabiyotlar (10-20 ta HAQIQIY manba — muallif, sarlavha, nashr yili, sahifa)\n"
+            "QOIDALAR:\n"
+            "- Har bir fikrga manba ko'rsatilsin [1, s.12] formatida\n"
+            "- Statistik ko'rsatkichlar va tadqiqot natijalari aniq raqamlar bilan\n"
+            "- O'zbekiston va dunyo ilm-fanidagi mavjud tadqiqotlarga tayanilsin\n"
+            "- Plagiat qabul qilinmaydi (70-80% originallik)\n"
             f"Til: {lang_instruction}"
         ),
         "a_pop_sci": base + (
@@ -1064,8 +1071,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     user_id=db_user.id,
                     service_type=service_key,
                     topic=topic,
-                    pages=pages_default,
-                    price=price
+                    options={"pages": pages_default, "price": price}
                 )
 
             await wait_msg.delete()
@@ -1233,8 +1239,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     user_id=db_user.id,
                     service_type=service_key,
                     topic=topic,
-                    pages=pages_default,
-                    price=price
+                    options={"pages": pages_default, "price": price}
                 )
 
             await wait_msg.delete()
@@ -1331,8 +1336,7 @@ async def _run_generation(
                     user_id=db_user.id,
                     service_type=service_key,
                     topic=topic,
-                    pages=pages,
-                    price=price
+                    options={"pages": pages, "price": price}
                 )
 
             await wait_msg.delete()
@@ -1500,8 +1504,7 @@ async def _run_generation(
                     user_id=db_user.id,
                     service_type=service_key,
                     topic=topic,
-                    pages=pages,
-                    price=price
+                    options={"pages": pages, "price": price}
                 )
 
             await wait_msg.delete()
