@@ -475,7 +475,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         run_auth.font.size = Pt(14)
         run_auth.font.bold = True
 
-    if service_type != "tezis":
+    if service_type not in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss", "t_pop", "tezis"):
         doc.add_page_break()
 
     # ── MUNDARIJA / REJA ─────────────────────────────────────────────────
