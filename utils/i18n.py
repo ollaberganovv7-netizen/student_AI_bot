@@ -20,7 +20,6 @@ TEXTS = {
     # ─── Welcome / Main menu ─────────────────────────────────────────────
     "welcome": {
         "uz": (
-            "<b>USTOZ AI</b>\n\n"
             "<i>Assalomu alaykum xush kelibsiz, <b>{name}</b>!</i> 👋\n\n"
             "<b>📚 XIZMATLARIMIZ:</b>\n"
             " 📝 <i>Ilmiy konferensiya tezisi</i>\n"
@@ -34,7 +33,6 @@ TEXTS = {
             "👇 <b>Iltimos, pastdagi menyudan xizmat turini tanlang:</b>"
         ),
         "ru": (
-            "<b>USTOZ AI</b>\n\n"
             "<i>Добро пожаловать, <b>{name}</b>!</i> 👋\n\n"
             "<b>🎓 НАУЧНЫЕ НАПРАВЛЕНИЯ:</b>\n"
             " ┣ 📝 <i>Тезис для конференции</i>\n"
@@ -47,7 +45,6 @@ TEXTS = {
             "👇 <b>Пожалуйста, выберите услугу из меню ниже:</b>"
         ),
         "en": (
-            "<b>USTOZ AI</b>\n\n"
             "<i>Welcome to your intellectual assistant, <b>{name}</b>!</i> 👋\n\n"
             "<b>🎓 SCIENTIFIC DIRECTIONS:</b>\n"
             " ┣ 📝 <i>Conference thesis</i>\n"
