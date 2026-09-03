@@ -308,6 +308,79 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
         doc.add_paragraph("")  # Space before text
 
+    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art"):
+        # Academic article / maqola style cover (journal format)
+        labels = {
+            "a_sci":     "ILMIY MAQOLA",
+            "a_pop_sci": "ILMIY-OMMABOP MAQOLA",
+            "a_pop":     "OMMABOP MAQOLA",
+            "a_art":     "BADIIY-PUBLITSISTIK MAQOLA",
+        }
+        label = labels.get(service_type, "ILMIY MAQOLA")
+
+        p_title = doc.add_paragraph(topic.upper())
+        p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_title.paragraph_format.first_line_indent = Cm(0)
+        p_title.paragraph_format.space_after = Pt(6)
+        run_title = p_title.runs[0]
+        run_title.font.name = "Times New Roman"
+        run_title.font.size = Pt(16)
+        run_title.font.bold = True
+
+        p_type = doc.add_paragraph(label)
+        p_type.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_type.paragraph_format.first_line_indent = Cm(0)
+        run_type = p_type.runs[0]
+        run_type.font.name = "Times New Roman"
+        run_type.font.size = Pt(14)
+        run_type.font.italic = True
+
+        p_auth = doc.add_paragraph(author)
+        p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_auth.paragraph_format.first_line_indent = Cm(0)
+        run_auth = p_auth.runs[0]
+        run_auth.font.name = "Times New Roman"
+        run_auth.font.size = Pt(14)
+        run_auth.font.bold = True
+
+        doc.add_paragraph("")  # Space before content
+
+    elif service_type in ("t_conf", "t_art", "t_diss", "t_pop"):
+        # Thesis/Tezis style cover
+        labels = {
+            "t_conf": "ILMIY KONFERENSIYA TEZISI",
+            "t_art":  "ILMIY MAQOLA TEZISI",
+            "t_diss": "DISSERTATSIYA TEZISI",
+            "t_pop":  "OMMABOP / TAHLILIY TEZIS",
+        }
+        label = labels.get(service_type, "TEZIS")
+
+        p_label = doc.add_paragraph(label)
+        p_label.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_label.paragraph_format.first_line_indent = Cm(0)
+        run_label = p_label.runs[0]
+        run_label.font.name = "Times New Roman"
+        run_label.font.size = Pt(14)
+        run_label.font.bold = True
+
+        p_top = doc.add_paragraph(topic.upper())
+        p_top.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p_top.paragraph_format.first_line_indent = Cm(0)
+        run_top = p_top.runs[0]
+        run_top.font.name = "Times New Roman"
+        run_top.font.size = Pt(14)
+        run_top.font.bold = True
+
+        p_auth = doc.add_paragraph(f"Muallif: {author}")
+        p_auth.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        p_auth.paragraph_format.first_line_indent = Cm(0)
+        run_auth2 = p_auth.runs[0]
+        run_auth2.font.name = "Times New Roman"
+        run_auth2.font.size = Pt(12)
+        run_auth2.font.italic = True
+
+        doc.add_paragraph("")  # Space before content
+
     elif service_type == "maqola":
         # Maqola title page: matches academic journal format
         # 1) Title — bold, caps, centered
