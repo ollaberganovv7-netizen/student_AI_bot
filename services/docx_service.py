@@ -12,6 +12,20 @@ SERVICE_TITLES = {
     "maqola": "ILMIY MAQOLA",
 }
 
+
+def format_fio(full_name: str) -> str:
+    """Format full name as 'Lastname F. M.' abbreviation."""
+    parts = full_name.strip().split()
+    if len(parts) == 0:
+        return ""
+    if len(parts) == 1:
+        return parts[0].capitalize()
+    last_name = parts[0].capitalize()
+    first_init = parts[1][0].upper() + "." if len(parts) > 1 else ""
+    middle_init = parts[2][0].upper() + "." if len(parts) > 2 else ""
+    return f"{last_name} {first_init} {middle_init}".strip()
+
+
 def _set_heading_style(paragraph, level: int = 1):
     """Apply standard academic heading formatting."""
     run = paragraph.runs[0] if paragraph.runs else paragraph.add_run(paragraph.text)
