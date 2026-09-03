@@ -1230,25 +1230,17 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             w = max(200, total_words // 7)
 
             sections = [
-                ("annotatsiya", "ANNOTATSIYA",
-                 f"'{topic}' maqolasi uchun O'ZBEK tilida annotatsiya yoz (100-200 so'z). "
-                 f"Format: Muammo -> Maqsad -> Metod -> Natija -> Xulosa. "
-                 f"Sarlavha YOZMA. Faqat matn."),
-                ("kalit", "KALIT SOʻZLAR:",
-                 f"'{topic}' mavzusiga oid 5-8 ta kalit so'z yoz, O'zbek tilida. "
-                 f"Faqat vergul bilan ajratilgan so'zlar, boshqa izoh yo'q."),
-                ("abstract", "ABSTRACT",
-                 f"Write an abstract for the article '{topic}' in ENGLISH (100-200 words). "
-                 f"DO NOT write the title. Only text."),
-                ("keywords", "KEYWORDS:",
-                 f"Write 5-8 keywords for the article '{topic}' in ENGLISH. "
-                 f"Only comma separated words, no extra text."),
-                ("ann_ru", "АННОТАЦИЯ",
-                 f"Напишите аннотацию для статьи '{topic}' на РУССКОМ языке (100-200 слов). "
-                 f"НЕ пишите заголовок. Только текст."),
-                ("keys_ru", "КЛЮЧЕВЫЕ СЛОВА:",
-                 f"Напишите 5-8 ключевых слов для статьи '{topic}' на РУССКОМ языке. "
-                 f"Только слова через запятую, без лишнего текста."),
+                ("barcha_annotatsiyalar", "ANNOTATSIYA",
+                 f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\\n"
+                 f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\\n"
+                 f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\\n"
+                 f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\\n"
+                 f"ABSTRACT\\n"
+                 f"[English abstract 100-150 words]\\n"
+                 f"KEYWORDS: [5-8 english keywords]\\n"
+                 f"АННОТАЦИЯ\\n"
+                 f"[Аннотация на русском 100-150 слов]\\n"
+                 f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
                 ("kirish", "KIRISH",
                  f"'{topic}' maqolasining KIRISH qismini yoz. "
                  f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA."),

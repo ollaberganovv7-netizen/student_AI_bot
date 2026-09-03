@@ -228,7 +228,7 @@ async def _call_openai(messages, max_tokens=3000, temperature=0.8, json_mode=Fal
     return content.strip()
 
 
-async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=3):
+async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=5):
     # FAQAT GROQ ishlatiladi — Claude va OpenAI fallback o'chirilgan (kreditlarsiz)
     if groq_client:
         for attempt in range(retries):
@@ -239,12 +239,22 @@ async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, 
                 err_str = str(e)
                 logger.warning(f"Groq attempt {attempt+1}/{retries} failed: {e}")
                 if attempt < retries - 1:
-                    await asyncio.sleep(3 * (attempt + 1))
+                    import re
+                    # Check if error message tells us how long to wait
+                    match = re.search(r'try again in ([\d\.]+)s', err_str)
+                    if match:
+                        sleep_time = float(match.group(1)) + 1.0
+                    elif "429" in err_str or "rate limit" in err_str.lower():
+                        sleep_time = 20.0  # default large wait for rate limits
+                    else:
+                        sleep_time = 3.0 * (attempt + 1)
+                    
+                    logger.info(f"Sleeping for {sleep_time}s before retry...")
+                    await asyncio.sleep(sleep_time)
                     continue
                 raise RuntimeError(
                     f"AI xizmati hozirda bandlik tufayli javob bermayapdi. "
-                    f"Iltimos, bir necha daqiqadan keyin qayta urinib ko'ring. "
-                    f"(Xato: {err_str[:100]})"
+                    f"Iltimos, 1-2 daqiqadan keyin qayta urinib ko'ring. "
                 )
 
     raise RuntimeError(
