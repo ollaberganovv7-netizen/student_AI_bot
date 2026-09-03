@@ -239,10 +239,10 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
     # ── Page margins ─────────────────────────────────────────────────────────
     for section in doc.sections:
-        section.top_margin = Cm(2.0)
-        section.bottom_margin = Cm(2.0)
-        section.left_margin = Cm(3.0)
-        section.right_margin = Cm(1.5)
+        section.top_margin = Cm(2.5)
+        section.bottom_margin = Cm(2.5)
+        section.left_margin = Cm(2.5)
+        section.right_margin = Cm(2.5)
 
     # ── Default style ────────────────────────────────────────────────────────
     style = doc.styles["Normal"]
@@ -326,14 +326,6 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         run_title.font.name = "Times New Roman"
         run_title.font.size = Pt(16)
         run_title.font.bold = True
-
-        p_type = doc.add_paragraph(label)
-        p_type.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_type.paragraph_format.first_line_indent = Cm(0)
-        run_type = p_type.runs[0]
-        run_type.font.name = "Times New Roman"
-        run_type.font.size = Pt(14)
-        run_type.font.italic = True
 
         p_auth = doc.add_paragraph(author)
         p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -512,6 +504,41 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
             i_line += 1
             continue
 
+        upper_stripped = stripped.upper()
+        # Handle keywords on a single line
+        if any(upper_stripped.startswith(k) for k in ["KALIT SO'ZLAR:", "KALIT SOʻZLAR:", "KEYWORDS:", "КЛЮЧЕВЫЕ СЛОВА:"]):
+            colon_idx = stripped.find(":")
+            if colon_idx != -1:
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                p.paragraph_format.first_line_indent = Cm(0)
+                
+                run_prefix = p.add_run(stripped[:colon_idx+1])
+                run_prefix.font.name = "Times New Roman"
+                run_prefix.font.size = Pt(14)
+                run_prefix.bold = True
+                
+                run_text = p.add_run(stripped[colon_idx+1:])
+                run_text.font.name = "Times New Roman"
+                run_text.font.size = Pt(14)
+                i_line += 1
+                continue
+
+        exact_headers = ["ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR"]
+        if upper_stripped in exact_headers:
+            p = doc.add_paragraph(stripped.upper())
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p.paragraph_format.first_line_indent = Cm(0)
+            p.paragraph_format.space_before = Pt(12)
+            p.paragraph_format.space_after = Pt(6)
+            run = p.runs[0]
+            run.font.name = "Times New Roman"
+            run.font.size = Pt(14)
+            run.bold = True
+            i_line += 1
+            continue
+
+
         # ── Image placeholder: [ 🖼️ SHU YERGA RASM JOYLANG: ... ]
         if "🖼" in stripped and "SHU YERGA RASM JOYLANG" in stripped:
             p = doc.add_paragraph()
@@ -652,10 +679,10 @@ def generate_docx_from_template(
 
     # 0. Apply official academic formatting margins
     for section in doc.sections:
-        section.top_margin = Cm(2.0)
-        section.bottom_margin = Cm(2.0)
-        section.left_margin = Cm(3.0)
-        section.right_margin = Cm(1.5)
+        section.top_margin = Cm(2.5)
+        section.bottom_margin = Cm(2.5)
+        section.left_margin = Cm(2.5)
+        section.right_margin = Cm(2.5)
 
     # 1. Parse AI Content
     sections_list = []

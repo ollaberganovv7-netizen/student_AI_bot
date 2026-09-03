@@ -137,10 +137,12 @@ def build_system_prompt(service_key: str, lang_instruction: str) -> str:
             "OAK (Oliy attestatsiya komissiyasi) TALABLARI bo'yicha TO'LIQ ilmiy maqola yozasan.\n\n"
 
             "MAJBURIY TUZILISH (IMRAD standarti):\n"
-            "ANNOTATSIYA (100-250 so'z): Dolzarblik → Muammo → Maqsad → Metod → Muhim natija → Ilmiy ahamiyat. "
-            "Annotatsiya maqolani o'qigan kishida uning mazmuni haqida aniq tasavvur uyg'otsin.\n\n"
-
-            "KALIT SO'ZLAR: 5-10 ta — mavzuning haqiqiy ilmiy mazmunini aks ettiruvchi terminlar.\n\n"
+            "ANNOTATSIYA (O'zbek, Rus, Ingliz tillarida):\n"
+            "Har bir tilda 100-250 so'zdan iborat. Tarkibi: Dolzarblik → Muammo → Maqsad → Metod → Natija → Ahamiyat.\n"
+            "Format:\n"
+            "ANNOTATSIYA\n[O'zbekcha matn]\nKALIT SO'ZLAR: [5-10 ta]\n"
+            "ABSTRACT\n[Inglizcha matn]\nKEYWORDS: [5-10 ta]\n"
+            "АННОТАЦИЯ\n[Ruscha matn]\nКЛЮЧЕВЫЕ СЛОВА: [5-10 ta]\n\n"
 
             "KIRISH (kuchli bo'lsin): Mavzuning dolzarbligi → Mavjud muammo → Muammoning ilmiy ahamiyati → "
             "Mavjud tadqiqotlar → Tadqiqotdagi bo'shliq → Maqolaning maqsadi va vazifalari.\n"
@@ -1229,12 +1231,24 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             sections = [
                 ("annotatsiya", "ANNOTATSIYA",
-                 f"'{topic}' maqolasi uchun annotatsiya yoz (100-250 so'z). "
+                 f"'{topic}' maqolasi uchun O'ZBEK tilida annotatsiya yoz (100-200 so'z). "
                  f"Format: Muammo -> Maqsad -> Metod -> Natija -> Xulosa. "
-                 f"Muallif: {author}. Sarlavha YOZMA."),
-                ("kalit", "KALIT SO'ZLAR",
-                 f"'{topic}' mavzusiga oid 7 ta kalit so'z yoz. "
-                 f"Faqat vergul bilan ajratilgan so'zlar."),
+                 f"Sarlavha YOZMA. Faqat matn."),
+                ("kalit", "KALIT SOʻZLAR:",
+                 f"'{topic}' mavzusiga oid 5-8 ta kalit so'z yoz, O'zbek tilida. "
+                 f"Faqat vergul bilan ajratilgan so'zlar, boshqa izoh yo'q."),
+                ("abstract", "ABSTRACT",
+                 f"Write an abstract for the article '{topic}' in ENGLISH (100-200 words). "
+                 f"DO NOT write the title. Only text."),
+                ("keywords", "KEYWORDS:",
+                 f"Write 5-8 keywords for the article '{topic}' in ENGLISH. "
+                 f"Only comma separated words, no extra text."),
+                ("ann_ru", "АННОТАЦИЯ",
+                 f"Напишите аннотацию для статьи '{topic}' на РУССКОМ языке (100-200 слов). "
+                 f"НЕ пишите заголовок. Только текст."),
+                ("keys_ru", "КЛЮЧЕВЫЕ СЛОВА:",
+                 f"Напишите 5-8 ключевых слов для статьи '{topic}' на РУССКОМ языке. "
+                 f"Только слова через запятую, без лишнего текста."),
                 ("kirish", "KIRISH",
                  f"'{topic}' maqolasining KIRISH qismini yoz. "
                  f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA."),
