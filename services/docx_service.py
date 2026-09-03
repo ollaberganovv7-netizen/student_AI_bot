@@ -220,6 +220,8 @@ def _build_mundarija_table(doc, plan: str, total_pages: int = 15):
 def generate_docx(service_type: str, topic: str, content: str, author: str = "Talaba", plan: str = "", extra_meta: dict = None) -> bytes:
     doc = Document()
     extra_meta = extra_meta or {}
+    # format_fio defined later in this module — safe to call here at runtime
+    formatted_author = format_fio(author)
 
     # ── Page margins ─────────────────────────────────────────────────────────
     for section in doc.sections:
