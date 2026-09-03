@@ -298,17 +298,10 @@ async def generate_document_plan(service_type: str, topic: str, language: str = 
             "- Faqat oddiy matn, boshqa izoh yoki tushuntirish qo'shma\n"
             "- Bo'lim nomlari qisqa va aniq bo'lsin (5-10 so'z)"
         )
-    try:
-        plan_text = await _call_ai(
-            [{"role": "user", "content": prompt}],
-            max_tokens=500, temperature=0.7
-        )
-    except Exception:
-        response = await client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        plan_text = response.choices[0].message.content.strip()
+    plan_text = await _call_ai(
+        [{"role": "user", "content": prompt}],
+        max_tokens=500, temperature=0.7
+    )
     return {"plan": plan_text}
 
 async def generate_document_section(topic: str, section_title: str, extra_details: str = "", language: str = "uz", quality: str = "standard", service_type: str = "") -> str:
@@ -404,19 +397,11 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
         "10. Rasm placeholder yoki '[ SHU YERGA RASM JOYLANG: ... ]' kabi narsalar QOSHMA."
     )
 
-    try:
-        result = await _call_ai(
-            [{"role": "system", "content": style_instruction},
-             {"role": "user", "content": prompt}],
-            max_tokens=4000, temperature=0.8
-        )
-    except Exception:
-        response = await client.chat.completions.create(
-            model=OPENAI_MODEL,
-            messages=[{"role": "system", "content": style_instruction},
-                      {"role": "user", "content": prompt}]
-        )
-        result = response.choices[0].message.content.strip()
+    result = await _call_ai(
+        [{"role": "system", "content": style_instruction},
+         {"role": "user", "content": prompt}],
+        max_tokens=4000, temperature=0.8
+    )
 
     # Clean up duplicate headers: if AI started its response with the section title, remove it
     clean_title = section_title.lower().strip()
@@ -438,8 +423,11 @@ async def generate_document_section(topic: str, section_title: str, extra_detail
 
 async def generate_presentation_plan(topic, slides, language="uz"):
     prompt = f"Mavzu: {topic}, Slaydlar soni: {slides}, Til: {language}. Taqdimot rejasini tuzing."
-    response = await client.chat.completions.create(model=OPENAI_MODEL, messages=[{"role": "user", "content": prompt}])
-    return response.choices[0].message.content.strip()
+    result = await _call_ai(
+        [{"role": "user", "content": prompt}],
+        max_tokens=500, temperature=0.7
+    )
+    return result.strip()
 
 
 async def generate_presentation_content(topic, language="uz", num_slides=10, style="standard", quality="standard", num_chapters=4, forced_titles=None, progress_callback=None):
