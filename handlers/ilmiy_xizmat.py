@@ -1048,7 +1048,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             full_text = f"{title_line}\n{author_line}\n\nMavzu: {topic}\n\n{content}"
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
-                None, generate_docx, full_text, topic
+                None, generate_docx, service_key, topic, content, author
             )
             doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
 
@@ -1217,7 +1217,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             full_text = "\n".join(full_parts)
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
-                None, generate_docx, full_text, topic
+                None, generate_docx, service_key, topic, full_text, author
             )
             doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
 
@@ -1315,7 +1315,7 @@ async def _run_generation(
             full_text = f"{title_line}\n{author_line}\n\nMavzu: {topic}\n\n{content}"
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
-                None, generate_docx, full_text, topic
+                None, generate_docx, service_key, topic, content, author
             )
             doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
 
@@ -1484,7 +1484,7 @@ async def _run_generation(
             full_text = "\n".join(full_parts)
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
-                None, generate_docx, full_text, topic
+                None, generate_docx, service_key, topic, full_text, author
             )
             doc_file = BufferedInputFile(doc_buf.read(), filename=f"{name_uz[:25]}.docx")
 
