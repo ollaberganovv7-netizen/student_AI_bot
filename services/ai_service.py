@@ -228,37 +228,28 @@ async def _call_openai(messages, max_tokens=3000, temperature=0.8, json_mode=Fal
     return content.strip()
 
 
-async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=2):
-    # 1. Try Groq first
+async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=3):
+    # FAQAT GROQ ishlatiladi — Claude va OpenAI fallback o'chirilgan (kreditlarsiz)
     if groq_client:
-        for attempt in range(1):
+        for attempt in range(retries):
             try:
                 result = await _call_groq(messages, max_tokens, temperature, json_mode)
                 return result
             except Exception as e:
-                logger.warning(f"Groq attempt failed: {e}")
-    
-    # 2. Try Claude
-    if _claude_client:
-        for attempt in range(1):
-            try:
-                result = await _call_claude(messages, max_tokens, temperature, json_mode)
-                return result
-            except Exception as e:
-                logger.warning(f"Claude attempt failed: {e}")
+                err_str = str(e)
+                logger.warning(f"Groq attempt {attempt+1}/{retries} failed: {e}")
+                if attempt < retries - 1:
+                    await asyncio.sleep(3 * (attempt + 1))
+                    continue
+                raise RuntimeError(
+                    f"AI xizmati hozirda bandlik tufayli javob bermayapdi. "
+                    f"Iltimos, bir necha daqiqadan keyin qayta urinib ko'ring. "
+                    f"(Xato: {err_str[:100]})"
+                )
 
-    # 3. Try OpenAI
-    for attempt in range(retries):
-        try:
-            result = await _call_openai(messages, max_tokens, temperature, json_mode)
-            return result
-        except Exception as e:
-            logger.warning(f"OpenAI attempt {attempt+1}/{retries} failed: {e}")
-            if attempt < retries - 1:
-                import asyncio
-                await asyncio.sleep(2 ** attempt)
-            else:
-                raise
+    raise RuntimeError(
+        "AI xizmati sozlanmagan. Iltimos, administratorga murojaat qiling."
+    )
 
 async def generate_document_plan(service_type: str, topic: str, language: str = "uz", detail_level: str = "standard", num_chapters: int = 2, num_subchapters: int = 2) -> dict:
     lang_map = {"uz": "O'zbek tilida", "ru": "На русском языке", "en": "In English"}
