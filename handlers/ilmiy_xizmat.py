@@ -633,16 +633,15 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
         await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
         return
 
-    # Groq vision check
-    from config import ADMIN_IDS
-    import os
-    groq_key = os.getenv("GROQ_API_KEY", "")
+    # Claude vision - to'lov cheki tahlili
+    from services.ai_service import _claude_client, CLAUDE_MODEL
+    import re as _re
 
     prompt = (
         f"Bu to'lov cheki (skrinshoti). Tekshir:\n"
         f"1) Aynan {price_fmt} so'm o'tkazilganmi?\n"
         f"2) To'lov muvaffaqiyatli yakunlanganmi?\n"
-        f"Faqat JSON qaytargin: {{\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}}"
+        "Faqat JSON qaytargin: {\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}"
     )
 
     verified = False
@@ -650,29 +649,70 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
     reason = "AI tekshirishda xatolik"
 
     try:
-        async with httpx.AsyncClient(timeout=30) as hclient:
-            resp = await hclient.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "qwen/qwen3.8-27b",
-                    "messages": [{"role": "user", "content": [
-                        {"type": "text", "text": prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}}
-                    ]}],
-                    "max_tokens": 200,
-                    "temperature": 0
-                }
+        if _claude_client:
+            vision_resp = await _claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=300,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": img_b64,
+                            }
+                        },
+                        {"type": "text", "text": prompt}
+                    ]
+                }]
             )
-        result_text = resp.json()["choices"][0]["message"]["content"]
-        # Extract JSON
-        import re as _re
-        json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
-        if json_match:
-            result_json = json.loads(json_match.group())
-            verified = result_json.get("verified", False)
-            found_amount = result_json.get("found_amount")
-            reason = result_json.get("reason", "")
+            result_text = vision_resp.content[0].text
+            json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+            if json_match:
+                result_json = json.loads(json_match.group())
+                verified = result_json.get("verified", False)
+                found_amount = result_json.get("found_amount")
+                reason = result_json.get("reason", "")
+        else:
+            reason = "Claude API sozlanmagan"
+    except Exception as e:
+        reason = f"AI xatolik: {e}"
+        verified = False
+    found_amount = None
+    reason = "AI tekshirishda xatolik"
+
+    try:
+        if _claude_client:
+            vision_resp = await _claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=300,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": img_b64,
+                            }
+                        },
+                        {"type": "text", "text": prompt}
+                    ]
+                }]
+            )
+            result_text = vision_resp.content[0].text
+            import re as _re
+            json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+            if json_match:
+                result_json = json.loads(json_match.group())
+                verified = result_json.get("verified", False)
+                found_amount = result_json.get("found_amount")
+                reason = result_json.get("reason", "")
+        else:
+            reason = "Claude API sozlanmagan"
     except Exception as e:
         reason = f"AI xatolik: {e}"
         verified = False
@@ -733,16 +773,15 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
         await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
         return
 
-    # Groq vision check
-    from config import ADMIN_IDS
-    import os
-    groq_key = os.getenv("GROQ_API_KEY", "")
+    # Claude vision - to'lov cheki tahlili
+    from services.ai_service import _claude_client, CLAUDE_MODEL
+    import re as _re
 
     prompt = (
         f"Bu to'lov cheki (skrinshoti). Tekshir:\n"
         f"1) Aynan {price_fmt} so'm o'tkazilganmi?\n"
         f"2) To'lov muvaffaqiyatli yakunlanganmi?\n"
-        f"Faqat JSON qaytargin: {{\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}}"
+        "Faqat JSON qaytargin: {\"verified\": true/false, \"found_amount\": <raqam yoki null>, \"reason\": \"izoh\"}"
     )
 
     verified = False
@@ -750,29 +789,70 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
     reason = "AI tekshirishda xatolik"
 
     try:
-        async with httpx.AsyncClient(timeout=30) as hclient:
-            resp = await hclient.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "qwen/qwen3.8-27b",
-                    "messages": [{"role": "user", "content": [
-                        {"type": "text", "text": prompt},
-                        {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img_b64}"}}
-                    ]}],
-                    "max_tokens": 200,
-                    "temperature": 0
-                }
+        if _claude_client:
+            vision_resp = await _claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=300,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": img_b64,
+                            }
+                        },
+                        {"type": "text", "text": prompt}
+                    ]
+                }]
             )
-        result_text = resp.json()["choices"][0]["message"]["content"]
-        # Extract JSON
-        import re as _re
-        json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
-        if json_match:
-            result_json = json.loads(json_match.group())
-            verified = result_json.get("verified", False)
-            found_amount = result_json.get("found_amount")
-            reason = result_json.get("reason", "")
+            result_text = vision_resp.content[0].text
+            json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+            if json_match:
+                result_json = json.loads(json_match.group())
+                verified = result_json.get("verified", False)
+                found_amount = result_json.get("found_amount")
+                reason = result_json.get("reason", "")
+        else:
+            reason = "Claude API sozlanmagan"
+    except Exception as e:
+        reason = f"AI xatolik: {e}"
+        verified = False
+    found_amount = None
+    reason = "AI tekshirishda xatolik"
+
+    try:
+        if _claude_client:
+            vision_resp = await _claude_client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=300,
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/jpeg",
+                                "data": img_b64,
+                            }
+                        },
+                        {"type": "text", "text": prompt}
+                    ]
+                }]
+            )
+            result_text = vision_resp.content[0].text
+            import re as _re
+            json_match = _re.search(r"\{.*?\}", result_text, _re.DOTALL)
+            if json_match:
+                result_json = json.loads(json_match.group())
+                verified = result_json.get("verified", False)
+                found_amount = result_json.get("found_amount")
+                reason = result_json.get("reason", "")
+        else:
+            reason = "Claude API sozlanmagan"
     except Exception as e:
         reason = f"AI xatolik: {e}"
         verified = False
