@@ -564,13 +564,13 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 i_line += 1
                 continue
 
-        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR"]
+        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR", "FOYDALANILGAN MANBALAR", "SIFAT NAZORATI"]
         if upper_stripped in exact_headers:
             if upper_stripped not in seen_headers:
                 if "XULOSA" in upper_stripped:
                     seen_headers.add("XULOSA")
                     seen_headers.add("XULOSA VA TAVSIYALAR")
-                elif "ADABIYOTLAR" in upper_stripped:
+                elif "ADABIYOTLAR" in upper_stripped or "MANBALAR" in upper_stripped:
                     seen_headers.add("FOYDALANILGAN ADABIYOTLAR")
                     seen_headers.add("ADABIYOTLAR")
                     seen_headers.add("ADABIYOTLAR RO'YXATI")

@@ -1201,6 +1201,16 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     "3. [Olingan xulosalar muhokamasi va solishtirish]\n"
                     "Boshqa hech narsa yozma."
                 )
+            elif service_key == "a_pop_sci":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun ilmiy-ommabop maqola rejasini tuzing. FAQAT shu formatda yozing:\n"
+                    "1. [Ilmiy faktlar va sodda tushuntirish uchun qiziqarli sarlavha]\n"
+                    "2. [Mexanizm, dalillar, misollar yoki tadqiqotlar uchun qiziqarli sarlavha]\n"
+                    "3. [Amaliy ahamiyat, taqqoslash yoki muhim jihatlar uchun qiziqarli sarlavha]\n"
+                    "4. [Muammolar, cheklovlar yoki istiqbollar uchun qiziqarli sarlavha]\n"
+                    "Boshqa hech narsa yozma."
+                )
             else:
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
@@ -1232,7 +1242,35 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             w = max(200, total_words // 7)
 
-            if service_key == "a_sci":
+            if service_key == "a_pop_sci":
+                style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
+                sections = [
+                    ("barcha_annotatsiyalar", "ANNOTATSIYA",
+                     f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
+                     f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida bo'lishi SHART! Har bir terminni to'g'ri tarjima qil.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\n"
+                     f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\n"
+                     f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\n"
+                     f"ABSTRACT\n"
+                     f"[English abstract 100-150 words]\n"
+                     f"KEYWORDS: [5-8 english keywords]\n"
+                     f"АННОТАЦИЯ\n"
+                     f"[Аннотация на русском 100-150 слов]\n"
+                     f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' mavzusida ilmiy-ommabop maqola uchun KIRISH yoz. Muammoni oddiy tilda tushuntir va qiziqarli fakt/savol bilan boshla. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", f"1. {plan_titles.get('1','Ilmiy fakt va misollar')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' ni yoz. Ilmiy faktlar va hayotiy misollar keltir. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", f"2. {plan_titles.get('2','Natijalar va ularning izohi')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2','')}' ni yoz. Tadqiqot natijalari va ularning oddiy, tushunarli izohini ber. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("3", f"3. {plan_titles.get('3','Hayotiy ahamiyati')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('3','')}' ni yoz. Mavzuning hayotiy ahamiyati va mutaxassislar fikrini qo'shib yoz. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' maqolasining XULOSA qismini yoz. Yakuniy xulosa va amaliy takliflar. Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 5-10 ta ishonchli manba ro'yxati. OAK talablari bo'yicha APA yoki GOST formatida. Kamida 3-4 ta O'zbek muallifi bo'lsin. Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_sci":
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
                      f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
@@ -1379,7 +1417,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 section_content = '\n'.join(sc_lines).strip()
                 
                 # Ultimate Terminator: Cut off hallucinated conclusions/bibliographies in middle sections
-                if key not in ["xulosa", "adabiyotlar", "barcha_annotatsiyalar"]:
+                if key not in ["muhokama", "xulosa", "adabiyotlar", "barcha_annotatsiyalar", "sifat_nazorati"]:
                     import re as re_mod_temp2
                     match = re_mod_temp2.search(r'(?i)\n(XULOSA|XULOSALAR|XULOSA VA TAVSIYALAR|FOYDALANILGAN ADABIYOTLAR|ADABIYOTLAR RO\'YXATI|ADABIYOTLAR)\s*\n', '\n' + section_content + '\n')
                     if match:
@@ -1403,7 +1441,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "xulosa", "adabiyotlar"]:
+                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
@@ -1565,6 +1603,16 @@ async def _run_generation(
                     "3. [Olingan xulosalar muhokamasi va solishtirish]\n"
                     "Boshqa hech narsa yozma."
                 )
+            elif service_key == "a_pop_sci":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun ilmiy-ommabop maqola rejasini tuzing. FAQAT shu formatda yozing:\n"
+                    "1. [Ilmiy faktlar va sodda tushuntirish uchun qiziqarli sarlavha]\n"
+                    "2. [Mexanizm, dalillar, misollar yoki tadqiqotlar uchun qiziqarli sarlavha]\n"
+                    "3. [Amaliy ahamiyat, taqqoslash yoki muhim jihatlar uchun qiziqarli sarlavha]\n"
+                    "4. [Muammolar, cheklovlar yoki istiqbollar uchun qiziqarli sarlavha]\n"
+                    "Boshqa hech narsa yozma."
+                )
             else:
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
@@ -1596,7 +1644,35 @@ async def _run_generation(
 
             w = max(200, total_words // 7)
 
-            if service_key == "a_sci":
+            if service_key == "a_pop_sci":
+                style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
+                sections = [
+                    ("barcha_annotatsiyalar", "ANNOTATSIYA",
+                     f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
+                     f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida bo'lishi SHART! Har bir terminni to'g'ri tarjima qil.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\n"
+                     f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\n"
+                     f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\n"
+                     f"ABSTRACT\n"
+                     f"[English abstract 100-150 words]\n"
+                     f"KEYWORDS: [5-8 english keywords]\n"
+                     f"АННОТАЦИЯ\n"
+                     f"[Аннотация на русском 100-150 слов]\n"
+                     f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' mavzusida ilmiy-ommabop maqola uchun KIRISH yoz. Muammoni oddiy tilda tushuntir va qiziqarli fakt/savol bilan boshla. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", f"1. {plan_titles.get('1','Ilmiy fakt va misollar')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' ni yoz. Ilmiy faktlar va hayotiy misollar keltir. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", f"2. {plan_titles.get('2','Natijalar va ularning izohi')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2','')}' ni yoz. Tadqiqot natijalari va ularning oddiy, tushunarli izohini ber. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("3", f"3. {plan_titles.get('3','Hayotiy ahamiyati')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('3','')}' ni yoz. Mavzuning hayotiy ahamiyati va mutaxassislar fikrini qo'shib yoz. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' maqolasining XULOSA qismini yoz. Yakuniy xulosa va amaliy takliflar. Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 5-10 ta ishonchli manba ro'yxati. OAK talablari bo'yicha APA yoki GOST formatida. Kamida 3-4 ta O'zbek muallifi bo'lsin. Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_sci":
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
                      f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
@@ -1743,7 +1819,7 @@ async def _run_generation(
                 section_content = '\n'.join(sc_lines).strip()
                 
                 # Ultimate Terminator: Cut off hallucinated conclusions/bibliographies in middle sections
-                if key not in ["xulosa", "adabiyotlar", "barcha_annotatsiyalar"]:
+                if key not in ["muhokama", "xulosa", "adabiyotlar", "barcha_annotatsiyalar", "sifat_nazorati"]:
                     import re as re_mod_temp2
                     match = re_mod_temp2.search(r'(?i)\n(XULOSA|XULOSALAR|XULOSA VA TAVSIYALAR|FOYDALANILGAN ADABIYOTLAR|ADABIYOTLAR RO\'YXATI|ADABIYOTLAR)\s*\n', '\n' + section_content + '\n')
                     if match:
@@ -1767,7 +1843,7 @@ async def _run_generation(
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "xulosa", "adabiyotlar"]:
+                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
