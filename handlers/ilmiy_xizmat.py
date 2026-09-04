@@ -1309,7 +1309,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             except:
                 pass
 
-            full_parts = [f"{icon} {name_uz.upper()}\n\nMavzu: {topic}\nMuallif: {author}\n"]
+            full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
                 full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
             full_text = "\n".join(full_parts)
@@ -1578,7 +1578,7 @@ async def _run_generation(
             except:
                 pass
 
-            full_parts = [f"{icon} {name_uz.upper()}\n\nMavzu: {topic}\nMuallif: {author}\n"]
+            full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
                 full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
             full_text = "\n".join(full_parts)

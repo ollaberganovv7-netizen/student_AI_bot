@@ -327,13 +327,25 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         run_title.font.size = Pt(16)
         run_title.font.bold = True
 
-        p_auth = doc.add_paragraph(author)
+        author_lines = author.strip().split('\n')
+        p_auth = doc.add_paragraph()
         p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_auth.paragraph_format.first_line_indent = Cm(0)
-        run_auth = p_auth.runs[0]
-        run_auth.font.name = "Times New Roman"
-        run_auth.font.size = Pt(14)
-        run_auth.font.bold = True
+        p_auth.paragraph_format.space_after = Pt(12)
+        
+        if len(author_lines) > 0:
+            run_name = p_auth.add_run(author_lines[0].strip())
+            run_name.font.name = "Times New Roman"
+            run_name.font.size = Pt(14)
+            run_name.font.bold = True
+            
+            for line in author_lines[1:]:
+                if not line.strip(): continue
+                run_br = p_auth.add_run('\n')
+                run_inst = p_auth.add_run(line.strip())
+                run_inst.font.name = "Times New Roman"
+                run_inst.font.size = Pt(12)
+                run_inst.font.bold = False
 
         doc.add_paragraph("")  # Space before content
 
@@ -509,18 +521,25 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         if any(upper_stripped.startswith(k) for k in ["KALIT SO'ZLAR:", "KALIT SOʻZLAR:", "KEYWORDS:", "КЛЮЧЕВЫЕ СЛОВА:"]):
             colon_idx = stripped.find(":")
             if colon_idx != -1:
-                p = doc.add_paragraph()
-                p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                p.paragraph_format.first_line_indent = Cm(0)
+                p_head = doc.add_paragraph(stripped[:colon_idx+1])
+                p_head.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p_head.paragraph_format.first_line_indent = Cm(0)
+                p_head.paragraph_format.space_before = Pt(12)
+                p_head.paragraph_format.space_after = Pt(6)
+                r_head = p_head.runs[0]
+                r_head.font.name = "Times New Roman"
+                r_head.font.size = Pt(14)
+                r_head.font.bold = True
                 
-                run_prefix = p.add_run(stripped[:colon_idx+1])
-                run_prefix.font.name = "Times New Roman"
-                run_prefix.font.size = Pt(14)
-                run_prefix.bold = True
+                text_part = stripped[colon_idx+1:].strip()
+                if text_part:
+                    p_text = doc.add_paragraph(text_part)
+                    p_text.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                    p_text.paragraph_format.first_line_indent = Cm(1.25)
+                    r_text = p_text.runs[0]
+                    r_text.font.name = "Times New Roman"
+                    r_text.font.size = Pt(14)
                 
-                run_text = p.add_run(stripped[colon_idx+1:])
-                run_text.font.name = "Times New Roman"
-                run_text.font.size = Pt(14)
                 i_line += 1
                 continue
 
