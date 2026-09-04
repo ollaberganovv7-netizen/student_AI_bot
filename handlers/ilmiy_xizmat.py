@@ -1204,13 +1204,13 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             else:
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
-                    "Ushbu mavzu uchun ilmiy maqola reja tuzing. FAQAT shu formatda:\n"
-                    "1. [Birinchi asosiy bo'lim]\n"
-                    "1.1. [Kichik bo'lim]\n"
-                    "1.2. [Kichik bo'lim]\n"
-                    "2. [Ikkinchi asosiy bo'lim]\n"
-                    "2.1. [Kichik bo'lim]\n"
-                    "2.2. [Kichik bo'lim]\n"
+                    "Ushbu mavzu uchun ilmiy maqola reja tuzing. Har bir qismga aniq mavzuga oid nom ber. FAQAT shu formatda yozing:\n"
+                    "1. [Birinchi asosiy bo'limning aniq nomi]\n"
+                    "1.1. [Unga mos birinchi kichik bo'limning nomi]\n"
+                    "1.2. [Unga mos ikkinchi kichik bo'limning nomi]\n"
+                    "2. [Ikkinchi asosiy bo'limning aniq nomi]\n"
+                    "2.1. [Unga mos birinchi kichik bo'limning nomi]\n"
+                    "2.2. [Unga mos ikkinchi kichik bo'limning nomi]\n"
                     "Boshqa hech narsa yozma."
                 )
             plan_text = await _call_ai(
@@ -1344,6 +1344,10 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 else:
                     contextual_prompt = user_prompt_text
 
+                # Anti-placeholder rule
+                anti_placeholder = "\nDIQQAT: Matn ichida hech qanday qavs ichidagi eslatmalar (masalan [STATISTIKA TASDIQLANISHI KERAK], [MANBA KERAK], [ISMNI YOZING] va h.k.) qoldirmang! Barcha ma'lumotlar, faktlar, statistikalar va yillarni aniq yozib ketishingiz shart. Agar aniq fakt esingizda bo'lmasa, eng ishonchli mantiqiy taxminiy faktni ishonch bilan yozib keting. Matn to'liq va o'qishga tayyor holatda bo'lishi shart."
+                contextual_prompt += anti_placeholder
+
                 section_content = await _call_ai(
                     [
                         {"role": "system", "content": system_prompt},
@@ -1366,7 +1370,10 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                         # Compare without numbers
                         s_name_clean = re_mod_temp.sub(r'^\d+(\.\d+)*\.?\s*', '', section_name).strip().upper()
                         s_line_clean = re_mod_temp.sub(r'^\d+(\.\d+)*\.?\s*', '', _l_clean).strip().upper()
-                        if s_name_clean and s_line_clean and difflib.SequenceMatcher(None, s_name_clean, s_line_clean).ratio() > 0.8:
+                        # If the line is short (like a title) and lacks sentence punctuation, just kill it!
+                        if len(_l_clean.split()) < 15 and not _l_clean.endswith(('.', '?', '!')):
+                            sc_lines[_i] = ""
+                        elif s_name_clean and s_line_clean and difflib.SequenceMatcher(None, s_name_clean, s_line_clean).ratio() > 0.6:
                             sc_lines[_i] = ""
                         break
                 section_content = '\n'.join(sc_lines).strip()
@@ -1561,13 +1568,13 @@ async def _run_generation(
             else:
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
-                    "Ushbu mavzu uchun ilmiy maqola reja tuzing. FAQAT shu formatda:\n"
-                    "1. [Birinchi asosiy bo'lim]\n"
-                    "1.1. [Kichik bo'lim]\n"
-                    "1.2. [Kichik bo'lim]\n"
-                    "2. [Ikkinchi asosiy bo'lim]\n"
-                    "2.1. [Kichik bo'lim]\n"
-                    "2.2. [Kichik bo'lim]\n"
+                    "Ushbu mavzu uchun ilmiy maqola reja tuzing. Har bir qismga aniq mavzuga oid nom ber. FAQAT shu formatda yozing:\n"
+                    "1. [Birinchi asosiy bo'limning aniq nomi]\n"
+                    "1.1. [Unga mos birinchi kichik bo'limning nomi]\n"
+                    "1.2. [Unga mos ikkinchi kichik bo'limning nomi]\n"
+                    "2. [Ikkinchi asosiy bo'limning aniq nomi]\n"
+                    "2.1. [Unga mos birinchi kichik bo'limning nomi]\n"
+                    "2.2. [Unga mos ikkinchi kichik bo'limning nomi]\n"
                     "Boshqa hech narsa yozma."
                 )
             plan_text = await _call_ai(
@@ -1660,6 +1667,10 @@ async def _run_generation(
                 else:
                     contextual_prompt = user_prompt_text
 
+                # Anti-placeholder rule
+                anti_placeholder = "\nDIQQAT: Matn ichida hech qanday qavs ichidagi eslatmalar (masalan [STATISTIKA TASDIQLANISHI KERAK], [MANBA KERAK], [ISMNI YOZING] va h.k.) qoldirmang! Barcha ma'lumotlar, faktlar, statistikalar va yillarni aniq yozib ketishingiz shart. Agar aniq fakt esingizda bo'lmasa, eng ishonchli mantiqiy taxminiy faktni ishonch bilan yozib keting. Matn to'liq va o'qishga tayyor holatda bo'lishi shart."
+                contextual_prompt += anti_placeholder
+
                 section_content = await _call_ai(
                     [
                         {"role": "system", "content": system_prompt},
@@ -1682,7 +1693,10 @@ async def _run_generation(
                         # Compare without numbers
                         s_name_clean = re_mod_temp.sub(r'^\d+(\.\d+)*\.?\s*', '', section_name).strip().upper()
                         s_line_clean = re_mod_temp.sub(r'^\d+(\.\d+)*\.?\s*', '', _l_clean).strip().upper()
-                        if s_name_clean and s_line_clean and difflib.SequenceMatcher(None, s_name_clean, s_line_clean).ratio() > 0.8:
+                        # If the line is short (like a title) and lacks sentence punctuation, just kill it!
+                        if len(_l_clean.split()) < 15 and not _l_clean.endswith(('.', '?', '!')):
+                            sc_lines[_i] = ""
+                        elif s_name_clean and s_line_clean and difflib.SequenceMatcher(None, s_name_clean, s_line_clean).ratio() > 0.6:
                             sc_lines[_i] = ""
                         break
                 section_content = '\n'.join(sc_lines).strip()
