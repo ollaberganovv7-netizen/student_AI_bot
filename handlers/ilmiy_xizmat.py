@@ -1273,11 +1273,12 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
             else:
+                style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)" if service_key == "a_pop_sci" else "akademik"
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
                      f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
-                     f"DIQQAT: Ingliz va Rus tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST va aniq ILMIY USLUBDA bo'lishi SHART!\n"
-                     f"AYNAN shu formatda yozing:\n"
+                     f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida bo'lishi SHART! Har bir terminni to'g'ri tarjima qil.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\n"
                      f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\n"
                      f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\n"
                      f"ABSTRACT\n"
@@ -1288,35 +1289,34 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                      f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
                     ("kirish", "KIRISH",
                      f"'{topic}' maqolasining KIRISH qismini yoz. "
-                     f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Dolzarblik, o'rganilganlik, maqsad. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun akademik matn. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun matn. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun nazariy tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun empirik tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun amaliy misollar. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun taqqoslash. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("xulosa", "XULOSA",
                      f"'{topic}' maqolasining XULOSA va TAVSIYALAR qismini yoz. "
-                     f"{max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
                     ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                      f"'{topic}' mavzusiga oid 10-15 ta REAL ilmiy manba ro'yxati. "
                      f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) bo'lsin. "
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
 
-            sections_content = {}
             total_sections = len(sections)
             progress_chars = ["⬛", "🟩"]
 
@@ -1637,10 +1637,11 @@ async def _run_generation(
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
             else:
+                style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)" if service_key == "a_pop_sci" else "akademik"
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
                      f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\n"
-                     f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida va aniq ILMIY USLUBDA bo'lishi SHART! Har bir terminni asl ilmiy ma'nosida tarjima qil.\n"
+                     f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida bo'lishi SHART! Har bir terminni to'g'ri tarjima qil.\n"
                      f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\n"
                      f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\n"
                      f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\n"
@@ -1652,33 +1653,34 @@ async def _run_generation(
                      f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
                     ("kirish", "KIRISH",
                      f"'{topic}' maqolasining KIRISH qismini yoz. "
-                     f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Dolzarblik, o'rganilganlik, maqsad. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun akademik matn. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun matn. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun nazariy tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
-                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun empirik tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur tahlil. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun amaliy misollar. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
                      f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun taqqoslash. "
-                     f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                     ("xulosa", "XULOSA",
                      f"'{topic}' maqolasining XULOSA va TAVSIYALAR qismini yoz. "
-                     f"{max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
                     ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                      f"'{topic}' mavzusiga oid 10-15 ta REAL ilmiy manba ro'yxati. "
                      f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) bo'lsin. "
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
+
             total_sections = len(sections)
             progress_chars = ["⬛", "🟩"]
 

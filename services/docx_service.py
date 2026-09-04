@@ -318,7 +318,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         }
         label = labels.get(service_type, "ILMIY MAQOLA")
 
-        if service_type == "a_sci":
+        if service_type in ("a_sci", "a_pop_sci"):
             p_udk = doc.add_paragraph("UO'K (UDC): _______")
             p_udk.alignment = WD_ALIGN_PARAGRAPH.LEFT
             p_udk.paragraph_format.first_line_indent = Cm(0)
