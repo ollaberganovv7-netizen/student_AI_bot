@@ -21,7 +21,7 @@ from keyboards.presentation_kb import (
     chapters_kb, slides_grid_kb, design_selection_kb, summary_kb
 )
 from keyboards.main_kb import main_menu_kb
-from services.ai_service import generate_presentation_content, generate_akademik_content, generate_test_presentation_content, client, OPENAI_MODEL
+from services.ai_service import generate_presentation_content, generate_akademik_content, generate_test_presentation_content
 from services.pptx_service import generate_pptx, analyze_template
 from services.akademik_pptx_service import generate_akademik_pptx
 from services.test_pptx_service import generate_test_pptx
@@ -812,30 +812,10 @@ async def finalize_presentation_logic(message: Message, state: FSMContext, db_us
                     q_num = img_tag.split("_")[1]  # "1", "2", or "3"
                     q_title = tag_data.get(f"QUESTION_{q_num}", topic)
                     try:
-                        img_resp = await client.images.generate(
-                            model="gpt-image-1-mini",
-                            prompt=(
-                                f"Educational scientific illustration for an academic lecture about: '{q_title}'. "
-                                f"The overall topic is: '{topic}'. "
-                                "Style: clean, professional, academic infographic or diagram. "
-                                "Realistic and informative visual. No text, no letters, no words, no watermarks. "
-                                "High resolution, white or neutral background."
-                            ),
-                            size="1024x1024",
-                            quality="medium",
-                            n=1
-                        )
-                        import httpx
-                        async with httpx.AsyncClient() as http:
-                            img_bytes = (await http.get(img_resp.data[0].url)).content
-                        image_data[img_tag] = img_bytes
-                        gen_count += 1
-                        try:
-                            await wait_msg.edit_text(f"🎨 <b>AI rasmlar: {gen_count}/{min(ai_images_count, 3)}</b>", parse_mode="HTML")
-                        except TelegramBadRequest:
-                            pass
+                        # AI image generation: skip (OpenAI DALL-E removed)
+                        pass
                     except Exception as e:
-                        logger.error(f"DALL-E error for {img_tag}: {e}")
+                        logger.error(f"Image generation skipped: {e}")
 
             try:
                 await wait_msg.edit_text("⏳ <b>Taqdimot fayli yig'ilmoqda...</b>", parse_mode="HTML")

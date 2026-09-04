@@ -36,7 +36,7 @@ from aiogram.fsm.state import State, StatesGroup
 from database.models import User
 from database.db import create_request, deduct_balance, mark_free_used
 from keyboards.main_kb import main_menu_kb
-from services.ai_service import client, OPENAI_MODEL
+
 from services.docx_service import generate_docx
 from utils.helpers import format_price, is_free_trial
 from utils.i18n import t, btn

@@ -3,37 +3,27 @@ import os
 import json
 import asyncio
 import logging
-from openai import AsyncOpenAI
+import re
 
-from config import GROQ_API_KEY
-if GROQ_API_KEY:
-    groq_client = AsyncOpenAI(api_key=GROQ_API_KEY, base_url='https://api.groq.com/openai/v1')
-else:
-    groq_client = None
-
-async def _call_groq(messages, max_tokens=3000, temperature=0.8, json_mode=False):
-    if not groq_client:
-        raise RuntimeError('Groq not configured')
-    
-    model = 'qwen/qwen3.8-27b' # good default for Groq
-    
-    kwargs = {
-        'model': model,
-        'messages': messages,
-        'temperature': temperature,
-        'max_tokens': max_tokens
-    }
-    if json_mode:
-        kwargs['response_format'] = {'type': 'json_object'}
-        
-    resp = await groq_client.chat.completions.create(**kwargs)
-    return resp.choices[0].message.content
-
-from config import OPENAI_API_KEY, OPENAI_MODEL, ANTHROPIC_API_KEY, CLAUDE_MODEL
+from config import ANTHROPIC_API_KEY, CLAUDE_MODEL
 
 logger = logging.getLogger(__name__)
-openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
-client = openai_client  # backward-compatible alias
+
+# Backward compatibility aliases
+OPENAI_MODEL = CLAUDE_MODEL
+client = None  # OpenAI client removed, use _call_ai()
+
+# ── Claude Client ─────────────────────────────────────────────────────────────
+_claude_client = None
+if ANTHROPIC_API_KEY:
+    try:
+        import anthropic
+        _claude_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        logger.info(f"Claude initialized: {CLAUDE_MODEL}")
+    except ImportError:
+        logger.error("anthropic package not installed! Run: pip install anthropic")
+
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HUMANIZER: Anti-plagiarism rules to make AI text sound human-written
@@ -122,23 +112,14 @@ HUMANIZER_SLIDES = (
     "Har bir punkt — tabiiy, jonli va o'ziga xos bo'lsin.\n"
 )
 
-# Claude client (primary)
-_claude_client = None
-if ANTHROPIC_API_KEY:
-    try:
-        import anthropic
-        _claude_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-        logger.info(f"✅ Claude initialized: {CLAUDE_MODEL}")
-    except ImportError:
-        logger.warning("anthropic package not installed, using OpenAI only")
 
-
-async def _call_claude(messages, max_tokens=3000, temperature=0.8, json_mode=False):
-    """Call Claude API with Extended Thinking + Prompt Caching."""
+# ── Main AI call: Claude Sonnet ──────────────────────────────────────────────
+async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=3):
+    """Call Claude Sonnet API. This is the ONLY AI provider used by the bot."""
     if not _claude_client:
-        raise RuntimeError("Claude not available")
-
-    import re
+        raise RuntimeError(
+            "Claude API sozlanmagan. Administratorga murojaat qiling."
+        )
 
     # Extract system message
     system_text = ""
@@ -159,109 +140,73 @@ async def _call_claude(messages, max_tokens=3000, temperature=0.8, json_mode=Fal
             "Javob { yoki [ bilan boshlanishi SHART."
         )
 
-    kwargs = {
-        "model": CLAUDE_MODEL,
-        "max_tokens": max_tokens,
-        "messages": user_messages,
-    }
-
-    # Prompt Caching: cache system prompt (saves 90% on repeated calls)
-    if system_text.strip():
-        kwargs["system"] = [
-            {
-                "type": "text",
-                "text": system_text.strip(),
-                "cache_control": {"type": "ephemeral"},
+    for attempt in range(retries):
+        try:
+            kwargs = {
+                "model": CLAUDE_MODEL,
+                "max_tokens": max_tokens,
+                "messages": user_messages,
             }
-        ]
 
-    # Extended Thinking: Claude thinks before answering (better quality)
-    # Note: thinking requires temperature=1 and uses budget_tokens
-    use_thinking = (max_tokens >= 1500 and not json_mode)
-    if use_thinking:
-        kwargs["temperature"] = 1  # required for thinking
-        kwargs["thinking"] = {
-            "type": "enabled",
-            "budget_tokens": min(2000, max_tokens // 2),
-        }
-        kwargs["max_tokens"] = max_tokens + 2000  # extra room for thinking
-    else:
-        kwargs["temperature"] = temperature
+            if system_text.strip():
+                kwargs["system"] = [
+                    {
+                        "type": "text",
+                        "text": system_text.strip(),
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ]
 
-    resp = await _claude_client.messages.create(**kwargs)
+            # Extended Thinking for long content generation (better quality)
+            use_thinking = (max_tokens >= 1500 and not json_mode)
+            if use_thinking:
+                kwargs["temperature"] = 1  # required for extended thinking
+                kwargs["thinking"] = {
+                    "type": "enabled",
+                    "budget_tokens": min(2000, max_tokens // 2),
+                }
+                kwargs["max_tokens"] = max_tokens + 2000
+            else:
+                kwargs["temperature"] = temperature
 
-    # Extract text from response (skip thinking blocks)
-    content = ""
-    for block in resp.content:
-        if block.type == "text":
-            content = block.text
-            break
+            resp = await _claude_client.messages.create(**kwargs)
 
-    if not content:
-        raise ValueError("Claude returned empty content")
+            # Extract text (skip thinking blocks)
+            content = ""
+            for block in resp.content:
+                if block.type == "text":
+                    content = block.text
+                    break
 
-    content = content.strip()
+            if not content:
+                raise ValueError("Claude returned empty content")
 
-    # Clean JSON: remove markdown wrappers if present
-    if json_mode:
-        content = re.sub(r'^```(?:json)?\s*', '', content)
-        content = re.sub(r'\s*```\s*$', '', content)
-        content = content.strip()
+            content = content.strip()
 
-    return content
+            # Clean up markdown wrappers if JSON mode
+            if json_mode:
+                content = re.sub(r'^```(?:json)?\s*', '', content)
+                content = re.sub(r'\s*```\s*$', '', content)
+                content = content.strip()
 
+            return content
 
-async def _call_openai(messages, max_tokens=3000, temperature=0.8, json_mode=False):
-    """Call OpenAI API."""
-    kwargs = {
-        "model": OPENAI_MODEL,
-        "messages": messages,
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-    }
-    if json_mode:
-        kwargs["response_format"] = {"type": "json_object"}
-    resp = await openai_client.chat.completions.create(**kwargs)
-    content = resp.choices[0].message.content
-    if content is None:
-        raise ValueError("OpenAI returned None content")
-    return content.strip()
+        except Exception as e:
+            err_str = str(e)
+            logger.warning(f"Claude attempt {attempt+1}/{retries} failed: {err_str[:150]}")
+            if attempt < retries - 1:
+                await asyncio.sleep(2.0 * (attempt + 1))
+                continue
+            raise RuntimeError(
+                f"AI xizmati hozirda javob bermayapdi. "
+                f"Iltimos, bir oz kutib qayta urinib ko'ring. "
+                f"(Xato: {err_str[:120]})"
+            )
 
 
-async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, retries=5):
-    # FAQAT GROQ ishlatiladi
-    if groq_client:
-        # Fallback list of models to avoid TPD limits on a single model
-        models_to_try = [
-            'llama-3.3-70b-versatile',
-            'llama-3.1-70b-versatile',
-            'mixtral-8x7b-32768',
-            'gemma2-9b-it',
-            'llama-3.1-8b-instant'
-        ]
-        
-        for attempt in range(retries):
-            current_model = models_to_try[attempt % len(models_to_try)]
-            try:
-                result = await _call_groq(messages, max_tokens, temperature, json_mode, model=current_model)
-                return result
-            except Exception as e:
-                err_str = str(e)
-                logger.warning(f"Groq attempt {attempt+1}/{retries} with {current_model} failed: {err_str[:100]}")
-                
-                if attempt < retries - 1:
-                    # Switch model and retry quickly
-                    await asyncio.sleep(2.0)
-                    continue
-                
-                raise RuntimeError(
-                    f"AI xizmatining kunlik so'rovlar limiti tugadi! "
-                    f"Barcha modellar band. Iltimos, keyinroq qayta urinib ko'ring."
-                )
 
-    raise RuntimeError(
-        "AI xizmati sozlanmagan. Iltimos, administratorga murojaat qiling."
-    )
+
+
 
 async def generate_document_plan(service_type: str, topic: str, language: str = "uz", detail_level: str = "standard", num_chapters: int = 2, num_subchapters: int = 2) -> dict:
     lang_map = {"uz": "O'zbek tilida", "ru": "На русском языке", "en": "In English"}

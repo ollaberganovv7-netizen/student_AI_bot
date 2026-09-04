@@ -30,7 +30,7 @@ from database.models import User
 from database.db import deduct_balance
 from keyboards.main_kb import main_menu_kb
 from utils.generation_manager import cache_get, cache_set, run_with_queue
-from services.ai_service import generate_content_for_template, client
+from services.ai_service import generate_content_for_template
 from services.template_filler_service import analyze_template_deep, fill_template
 from services.file_reader_service import read_document, summarize_for_prompt
 from utils.helpers import format_price, safe_topic, get_template_path
