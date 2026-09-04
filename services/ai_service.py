@@ -157,17 +157,9 @@ async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, 
                     }
                 ]
 
-            # Extended Thinking for long content generation (better quality)
-            use_thinking = (max_tokens >= 1500 and not json_mode)
-            if use_thinking:
-                kwargs["temperature"] = 1  # required for extended thinking
-                kwargs["thinking"] = {
-                    "type": "enabled",
-                    "budget_tokens": min(2000, max_tokens // 2),
-                }
-                kwargs["max_tokens"] = max_tokens + 2000
-            else:
-                kwargs["temperature"] = temperature
+            # Extended Thinking disabled — claude-sonnet-4-5 rejects 'temperature'
+            # with thinking enabled. Use standard mode with full max_tokens.
+            kwargs["temperature"] = temperature
 
             resp = await _claude_client.messages.create(**kwargs)
 
