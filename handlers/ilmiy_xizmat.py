@@ -1371,6 +1371,13 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                         break
                 section_content = '\n'.join(sc_lines).strip()
                 
+                # Ultimate Terminator: Cut off hallucinated conclusions/bibliographies in middle sections
+                if key not in ["xulosa", "adabiyotlar", "barcha_annotatsiyalar"]:
+                    import re as re_mod_temp2
+                    match = re_mod_temp2.search(r'(?i)\n(XULOSA|XULOSALAR|XULOSA VA TAVSIYALAR|FOYDALANILGAN ADABIYOTLAR|ADABIYOTLAR RO\'YXATI|ADABIYOTLAR)\s*\n', '\n' + section_content + '\n')
+                    if match:
+                        section_content = section_content[:match.start()].strip()
+                
                 sections_content[key] = (section_name, section_content)
                 await asyncio.sleep(0.3)
 
@@ -1679,6 +1686,13 @@ async def _run_generation(
                             sc_lines[_i] = ""
                         break
                 section_content = '\n'.join(sc_lines).strip()
+                
+                # Ultimate Terminator: Cut off hallucinated conclusions/bibliographies in middle sections
+                if key not in ["xulosa", "adabiyotlar", "barcha_annotatsiyalar"]:
+                    import re as re_mod_temp2
+                    match = re_mod_temp2.search(r'(?i)\n(XULOSA|XULOSALAR|XULOSA VA TAVSIYALAR|FOYDALANILGAN ADABIYOTLAR|ADABIYOTLAR RO\'YXATI|ADABIYOTLAR)\s*\n', '\n' + section_content + '\n')
+                    if match:
+                        section_content = section_content[:match.start()].strip()
                 
                 sections_content[key] = (section_name, section_content)
                 await asyncio.sleep(0.3)
