@@ -157,9 +157,8 @@ async def _call_ai(messages, max_tokens=3000, temperature=0.8, json_mode=False, 
                     }
                 ]
 
-            # Extended Thinking disabled — claude-sonnet-4-5 rejects 'temperature'
-            # with thinking enabled. Use standard mode with full max_tokens.
-            kwargs["temperature"] = temperature
+            # NOTE: claude-sonnet-4-5 does NOT accept 'temperature' parameter.
+            # The model controls temperature internally.
 
             resp = await _claude_client.messages.create(**kwargs)
 
