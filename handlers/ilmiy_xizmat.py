@@ -391,9 +391,9 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
         
         # Dynamic pricing based on pages (matching WebApp)
         if service_key in ["a_sci", "a_pop_sci", "a_pop", "a_art"]:
-        min_p = 8
-        base = 5000
-        step = 1400
+            min_p = 8
+            base = 5000
+            step = 1400
         elif service_key in ["t_conf", "t_pop"]:
             min_p = 1
             base = 2000
