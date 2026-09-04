@@ -1312,7 +1312,10 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
+                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa"]:
+                    full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
+                else:
+                    full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
             full_text = "\n".join(full_parts)
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
@@ -1582,7 +1585,10 @@ async def _run_generation(
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
+                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa"]:
+                    full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
+                else:
+                    full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
             full_text = "\n".join(full_parts)
 
             doc_buf = await asyncio.get_event_loop().run_in_executor(
