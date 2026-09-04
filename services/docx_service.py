@@ -534,8 +534,8 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 text_part = stripped[colon_idx+1:].strip()
                 if text_part:
                     p_text = doc.add_paragraph(text_part)
-                    p_text.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-                    p_text.paragraph_format.first_line_indent = Cm(1.25)
+                    p_text.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p_text.paragraph_format.first_line_indent = Cm(0)
                     r_text = p_text.runs[0]
                     r_text.font.name = "Times New Roman"
                     r_text.font.size = Pt(14)

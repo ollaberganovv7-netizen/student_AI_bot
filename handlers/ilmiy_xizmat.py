@@ -1225,6 +1225,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             sections = [
                 ("barcha_annotatsiyalar", "ANNOTATSIYA",
                  f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\\n"
+                 f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida va aniq ILMIY USLUBDA bo'lishi SHART! Har bir terminni asl ilmiy ma'nosida tarjima qil.\\n"
                  f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\\n"
                  f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\\n"
                  f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\\n"
@@ -1494,6 +1495,7 @@ async def _run_generation(
             sections = [
                 ("barcha_annotatsiyalar", "ANNOTATSIYA",
                  f"'{topic}' maqolasi uchun O'ZBEK, INGLIZ va RUS tillarida annotatsiya va kalit so'zlar yoz.\\n"
+                 f"DIQQAT: Ingliz (ABSTRACT/KEYWORDS) va Rus (АННОТАЦИЯ/КЛЮЧЕВЫЕ СЛОВА) tilidagi tarjimalar JUDA SIFATLI, grammatik jihatdan BEKAM-U KO'ST, professionallar darajasida va aniq ILMIY USLUBDA bo'lishi SHART! Har bir terminni asl ilmiy ma'nosida tarjima qil.\\n"
                  f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, markdown yoki sarlavha qoshmang):\\n"
                  f"[O'zbek tilida 100-150 so'zlik annotatsiya matni]\\n"
                  f"KALIT SOʻZLAR: [5-8 ta o'zbekcha kalit so'zlar]\\n"
