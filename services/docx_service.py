@@ -502,6 +502,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     # ── CONTENT ─────────────────────────────────────────────────────────────
     lines = content.split("\n")
     i_line = 0
+    seen_headers = set()
     while i_line < len(lines):
         stripped = lines[i_line].strip()
         if not stripped:
@@ -555,15 +556,32 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
         exact_headers = ["ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR"]
         if upper_stripped in exact_headers:
-            p = doc.add_paragraph(stripped.upper())
-            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            p.paragraph_format.first_line_indent = Cm(0)
-            p.paragraph_format.space_before = Pt(12)
-            p.paragraph_format.space_after = Pt(6)
-            run = p.runs[0]
-            run.font.name = "Times New Roman"
-            run.font.size = Pt(14)
-            run.bold = True
+            if upper_stripped not in seen_headers:
+                if "XULOSA" in upper_stripped:
+                    seen_headers.add("XULOSA")
+                    seen_headers.add("XULOSA VA TAVSIYALAR")
+                elif "ADABIYOTLAR" in upper_stripped:
+                    seen_headers.add("FOYDALANILGAN ADABIYOTLAR")
+                    seen_headers.add("ADABIYOTLAR")
+                    seen_headers.add("ADABIYOTLAR RO'YXATI")
+                else:
+                    seen_headers.add(upper_stripped)
+                
+                if "ADABIYOTLAR" in upper_stripped:
+                    print_text = "FOYDALANILGAN ADABIYOTLAR"
+                else:
+                    print_text = stripped.upper()
+                    
+                p = doc.add_paragraph(print_text)
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p.paragraph_format.first_line_indent = Cm(0)
+                p.paragraph_format.space_before = Pt(12)
+                p.paragraph_format.space_after = Pt(6)
+                run = p.runs[0]
+                run.font.name = "Times New Roman"
+                run.font.size = Pt(14)
+                run.font.bold = True
+            
             i_line += 1
             continue
 

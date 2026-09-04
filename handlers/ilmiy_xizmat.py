@@ -1237,32 +1237,32 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                  f"КЛЮЧЕВЫЕ СЛОВА: [5-8 русских ключевых слов]"),
                 ("kirish", "KIRISH",
                  f"'{topic}' maqolasining KIRISH qismini yoz. "
-                 f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA."),
+                 f"Dolzarblik, o'rganilganlik, maqsad. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun akademik matn. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun nazariy tahlil. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun empirik tahlil. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur tahlil. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun amaliy misollar. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
                  f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun taqqoslash. "
-                 f"{w} so'z. Sarlavha YOZMA."),
+                 f"{w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA! Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
                 ("xulosa", "XULOSA",
                  f"'{topic}' maqolasining XULOSA va TAVSIYALAR qismini yoz. "
-                 f"{max(100, w//2)} so'z. Sarlavha YOZMA."),
+                 f"{max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
                 ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                  f"'{topic}' mavzusiga oid 10-15 ta REAL ilmiy manba ro'yxati. "
-                 f"APA yoki GOST formatida. 4-5 ta O'zbek muallifi bo'lsin. "
-                 f"Faqat ro'yxat — hech narsa qo'shma."),
+                 f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) bo'lsin. "
+                 f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!"),
             ]
 
             sections_content = {}
@@ -1312,7 +1312,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa"]:
+                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa", "adabiyotlar"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
@@ -1531,11 +1531,11 @@ async def _run_generation(
                  f"{w} so'z. Sarlavha YOZMA."),
                 ("xulosa", "XULOSA",
                  f"'{topic}' maqolasining XULOSA va TAVSIYALAR qismini yoz. "
-                 f"{max(100, w//2)} so'z. Sarlavha YOZMA."),
+                 f"{max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
                 ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                  f"'{topic}' mavzusiga oid 10-15 ta REAL ilmiy manba ro'yxati. "
-                 f"APA yoki GOST formatida. 4-5 ta O'zbek muallifi bo'lsin. "
-                 f"Faqat ro'yxat — hech narsa qo'shma."),
+                 f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) bo'lsin. "
+                 f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!"),
             ]
 
             sections_content = {}
@@ -1585,7 +1585,7 @@ async def _run_generation(
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa"]:
+                if key not in ["barcha_annotatsiyalar", "kirish", "xulosa", "adabiyotlar"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
