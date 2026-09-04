@@ -318,6 +318,16 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         }
         label = labels.get(service_type, "ILMIY MAQOLA")
 
+        if service_type == "a_sci":
+            p_udk = doc.add_paragraph("UO'K (UDC): _______")
+            p_udk.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p_udk.paragraph_format.first_line_indent = Cm(0)
+            p_udk.paragraph_format.space_after = Pt(12)
+            run_udk = p_udk.runs[0]
+            run_udk.font.name = "Times New Roman"
+            run_udk.font.size = Pt(14)
+            run_udk.font.bold = True
+
         p_title = doc.add_paragraph(topic.upper())
         p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_title.paragraph_format.first_line_indent = Cm(0)
@@ -554,7 +564,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 i_line += 1
                 continue
 
-        exact_headers = ["ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR"]
+        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR"]
         if upper_stripped in exact_headers:
             if upper_stripped not in seen_headers:
                 if "XULOSA" in upper_stripped:
