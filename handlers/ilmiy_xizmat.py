@@ -269,11 +269,12 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     if free_trial:
         price_text = "🎁 BEPUL (birinchi marta)"
     else:
-        # User requested 5000 - 15000 for this
-        if "maqola" in svc_type:
-            price_text = "💳 5 000 - 15 000 so'm (sahifa soniga qarab)"
+        if service_key in ["a_pop_sci", "a_pop", "a_art"]:
+            price_text = " 5 000 - 9 000 so'm (sahifa soniga qarab)"
+        elif service_key == "a_sci" or "maqola" in svc_type:
+            price_text = " 5 000 - 15 000 so'm (sahifa soniga qarab)"
         else:
-            price_text = f"💳 {format_price(price)} so'mdan boshlab"
+            price_text = f" {format_price(price)} so'mdan boshlab"
 
     # WebApp URL - maqola_settings.html bilan bir xil format (root papka)
     base_url = os.getenv("WEBAPP_URL", "https://ollaberganovv7-netizen.github.io/student_AI_bot").split("?")[0]
