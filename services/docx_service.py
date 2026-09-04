@@ -318,7 +318,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         }
         label = labels.get(service_type, "ILMIY MAQOLA")
 
-        if service_type in ("a_sci", "a_pop_sci"):
+        if service_type == "a_sci":
             p_udk = doc.add_paragraph("UO'K (UDC): _______")
             p_udk.alignment = WD_ALIGN_PARAGRAPH.LEFT
             p_udk.paragraph_format.first_line_indent = Cm(0)
@@ -491,11 +491,18 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         p3.runs[0].font.italic = True
         for _ in range(8): doc.add_paragraph("")
         p_auth = doc.add_paragraph()
-        p_auth.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-        p_auth.paragraph_format.first_line_indent = Cm(0)
-        run_auth = p_auth.add_run(f"Bajardi: {formatted_author}")
-        run_auth.font.size = Pt(14)
-        run_auth.font.bold = True
+        if service_type == "a_pop_sci":
+            p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p_auth.paragraph_format.first_line_indent = Cm(0)
+            run_auth = p_auth.add_run(f"{formatted_author}")
+            run_auth.font.size = Pt(14)
+            run_auth.font.bold = True
+        else:
+            p_auth.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+            p_auth.paragraph_format.first_line_indent = Cm(0)
+            run_auth = p_auth.add_run(f"Bajardi: {formatted_author}")
+            run_auth.font.size = Pt(14)
+            run_auth.font.bold = True
 
     if service_type not in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss", "t_pop", "tezis"):
         doc.add_page_break()
