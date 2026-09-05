@@ -7,125 +7,264 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #060d1f; color: #e2e8f0;
-            min-height: 100vh; padding-bottom: 100px; overflow-x: hidden;
+            background: #060d1f;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 0 0 100px 0;
+            overflow-x: hidden;
         }
+
+        /* TOP HERO */
         .hero {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #1e3a5f 100%);
-            padding: 24px 20px 32px; position: relative; overflow: hidden;
+            padding: 24px 20px 28px;
+            position: relative;
+            overflow: hidden;
         }
         .hero::after {
-            content:''; position:absolute; bottom:-20px; left:0; right:0;
-            height:40px; background:#060d1f; border-radius:40px 40px 0 0;
+            content: '';
+            position: absolute;
+            bottom: -20px; left: 0; right: 0;
+            height: 40px;
+            background: #060d1f;
+            border-radius: 40px 40px 0 0;
         }
         .hero-glow {
-            position:absolute; top:-40px; right:-40px; width:180px; height:180px;
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
             background: radial-gradient(circle, rgba(167,139,250,0.3) 0%, transparent 70%);
-            pointer-events:none;
+            pointer-events: none;
         }
         .hero-icon {
-            width:64px; height:64px;
-            background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2);
-            border-radius:18px; display:flex; align-items:center; justify-content:center;
-            font-size:30px; margin-bottom:14px; backdrop-filter:blur(10px);
+            width: 64px; height: 64px;
+            background: rgba(255,255,255,0.12);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(10px);
         }
-        .hero h1 { font-size:22px; font-weight:800; color:#fff; margin-bottom:6px; letter-spacing:-0.3px; }
-        .hero p  { font-size:13px; color:rgba(199,210,254,0.85); line-height:1.4; }
-        .body { padding:24px 16px 0; display:flex; flex-direction:column; gap:12px; }
+        .hero h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+            letter-spacing: -0.3px;
+        }
+        .hero p {
+            font-size: 13px;
+            color: rgba(199,210,254,0.85);
+            line-height: 1.4;
+        }
+
+        /* BODY */
+        .body {
+            padding: 24px 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* GLASS CARD */
         .glass {
-            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-            border-radius:18px; padding:16px;
-            transition: border-color 0.25s, background 0.25s;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 16px;
+            transition: border-color 0.25s;
         }
         .glass:focus-within {
-            border-color:rgba(139,92,246,0.55); background:rgba(139,92,246,0.07);
+            border-color: rgba(139,92,246,0.6);
+            background: rgba(139,92,246,0.06);
         }
+
         .field-label {
-            font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
-            color:#6366f1; margin-bottom:8px; display:flex; align-items:center; gap:6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #6366f1;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .req { color:#f87171; font-size:14px; line-height:1; }
-        .opt { color:#475569; font-weight:400; text-transform:none; letter-spacing:0; font-size:10px; }
+        .field-label .req { color: #f87171; font-size: 14px; line-height: 1; }
+        .field-label .opt { color: #475569; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 10px; }
+
         .glass input {
-            width:100%; background:transparent; border:none; outline:none;
-            color:#f1f5f9; font-size:15px; font-family:inherit;
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #f1f5f9;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
         }
-        .glass input::placeholder { color:#2d3f55; font-size:13px; }
-        .slider-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px; }
-        .sl-label { font-size:13px; color:#94a3b8; }
-        .sl-val { font-size:36px; font-weight:900; color:#a78bfa; line-height:1; letter-spacing:-1px; }
-        .sl-val .unit { font-size:13px; font-weight:500; color:#64748b; margin-left:4px; letter-spacing:0; }
+        .glass input::placeholder { color: #334155; font-size: 13px; }
+
+        /* SLIDER */
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 16px;
+        }
+        .slider-header .label { font-size: 13px; color: #94a3b8; }
+        .slider-header .val {
+            font-size: 36px;
+            font-weight: 900;
+            color: #a78bfa;
+            line-height: 1;
+            letter-spacing: -1px;
+        }
+        .slider-header .val .unit {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            margin-left: 4px;
+            letter-spacing: 0;
+        }
+
         input[type="range"] {
-            -webkit-appearance:none; width:100%; height:6px;
-            border-radius:99px; background:rgba(99,102,241,0.2); outline:none; margin:2px 0 10px;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 99px;
+            background: rgba(99,102,241,0.2);
+            outline: none;
+            margin: 2px 0 10px;
         }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance:none; width:26px; height:26px; border-radius:50%;
-            background:linear-gradient(135deg,#a78bfa,#7c3aed); cursor:pointer;
-            border:3px solid #060d1f; box-shadow:0 0 16px rgba(139,92,246,0.6);
+            -webkit-appearance: none;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            cursor: pointer;
+            border: 3px solid #060d1f;
+            box-shadow: 0 0 16px rgba(139,92,246,0.6);
         }
-        .ticks { display:flex; justify-content:space-between; }
-        .ticks span { font-size:10px; color:#334155; }
+        .ticks {
+            display: flex;
+            justify-content: space-between;
+        }
+        .ticks span { font-size: 10px; color: #334155; }
+
+        /* INFO */
         .info-pill {
-            background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2);
-            border-radius:12px; padding:11px 16px; font-size:12px; color:#a5b4fc;
-            text-align:center; font-weight:500;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 12px;
+            padding: 11px 16px;
+            font-size: 12px;
+            color: #a5b4fc;
+            text-align: center;
+            font-weight: 500;
         }
+
+        /* PRICE */
         .price-card {
-            background:linear-gradient(135deg,rgba(16,185,129,0.18),rgba(5,150,105,0.1));
-            border:1.5px solid rgba(52,211,153,0.3); border-radius:20px; padding:22px 20px;
-            text-align:center; position:relative; overflow:hidden;
+            background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.1));
+            border: 1.5px solid rgba(52,211,153,0.3);
+            border-radius: 20px;
+            padding: 22px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         .price-card::before {
-            content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px;
-            background:radial-gradient(circle,rgba(52,211,153,0.15) 0%,transparent 70%); pointer-events:none;
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(52,211,153,0.15) 0%, transparent 70%);
+            pointer-events: none;
         }
-        .price-tag { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#6ee7b7; margin-bottom:8px; }
-        .price-amount { font-size:38px; font-weight:900; color:#10b981; letter-spacing:-1px; line-height:1; }
-        .price-sub { font-size:11px; color:#34d399; margin-top:6px; opacity:0.7; }
+        .price-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #6ee7b7;
+            margin-bottom: 8px;
+        }
+        .price-amount {
+            font-size: 38px;
+            font-weight: 900;
+            color: #10b981;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .price-sub {
+            font-size: 11px;
+            color: #34d399;
+            margin-top: 6px;
+            opacity: 0.7;
+        }
+
+        /* ANIM */
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-        .hero { animation:fadeUp 0.3s ease; }
-        .glass, .info-pill, .price-card { animation:fadeUp 0.4s ease both; }
+        .hero { animation: fadeUp 0.3s ease; }
+        .glass, .info-pill, .price-card { animation: fadeUp 0.4s ease both; }
         .d1{animation-delay:.06s} .d2{animation-delay:.12s} .d3{animation-delay:.18s}
         .d4{animation-delay:.24s} .d5{animation-delay:.30s} .d6{animation-delay:.36s}
     </style>
 </head>
 <body>
+
+<!-- HERO -->
 <div class="hero">
     <div class="hero-glow"></div>
+    <div class="hero-icon" id="svc-icon">📝</div>
     <h1 id="svc-name">Ilmiy xizmat</h1>
     <p id="svc-desc">Sozlamalarni to'ldiring va yaratishni boshlang</p>
 </div>
+
+<!-- BODY -->
 <div class="body">
+
     <div class="glass d1">
         <div class="field-label">📌 Mavzu <span class="req">*</span></div>
         <input type="text" id="topic" placeholder="Masalan: Sun'iy intellektning ta'limdagi o'rni" autocomplete="off">
     </div>
+
     <div class="glass d2">
         <div class="field-label">👤 Muallif ism-sharifi <span class="req">*</span></div>
         <input type="text" id="author" placeholder="Masalan: Karimov Bobur Rashidovich" autocomplete="off">
     </div>
+
     <div class="glass d3">
         <div class="field-label">🏛 Tashkilot / Lavozim <span class="opt">(ixtiyoriy)</span></div>
         <input type="text" id="workplace" placeholder="Masalan: ToshDTU, dotsent" autocomplete="off">
     </div>
+
     <div class="glass d4" style="padding:18px 16px;">
         <div class="slider-header">
-            <span class="sl-label">📄 Hajmi</span>
-            <div class="sl-val" id="page-count">5<span class="unit">bet</span></div>
+            <span class="label">📄 Hajmi</span>
+            <div class="val" id="page-count">5<span class="unit">bet</span></div>
         </div>
         <input type="range" id="pages" min="3" max="15" step="1" value="5">
-        <div class="ticks" id="range-labels"><span>3</span><span>6</span><span>9</span><span>12</span><span>15</span></div>
+        <div class="ticks" id="range-labels">
+            <span>3</span><span>6</span><span>9</span><span>12</span><span>15</span>
+        </div>
     </div>
+
     <div class="info-pill d5" id="words-info">📊 Taxminiy hajm: ~1 250 ta so'z</div>
+
     <div class="price-card d6">
         <div class="price-tag">💰 Xizmat narxi</div>
         <div class="price-amount" id="price-display">4 000 so'm</div>
         <div class="price-sub" id="price-note">Sahifalar soniga qarab o'zgaradi</div>
     </div>
+
 </div>
+
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
@@ -134,45 +273,78 @@
     tg.MainButton.setText("\u2705 Yaratishni boshlash");
     tg.MainButton.color = "#7c3aed";
     tg.MainButton.show();
+
     const SERVICES = {
-        "a_sci":     {icon:"\uD83D\uDD2C",name:"Ilmiy maqola",              desc:"OAK talablariga mos IMRAD strukturasi",       minP:5,maxP:15,basePrice:4000},
-        "a_pop_sci": {icon:"\uD83D\uDD2D",name:"Ilmiy-ommabop maqola",      desc:"Storytelling uslubida, keng kitobxon uchun",  minP:3,maxP:10,basePrice:3000},
-        "a_pop":     {icon:"\uD83D\uDCF0",name:"Ommabop maqola",            desc:"Jurnalistik uslub \u2014 fakt, tahlil, ta'sir",minP:3,maxP:10,basePrice:3000},
-        "a_art":     {icon:"\uD83C\uDFAD",name:"Badiiy-publitsistik maqola",desc:"Obrazlar, metaforalar, emotsional ta'sir",   minP:3,maxP:10,basePrice:3000},
-        "t_conf":    {icon:"\uD83D\uDCDD",name:"Konferensiya tezisi",        desc:"OAK/Konferensiya talablari, 200-500 so'z",   minP:1,maxP:3, basePrice:2000},
-        "t_art":     {icon:"\uD83D\uDCC4",name:"Maqola tezisi (Abstract)",  desc:"3 tilda annotatsiya, kalit so'zlar",          minP:1,maxP:2, basePrice:1500},
-        "t_diss":    {icon:"\uD83C\uDF93",name:"Dissertatsiya tezisi",       desc:"Avtoreferat uslubi \u2014 pasport, natijalar",minP:2,maxP:5, basePrice:3500},
-        "t_pop":     {icon:"\uD83D\uDCCA",name:"Ommabop / Tahliliy tezis",  desc:"Executive Summary \u2014 bullet points",      minP:1,maxP:3, basePrice:2000},
+        "a_sci":     {icon:"\uD83D\uDD2C",name:"Ilmiy maqola",             desc:"OAK talablariga mos IMRAD strukturasi",       minP:8,maxP:15,basePrice:5000,step:1400},
+        "a_pop_sci": {icon:"\uD83D\uDD2D",name:"Ilmiy-ommabop maqola",     desc:"Storytelling uslubida, keng kitobxon uchun",  minP:5,maxP:8,basePrice:5000,step:1334},
+        "a_pop":     {icon:"\uD83D\uDCF0",name:"Ommabop maqola",           desc:"Jurnalistik uslub \u2014 fakt, tahlil, ta'sir",minP:5,maxP:8,basePrice:5000,step:1334},
+        "a_art":     {icon:"\uD83C\uDFAD",name:"Badiiy-publitsistik maqola",desc:"Obrazlar, metaforalar, emotsional ta'sir",   minP:5,maxP:8,basePrice:5000,step:1334},
+        "t_conf":    {icon:"\uD83D\uDCDD",name:"Konferensiya tezisi",       desc:"OAK/Konferensiya talablari, 200-500 so'z",   minP:1,maxP:3, basePrice:2000,step:500},
+        "t_art":     {icon:"\uD83D\uDCC4",name:"Maqola tezisi (Abstract)", desc:"3 tilda annotatsiya, kalit so'zlar",          minP:1,maxP:2, basePrice:1500,step:500},
+        "t_diss":    {icon:"\uD83C\uDF93",name:"Dissertatsiya tezisi",      desc:"Avtoreferat uslubi \u2014 pasport, natijalar",minP:2,maxP:5, basePrice:3500,step:500},
+        "t_pop":     {icon:"\uD83D\uDCCA",name:"Ommabop / Tahliliy tezis", desc:"Executive Summary \u2014 bullet points",      minP:1,maxP:3, basePrice:2000,step:500},
     };
+
     const params = new URLSearchParams(window.location.search);
     const key = params.get('service') || 'a_sci';
     const svc = SERVICES[key] || SERVICES['a_sci'];
+
+    document.getElementById('svc-icon').textContent = svc.icon;
     document.getElementById('svc-name').textContent = svc.name;
     document.getElementById('svc-desc').textContent = svc.desc;
+
     const slider = document.getElementById('pages');
     slider.min = svc.minP; slider.max = svc.maxP; slider.value = svc.minP;
+
     const lc = Math.min(5, svc.maxP - svc.minP + 1);
-    const st = (svc.maxP - svc.minP) / Math.max(lc-1,1);
+    const st = (svc.maxP - svc.minP) / Math.max(lc - 1, 1);
     const ticks = document.getElementById('range-labels');
     ticks.innerHTML = '';
-    for(let i=0;i<lc;i++){const s=document.createElement('span');s.textContent=Math.round(svc.minP+st*i);ticks.appendChild(s);}
-    function fill(){const v=+slider.value,mn=+slider.min,mx=+slider.max;const p=mx===mn?100:((v-mn)/(mx-mn))*100;slider.style.background=`linear-gradient(to right,#7c3aed ${p}%,rgba(99,102,241,0.2) ${p}%)`;}
-    function update(){
-        const p=+slider.value;
-        document.getElementById('page-count').innerHTML=p+'<span class="unit">bet</span>';
-        document.getElementById('words-info').textContent='\uD83D\uDCCA Taxminiy hajm: ~'+(p*250).toLocaleString('ru-RU')+' ta so\u02BCz';
-        const price=svc.basePrice+(p-svc.minP)*500;
-        document.getElementById('price-display').textContent=price<=0?'Bepul \u2728':price.toLocaleString('ru-RU')+" so'm";
-        document.getElementById('price-note').textContent=price<=0?'Birinchi marta tekin!':'Sahifalar soniga qarab o\u02BCzgaradi';
+    for (let i = 0; i < lc; i++) {
+        const s = document.createElement('span');
+        s.textContent = Math.round(svc.minP + st * i);
+        ticks.appendChild(s);
+    }
+
+    function fill() {
+        const v = +slider.value, mn = +slider.min, mx = +slider.max;
+        const p = mx === mn ? 100 : ((v - mn) / (mx - mn)) * 100;
+        slider.style.background = `linear-gradient(to right,#7c3aed ${p}%,rgba(99,102,241,0.2) ${p}%)`;
+    }
+
+    function update() {
+        const p = +slider.value;
+        document.getElementById('page-count').innerHTML = p + '<span class="unit">bet</span>';
+        document.getElementById('words-info').textContent = '\uD83D\uDCCA Taxminiy hajm: ~' + (p * 250).toLocaleString('ru-RU') + ' ta so\u02BCz';
+        const step = svc.step || 500;
+        let price = svc.basePrice + (p - svc.minP) * step;
+        if (key === 'a_pop_sci' || key === 'a_pop' || key === 'a_art') {
+            if (p === 5) price = 5000;
+            else if (p === 6) price = 7000;
+            else if (p === 7) price = 8000;
+            else if (p === 8) price = 9000;
+            else price = Math.round(price / 1000) * 1000;
+        } else {
+            price = Math.round(price / 1000) * 1000; // Round to nearest 1000
+        }
+        document.getElementById('price-display').textContent = price <= 0 ? 'Bepul \u2728' : price.toLocaleString('ru-RU') + " so'm";
+        document.getElementById('price-note').textContent = price <= 0 ? 'Birinchi marta tekin!' : 'Sahifalar soniga qarab o\u02BCzgaradi';
         fill();
     }
-    slider.addEventListener('input',update); update();
-    tg.MainButton.onClick(()=>{
-        const topic=document.getElementById('topic').value.trim();
-        const author=document.getElementById('author').value.trim();
-        if(topic.length<5){tg.showAlert("\u274C Iltimos, mavzuni to\u02BCliqroq kiriting.");return;}
-        if(author.length<3){tg.showAlert("\u274C Iltimos, muallif ismini kiriting.");return;}
-        tg.sendData(JSON.stringify({type:"ilmiy_xizmat",service_key:key,topic,author,workplace:document.getElementById('workplace').value.trim(),language:'uz',pages:+slider.value,keywords:'',research_details:''}));
+
+    slider.addEventListener('input', update);
+    update();
+
+    tg.MainButton.onClick(() => {
+        const topic  = document.getElementById('topic').value.trim();
+        const author = document.getElementById('author').value.trim();
+        if (topic.length < 5)  { tg.showAlert("\u274C Iltimos, mavzuni to\u02BCliqroq kiriting (kamida 5 ta belgi)."); return; }
+        if (author.length < 3) { tg.showAlert("\u274C Iltimos, muallif ismini kiriting."); return; }
+        tg.sendData(JSON.stringify({
+            type:"ilmiy_xizmat", service_key:key, topic, author,
+            workplace: document.getElementById('workplace').value.trim(),
+            language:'uz', pages:+slider.value, keywords:'', research_details:''
+        }));
     });
 </script>
 </body>
