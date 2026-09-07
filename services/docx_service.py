@@ -238,7 +238,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     formatted_author = format_fio(author)
 
     # ── Page margins ─────────────────────────────────────────────────────────
-    is_maqola_style = service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf")
+    is_maqola_style = service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art")
     for section in doc.sections:
         if is_maqola_style:
             section.top_margin = Cm(2.0)
@@ -255,7 +255,9 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     style = doc.styles["Normal"]
     style.font.name = "Times New Roman"
     style.font.size = Pt(14)
-    if service_type in ("t_conf", "a_pop_sci", "a_pop", "a_art"):
+    if service_type in ("t_art", "t_conf"):
+        style.paragraph_format.line_spacing = 1.15
+    elif service_type in ("a_pop_sci", "a_pop", "a_art"):
         style.paragraph_format.line_spacing = 1.0
     else:
         style.paragraph_format.line_spacing = 1.5
@@ -318,7 +320,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
         doc.add_paragraph("")  # Space before text
 
-    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf"):
+    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art"):
         # Academic article / maqola style cover (journal format)
         labels = {
             "a_sci":     "ILMIY MAQOLA",
@@ -341,17 +343,17 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         p_title = doc.add_paragraph(topic.upper())
         p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_title.paragraph_format.first_line_indent = Cm(0)
-        p_title.paragraph_format.space_after = Pt(6)
+        p_title.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art") else 6)
         run_title = p_title.runs[0]
         run_title.font.name = "Times New Roman"
-        run_title.font.size = Pt(16)
+        run_title.font.size = Pt(14 if service_type in ("t_conf", "t_art") else 16)
         run_title.font.bold = True
 
         author_lines = author.strip().split('\n')
         p_auth = doc.add_paragraph()
         p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_auth.paragraph_format.first_line_indent = Cm(0)
-        p_auth.paragraph_format.space_after = Pt(12)
+        p_auth.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art") else 12)
         
         if len(author_lines) > 0:
             run_name = p_auth.add_run(author_lines[0].strip())
@@ -364,7 +366,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 run_br = p_auth.add_run('\n')
                 run_inst = p_auth.add_run(line.strip())
                 run_inst.font.name = "Times New Roman"
-                run_inst.font.size = Pt(12)
+                run_inst.font.size = Pt(14 if service_type in ("t_conf", "t_art") else 12)
                 run_inst.font.bold = False
 
         doc.add_paragraph("")  # Space before content
@@ -545,7 +547,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
             level = 1 if stripped.startswith("# ") else 2
             heading_text = stripped.lstrip("#").strip()
             
-            if service_type in ("a_art", "a_pop_sci", "a_pop", "a_sci", "t_conf"):
+            if service_type in ("a_art", "a_pop_sci", "a_pop", "a_sci", "t_conf", "t_art"):
                 p = doc.add_paragraph(heading_text.upper())
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 p.paragraph_format.first_line_indent = Cm(0)
@@ -592,7 +594,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 i_line += 1
                 continue
 
-        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "TADQIQOT NATIJALARI", "NATIJALAR", "MUHOKAMA", "NATIJALAR MUHOKAMASI", "NATIJALAR VA MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR", "FOYDALANILGAN MANBALAR", "SIFAT NAZORATI", "KALIT SO'ZLAR", "KALIT SOʻZLAR", "KALIT SO?ZLAR"]
+        exact_headers = ["TADQIQOT METODLARI", "TADQIQOT METODOLOGIYASI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "TADQIQOT NATIJALARI", "NATIJALAR", "MUHOKAMA", "NATIJALAR MUHOKAMASI", "NATIJALAR VA MUHOKAMA", "ILMIY NATIJALAR VA MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR", "FOYDALANILGAN MANBALAR", "SIFAT NAZORATI", "KALIT SO'ZLAR", "KALIT SOʻZLAR", "KALIT SO?ZLAR"]
         if upper_stripped in exact_headers:
             if upper_stripped not in seen_headers:
                 if "XULOSA" in upper_stripped:
@@ -605,20 +607,31 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 else:
                     seen_headers.add(upper_stripped)
                 
-                if "ADABIYOTLAR" in upper_stripped:
-                    print_text = "FOYDALANILGAN ADABIYOTLAR"
+                if service_type == "t_art" and ("ADABIYOTLAR" in upper_stripped or "MANBALAR" in upper_stripped):
+                    p = doc.add_paragraph("Foydalanilgan adabiyotlar:")
+                    p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+                    p.paragraph_format.first_line_indent = Cm(1.25)
+                    p.paragraph_format.space_before = Pt(6)
+                    p.paragraph_format.space_after = Pt(0)
+                    run = p.runs[0]
+                    run.font.name = "Times New Roman"
+                    run.font.size = Pt(14)
+                    run.font.bold = False
                 else:
-                    print_text = stripped.upper()
-                    
-                p = doc.add_paragraph(print_text)
-                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                p.paragraph_format.first_line_indent = Cm(0)
-                p.paragraph_format.space_before = Pt(12)
-                p.paragraph_format.space_after = Pt(6)
-                run = p.runs[0]
-                run.font.name = "Times New Roman"
-                run.font.size = Pt(14)
-                run.font.bold = True
+                    if "ADABIYOTLAR" in upper_stripped:
+                        print_text = "FOYDALANILGAN ADABIYOTLAR"
+                    else:
+                        print_text = stripped.upper()
+                        
+                    p = doc.add_paragraph(print_text)
+                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    p.paragraph_format.first_line_indent = Cm(0)
+                    p.paragraph_format.space_before = Pt(12)
+                    p.paragraph_format.space_after = Pt(6)
+                    run = p.runs[0]
+                    run.font.name = "Times New Roman"
+                    run.font.size = Pt(14)
+                    run.font.bold = True
             
             i_line += 1
             continue

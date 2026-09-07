@@ -81,8 +81,8 @@ SERVICE_CONFIG = {
         "Ilmiy konferensiya tezisi (namunaga mos, 1-3 bet)",
     ),
     "t_art": (
-        "📝", "Ilmiy maqola tezisi (Abstract)", 1, "tezis_1", "tezis",
-        "OAK jurnali uchun maqola annotatsiyasi (Abstract/Tezis)",
+        "📝", "Ilmiy maqola tezisi", 2, "tezis_2", "maqola",
+        "OAK va IMRAD talablariga mos ilmiy maqola tezisi (1-2 bet)",
     ),
     "t_diss": (
         "🎓", "Dissertatsiya / BMI tezisi", 3, "tezis_3", "tezis",
@@ -181,12 +181,17 @@ QOIDALAR:
 
         # 3. Ilmiy maqola tezisi (t_art)
         "t_art": """
-## SEN ILMIY MAQOLA TEZISI YOZUVCHISAN
-Tezis — maqolaning oddiy qisqartirilgan shakli emas. U mustaqil ilmiy fikrni zich ifodalaydi.
-Struktura: MUAMMO -> MAQSAD -> ASOSIY FIKR -> DALIL -> NATIJA -> XULOSA.
-Har bir jumla kerakli. Har bir da'vo — dalil bilan.
-Ortiqcha kirish so'zlar, umumiy gaplar, muqaddima yoqma.
-Manbalar: faqat eng muhim 3-5 ta, haqiqiy mavjud bo'lganlari.""",
+## SEN ILMIY MAQOLA TEZISI YOZUVCHISAN (OAK & IMRAD STANDARTLARI ASOSIDA)
+Tezis — to'liq ilmiy maqolaning ixcham, zich va ilmiy-metodologik jihatdan puxta bayonidir (OAK 2026 talablari va PF-98 Farmoni).
+Asosiy prinsiplar:
+1. ANNOTATSIYA VA KALIT SO'ZLAR: Tadqiqot muammosi, maqsadi, usuli, asosiy ilmiy natijasi va xulosasini lo'nda ifodalasin.
+2. IMRAD STRUKTURASI:
+   - KIRISH: Mavzuning dolzarbligi, ilmiy muammo va maqsad (ortiqcha umumiy kirish gaplarsiz).
+   - TADQIQOT METODOLOGIYASI: Obyekt, tanlanma, tahlil usullari (qiyosiy, statistik, eksperimental).
+   - ILMIY NATIJALAR VA MUHOKAMA: Aniq ilmiy natija (aniq raqamlar, foizlar, faktlar bilan) va boshqa tadqiqotchilar/manbalar bilan taqqoslash.
+   - XULOSA VA AMALIY TAVSIYALAR: Natijadan kelib chiqadigan aniq ilmiy xulosa va amaliy tavsiya.
+3. HAVOLALAR: Matn ichida asosiy fikrlarga [1], [2] ko'rinishida nufuzli ilmiy manbalarga havola berilsin.
+4. TIL VA USLUB: Qat'iy akademik, aniq va lo'nda. "Hozirgi kunda dunyoda katta o'zgarishlar..." kabi suvsiz, umumiy jumlalarga YO'L QO'YILMAYDI.""",
 
         # 4. Ilmiy-ommabop maqola (a_pop_sci)
         "a_pop_sci": """
@@ -279,7 +284,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     else:
         if service_key in ["a_pop_sci", "a_pop", "a_art"]:
             price_text = " 5 000 - 9 000 so'm (sahifa soniga qarab)"
-        elif service_key == "t_conf":
+        elif service_key in ("t_conf", "t_art"):
             price_text = " 3 000 - 5 000 so'm (sahifa soniga qarab)"
         elif service_key == "a_sci" or "maqola" in svc_type:
             price_text = " 5 000 - 15 000 so'm (sahifa soniga qarab)"
@@ -413,13 +418,13 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             min_p = 1
             base = 3000
             step = 1000
+        elif service_key == "t_art":
+            min_p = 1
+            base = 3000
+            step = 2000
         elif service_key == "t_pop":
             min_p = 1
             base = 2000
-            step = 500
-        elif service_key == "t_art":
-            min_p = 1
-            base = 1500
             step = 500
         elif service_key == "t_diss":
             min_p = 2
@@ -443,6 +448,9 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             elif pages == 2: price = 4000
             elif pages == 3: price = 5000
             else: price = 3000 + max(0, pages - 1) * 1000
+        elif service_key == "t_art":
+            if pages == 1: price = 3000
+            else: price = 5000
         else:
             calc_price = base + max(0, (pages - min_p)) * step
             price = round(calc_price / 1000) * 1000
@@ -1209,13 +1217,18 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
         else:
             if service_key == "t_conf":
                 if pages == 1:
-                    w = 180
+                    w = 120
                 elif pages == 2:
                     w = 430
                 elif pages == 3:
                     w = 700
                 else:
                     w = int(pages * 230)
+            elif service_key == "t_art":
+                if pages == 1:
+                    w = 120
+                else:
+                    w = 270
             elif service_key == "a_art":
                 target_words = int(pages * 290)
                 content_words = max(600, target_words - 280)
@@ -1239,10 +1252,10 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             except:
                 pass
 
-            if service_key == "t_conf":
+            if service_key in ("t_conf", "t_art"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
-                    "Ushbu mavzu bo'yicha ilmiy konferensiya tezisida yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
+                    "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
                     "1. [1-ilmiy jihat]\n"
                     "2. [2-ilmiy jihat]\n"
                     "3. [3-ilmiy jihat]\n"
@@ -1319,25 +1332,72 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
                 style_ins = "ILMIY KONFERENSIYA TEZISI (zich, qat'iy akademik, chuqur tahliliy, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
-                par_count = "4-5 ta" if pages == 1 else ("7-9 ta" if pages == 2 else "10-13 ta")
-                sections = [
-                    ("matn", "ASOSIY MATN",
-                     f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
-                     f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
-                     f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
-                     f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
-                     f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
-                     f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
-                     f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
-                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
-                     f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
-                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
-                ]
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY KONFERENSIYA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"2-xatboshi asosiy ilmiy natija va mohiyatni yoritsin. "
+                         f"Oxirgi gap albatta 'Xulosa qilib aytganda, ...' deb yakunlansin. "
+                         f"Hajmi: qat'iy 110-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid 3 ta eng asosiy ilmiy manba ro'yxati (qisqa bibliografik formatda). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    par_count = "7-9 ta" if pages == 2 else "10-13 ta"
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
+                         f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
+                    ]
+            elif service_key == "t_art":
+                style_ins = "ILMIY MAQOLA TEZISI (OAK va IMRAD standartlariga qat'iy mos, ixcham, qat'iy akademik, chuqur tahliliy, sarlavhalarsiz yaxlit ilmiy matn)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"2-xatboshi asosiy ilmiy natija, tahlil va metodologiyani yoritsin. "
+                         f"Oxirgi gap yoki xatboshi albatta '**Xulosa.**' so'zi bilan boshlansin va yakuniy taklifni bersin. "
+                         f"Hajmi: qat'iy 110-120 ta so'z bo'lsin (1 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid 3 ta eng asosiy nufuzli ilmiy manba ro'yxati (1. Qonun yoki PF Farmoni, 2. Xalqaro nufuzli manba, 3. Ilmiy maqola). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK ILMIY MAQOLA TEZISI uchun namunadagidek yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR, XULOSA va h.k.) YOZMA! "
+                         f"Matn namunadagidek aynan 5 ta mantiqiy akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, zamonaviy tendensiyalar va hal etilishi lozim bo'lgan ilmiy muammo (~55 so'z). "
+                         f"2-xatboshi: Tadqiqotning asosiy maqsadi va qo'llanilgan ilmiy metodlar (qiyosiy tahlil, umumlashtirish, tizimlashtirish) (~50 so'z). "
+                         f"3-xatboshi: Tahlil natijalari va ilmiy amaliy imkoniyatlar (~60 so'z). "
+                         f"4-xatboshi: Mavjud muammolar, cheklovlar, akademik halollik va xatarlar tahlili (~55 so'z). "
+                         f"5-xatboshi: Yakuniy umumlashtirish — ushbu xatboshi aynan '**Xulosa.**' deb boshlansin va asosiy amaliy xulosa va tavsiyani bersin (~50 so'z). "
+                         f"Hajmi: Jami matn hajmi qat'iy 260-280 ta so'z bo'lsin (namunaga to'liq mos ravishda roppa-rosa 2 bet bo'lishi, 3-betga aslo o'tib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati (1. O'zbekiston Respublikasining sohaga oid Qonuni; 2. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (PF-...) yoki Qarori; 3. Nufuzli xalqaro tashkilot hujjati masalan UNESCO, BMT, OECD; 4. Nufuzli xalqaro jurnal maqolasi). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
                 sections = [
@@ -1760,13 +1820,18 @@ async def _run_generation(
         else:
             if service_key == "t_conf":
                 if pages == 1:
-                    w = 180
+                    w = 120
                 elif pages == 2:
                     w = 430
                 elif pages == 3:
                     w = 700
                 else:
                     w = int(pages * 230)
+            elif service_key == "t_art":
+                if pages == 1:
+                    w = 120
+                else:
+                    w = 270
             elif service_key == "a_art":
                 target_words = int(pages * 290)
                 content_words = max(600, target_words - 280)
@@ -1790,10 +1855,10 @@ async def _run_generation(
             except:
                 pass
 
-            if service_key == "t_conf":
+            if service_key in ("t_conf", "t_art"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
-                    "Ushbu mavzu bo'yicha ilmiy konferensiya tezisida yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
+                    "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
                     "1. [1-ilmiy jihat]\n"
                     "2. [2-ilmiy jihat]\n"
                     "3. [3-ilmiy jihat]\n"
@@ -1870,25 +1935,72 @@ async def _run_generation(
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
                 style_ins = "ILMIY KONFERENSIYA TEZISI (zich, qat'iy akademik, chuqur tahliliy, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
-                par_count = "4-5 ta" if pages == 1 else ("7-9 ta" if pages == 2 else "10-13 ta")
-                sections = [
-                    ("matn", "ASOSIY MATN",
-                     f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
-                     f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
-                     f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
-                     f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
-                     f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
-                     f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
-                     f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
-                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
-                     f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
-                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
-                ]
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY KONFERENSIYA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"2-xatboshi asosiy ilmiy natija va mohiyatni yoritsin. "
+                         f"Oxirgi gap albatta 'Xulosa qilib aytganda, ...' deb yakunlansin. "
+                         f"Hajmi: qat'iy 110-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid 3 ta eng asosiy ilmiy manba ro'yxati (qisqa bibliografik formatda). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    par_count = "7-9 ta" if pages == 2 else "10-13 ta"
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
+                         f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
+                    ]
+            elif service_key == "t_art":
+                style_ins = "ILMIY MAQOLA TEZISI (OAK va IMRAD standartlariga qat'iy mos, ixcham, qat'iy akademik, chuqur tahliliy, sarlavhalarsiz yaxlit ilmiy matn)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
+                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                         f"2-xatboshi asosiy ilmiy natija, tahlil va metodologiyani yoritsin. "
+                         f"Oxirgi gap yoki xatboshi albatta '**Xulosa.**' so'zi bilan boshlansin va yakuniy taklifni bersin. "
+                         f"Hajmi: qat'iy 110-120 ta so'z bo'lsin (1 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid 3 ta eng asosiy nufuzli ilmiy manba ro'yxati (1. Qonun yoki PF Farmoni, 2. Xalqaro nufuzli manba, 3. Ilmiy maqola). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK ILMIY MAQOLA TEZISI uchun namunadagidek yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR, XULOSA va h.k.) YOZMA! "
+                         f"Matn namunadagidek aynan 5 ta mantiqiy akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, zamonaviy tendensiyalar va hal etilishi lozim bo'lgan ilmiy muammo (~55 so'z). "
+                         f"2-xatboshi: Tadqiqotning asosiy maqsadi va qo'llanilgan ilmiy metodlar (qiyosiy tahlil, umumlashtirish, tizimlashtirish) (~50 so'z). "
+                         f"3-xatboshi: Tahlil natijalari va ilmiy amaliy imkoniyatlar (~60 so'z). "
+                         f"4-xatboshi: Mavjud muammolar, cheklovlar, akademik halollik va xatarlar tahlili (~55 so'z). "
+                         f"5-xatboshi: Yakuniy umumlashtirish — ushbu xatboshi aynan '**Xulosa.**' deb boshlansin va asosiy amaliy xulosa va tavsiyani bersin (~50 so'z). "
+                         f"Hajmi: Jami matn hajmi qat'iy 260-280 ta so'z bo'lsin (namunaga to'liq mos ravishda roppa-rosa 2 bet bo'lishi, 3-betga aslo o'tib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati (1. O'zbekiston Respublikasining sohaga oid Qonuni; 2. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (PF-...) yoki Qarori; 3. Nufuzli xalqaro tashkilot hujjati masalan UNESCO, BMT, OECD; 4. Nufuzli xalqaro jurnal maqolasi). "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
                 sections = [
