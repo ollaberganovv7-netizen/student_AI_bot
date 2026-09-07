@@ -282,7 +282,7 @@
         "t_conf":    {icon:"\uD83D\uDCDD",name:"Konferensiya tezisi",       desc:"OAK/Konferensiya talablari, 1-3 bet",        minP:1,maxP:3, basePrice:3000,step:1000},
         "t_art":     {icon:"\uD83D\uDCDD",name:"Ilmiy maqola tezisi",       desc:"OAK va IMRAD talablari, 1-2 bet",        minP:1,maxP:2, basePrice:3000,step:2000},
         "t_diss":    {icon:"\uD83C\uDF93",name:"Dissertatsiya / BMI tezisi", desc:"Namunaga mos, 1-3 bet",        minP:1,maxP:3, basePrice:3000,step:1000},
-        "t_pop":     {icon:"\uD83D\uDCCA",name:"Ommabop / Tahliliy tezis", desc:"Executive Summary \u2014 bullet points",      minP:1,maxP:3, basePrice:2000,step:500},
+        "t_pop":     {icon:"\uD83D\uDCCA",name:"Ommabop / Tahliliy tezis", desc:"Executive Summary, 1-3 bet",        minP:1,maxP:3, basePrice:3000,step:1000},
     };
 
     const params = new URLSearchParams(window.location.search);
@@ -324,7 +324,7 @@
             else if (p === 7) price = 8000;
             else if (p === 8) price = 9000;
             else price = Math.round(price / 1000) * 1000;
-        } else if (key === 't_conf' || key === 't_diss') {
+        } else if (key === 't_conf' || key === 't_diss' || key === 't_pop') {
             if (p === 1) price = 3000;
             else if (p === 2) price = 4000;
             else if (p === 3) price = 5000;
