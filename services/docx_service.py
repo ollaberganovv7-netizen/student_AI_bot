@@ -238,7 +238,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     formatted_author = format_fio(author)
 
     # ── Page margins ─────────────────────────────────────────────────────────
-    is_maqola_style = service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss")
+    is_maqola_style = service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss", "t_pop")
     for section in doc.sections:
         if is_maqola_style:
             section.top_margin = Cm(2.0)
@@ -257,7 +257,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     style.font.size = Pt(14)
     if service_type in ("t_art", "t_conf"):
         style.paragraph_format.line_spacing = 1.15
-    elif service_type in ("a_pop_sci", "a_pop", "a_art", "t_diss"):
+    elif service_type in ("a_pop_sci", "a_pop", "a_art", "t_diss", "t_pop"):
         style.paragraph_format.line_spacing = 1.0
     else:
         style.paragraph_format.line_spacing = 1.5
@@ -320,7 +320,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
         doc.add_paragraph("")  # Space before text
 
-    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss"):
+    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf", "t_art", "t_diss", "t_pop"):
         # Academic article / maqola style cover (journal format)
         labels = {
             "a_sci":     "ILMIY MAQOLA",
@@ -343,17 +343,17 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         p_title = doc.add_paragraph(topic.upper())
         p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_title.paragraph_format.first_line_indent = Cm(0)
-        p_title.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art", "t_diss") else 6)
+        p_title.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art", "t_diss", "t_pop") else 6)
         run_title = p_title.runs[0]
         run_title.font.name = "Times New Roman"
-        run_title.font.size = Pt(14 if service_type in ("t_conf", "t_art", "t_diss") else 16)
+        run_title.font.size = Pt(14 if service_type in ("t_conf", "t_art", "t_diss", "t_pop") else 16)
         run_title.font.bold = True
 
         author_lines = author.strip().split('\n')
         p_auth = doc.add_paragraph()
         p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_auth.paragraph_format.first_line_indent = Cm(0)
-        p_auth.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art", "t_diss") else 12)
+        p_auth.paragraph_format.space_after = Pt(0 if service_type in ("t_conf", "t_art", "t_diss", "t_pop") else 12)
         
         if len(author_lines) > 0:
             run_name = p_auth.add_run(author_lines[0].strip())
@@ -366,7 +366,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 run_br = p_auth.add_run('\n')
                 run_inst = p_auth.add_run(line.strip())
                 run_inst.font.name = "Times New Roman"
-                run_inst.font.size = Pt(14 if service_type in ("t_conf", "t_art", "t_diss") else 12)
+                run_inst.font.size = Pt(14 if service_type in ("t_conf", "t_art", "t_diss", "t_pop") else 12)
                 run_inst.font.bold = False
 
         doc.add_paragraph("")  # Space before content
@@ -547,7 +547,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
             level = 1 if stripped.startswith("# ") else 2
             heading_text = stripped.lstrip("#").strip()
             
-            if service_type in ("a_art", "a_pop_sci", "a_pop", "a_sci", "t_conf", "t_art", "t_diss"):
+            if service_type in ("a_art", "a_pop_sci", "a_pop", "a_sci", "t_conf", "t_art", "t_diss", "t_pop"):
                 p = doc.add_paragraph(heading_text.upper())
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 p.paragraph_format.first_line_indent = Cm(0)

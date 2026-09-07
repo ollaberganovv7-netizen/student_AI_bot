@@ -89,8 +89,8 @@ SERVICE_CONFIG = {
         "Bitiruv malakaviy ishi va dissertatsiya tezisi (namunaga mos, 1-3 bet)",
     ),
     "t_pop": (
-        "📊", "Ommabop / Tahliliy tezislar", 2, "tezis_2", "tezis",
-        "Ommabop yoki tahliliy tezis (Executive Summary / Key Takeaways uslubida)",
+        "📊", "Ommabop / Tahliliy tezislar", 2, "tezis_2", "maqola",
+        "Ommabop yoki tahliliy tezis (Executive Summary / Key Takeaways uslubida, 1-3 bet)",
     ),
 }
 
@@ -285,7 +285,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     else:
         if service_key in ["a_pop_sci", "a_pop", "a_art"]:
             price_text = " 5 000 - 9 000 so'm (sahifa soniga qarab)"
-        elif service_key in ("t_conf", "t_art", "t_diss"):
+        elif service_key in ("t_conf", "t_art", "t_diss", "t_pop"):
             price_text = " 3 000 - 5 000 so'm (sahifa soniga qarab)"
         elif service_key == "a_sci" or "maqola" in svc_type:
             price_text = " 5 000 - 15 000 so'm (sahifa soniga qarab)"
@@ -423,11 +423,7 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             min_p = 1
             base = 3000
             step = 2000
-        elif service_key == "t_pop":
-            min_p = 1
-            base = 2000
-            step = 500
-        elif service_key == "t_diss":
+        elif service_key in ("t_diss", "t_pop"):
             min_p = 1
             base = 3000
             step = 1000
@@ -444,7 +440,7 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             else:
                 calc_price = base + max(0, (pages - min_p)) * step
                 price = round(calc_price / 1000) * 1000
-        elif service_key in ("t_conf", "t_diss"):
+        elif service_key in ("t_conf", "t_diss", "t_pop"):
             if pages == 1: price = 3000
             elif pages == 2: price = 4000
             elif pages == 3: price = 5000
@@ -1230,7 +1226,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     w = 120
                 else:
                     w = 270
-            elif service_key == "t_diss":
+            elif service_key in ("t_diss", "t_pop"):
                 if pages == 1:
                     w = 120
                 elif pages == 2:
@@ -1260,7 +1256,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             except:
                 pass
 
-            if service_key in ("t_conf", "t_art", "t_diss"):
+            if service_key in ("t_conf", "t_art", "t_diss", "t_pop"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
@@ -1340,7 +1336,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss", "t_pop"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
@@ -1465,6 +1461,53 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                          f"'{topic}' dissertatsiya / BMI tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                          f"'{topic}' mavzusiga oid kamida 5 ta nufuzli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
+                    ]
+            elif service_key == "t_pop":
+                style_ins = "OMMABOP / TAHLILIY TEZIS (Executive Summary uslubida, faktlarga boy, aniq raqamlar va sabab-oqibat tahlili, oraliq sarlavhalarsiz)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun ixcham tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, TAHLIL, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn aynan 3 ta qisqa xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning ijtimoiy-iqtisodiy dolzarbligi, asosiy muammo va sabablari (~45 so'z). "
+                         f"2-xatboshi: Faktlar, raqamlar, tahliliy taqqoslash va amaldagi tendensiyalar (~40 so'z). "
+                         f"3-xatboshi: Asosiy tahliliy topilmalar, oqibatlar va yechim yo'llari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik tavsiya va xulosani bersin. "
+                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid aynan 2 ta ishonchli ochiq manba (rasmiy statistika, O'zbekiston Respublikasi Qonuni yoki tahliliy hisobot). "
+                         f"DIQQAT: Har bir manba qisqa ko'rinishda bo'lsin. "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
+                    ]
+                elif pages == 2:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK OMMABOP / TAHLILIY TEZIS uchun keng qamrovli tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha YOZMA! "
+                         f"Matn 5-6 ta mantiqiy xatboshidan iborat bo'lsin: muammo qo'yilishi, faktlar, statistik tendensiyalar, qiyosiy tahlil, sabab-oqibat zanjiri va amaliy takliflar. "
+                         f"Hajmi: jami qat'iy 260-280 ta so'z bo'lsin (2 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. Sarlavha YOZMA. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin. Hajmi: 60-70 ta so'z. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid 4 ta ishonchli manba ro'yxati (Prezident farmoni, Statistika agentligi, xalqaro hisobot). "
+                         f"Sarlavha YOZMA. Ro'yxatni 1., 2., 3., 4. deb boshla.")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida {pages} BETLIK OMMABOP / TAHLILIY TEZIS uchun to'liq tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha YOZMA! "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid 5 ta ishonchli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
                     ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
@@ -1900,7 +1943,7 @@ async def _run_generation(
                     w = 120
                 else:
                     w = 270
-            elif service_key == "t_diss":
+            elif service_key in ("t_diss", "t_pop"):
                 if pages == 1:
                     w = 120
                 elif pages == 2:
@@ -1930,7 +1973,7 @@ async def _run_generation(
             except:
                 pass
 
-            if service_key in ("t_conf", "t_art", "t_diss"):
+            if service_key in ("t_conf", "t_art", "t_diss", "t_pop"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
@@ -2010,7 +2053,7 @@ async def _run_generation(
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss", "t_pop"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
@@ -2135,6 +2178,53 @@ async def _run_generation(
                          f"'{topic}' dissertatsiya / BMI tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                          f"'{topic}' mavzusiga oid kamida 5 ta nufuzli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
+                    ]
+            elif service_key == "t_pop":
+                style_ins = "OMMABOP / TAHLILIY TEZIS (Executive Summary uslubida, faktlarga boy, aniq raqamlar va sabab-oqibat tahlili, oraliq sarlavhalarsiz)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun ixcham tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, TAHLIL, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn aynan 3 ta qisqa xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning ijtimoiy-iqtisodiy dolzarbligi, asosiy muammo va sabablari (~45 so'z). "
+                         f"2-xatboshi: Faktlar, raqamlar, tahliliy taqqoslash va amaldagi tendensiyalar (~40 so'z). "
+                         f"3-xatboshi: Asosiy tahliliy topilmalar, oqibatlar va yechim yo'llari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik tavsiya va xulosani bersin. "
+                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid aynan 2 ta ishonchli ochiq manba (rasmiy statistika, O'zbekiston Respublikasi Qonuni yoki tahliliy hisobot). "
+                         f"DIQQAT: Har bir manba qisqa ko'rinishda bo'lsin. "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
+                    ]
+                elif pages == 2:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK OMMABOP / TAHLILIY TEZIS uchun keng qamrovli tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha YOZMA! "
+                         f"Matn 5-6 ta mantiqiy xatboshidan iborat bo'lsin: muammo qo'yilishi, faktlar, statistik tendensiyalar, qiyosiy tahlil, sabab-oqibat zanjiri va amaliy takliflar. "
+                         f"Hajmi: jami qat'iy 260-280 ta so'z bo'lsin (2 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. Sarlavha YOZMA. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin. Hajmi: 60-70 ta so'z. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid 4 ta ishonchli manba ro'yxati (Prezident farmoni, Statistika agentligi, xalqaro hisobot). "
+                         f"Sarlavha YOZMA. Ro'yxatni 1., 2., 3., 4. deb boshla.")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida {pages} BETLIK OMMABOP / TAHLILIY TEZIS uchun to'liq tahliliy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha YOZMA! "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' tahliliy tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
+                        ("adabiyotlar", "FOYDALANILGAN MANBALAR",
+                         f"'{topic}' mavzusiga oid 5 ta ishonchli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
                     ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
