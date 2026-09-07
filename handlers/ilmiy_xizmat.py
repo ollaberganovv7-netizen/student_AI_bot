@@ -321,38 +321,38 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
 
 # ── 4 ta maqola tugmasi ──────────────────────────────────────────────────────
 
-@router.message(F.text == "🔬 Ilmiy maqola")
+@router.message(F.text.in_([btn("a_sci", "uz"), btn("a_sci", "ru"), btn("a_sci", "en")]))
 async def start_a_sci(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "a_sci")
 
-@router.message(F.text == "🔭 Ilmiy-ommabop maqola")
+@router.message(F.text.in_([btn("a_pop_sci", "uz"), btn("a_pop_sci", "ru"), btn("a_pop_sci", "en")]))
 async def start_a_pop_sci(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "a_pop_sci")
 
-@router.message(F.text == "📰 Ommabop maqola")
+@router.message(F.text.in_([btn("a_pop", "uz"), btn("a_pop", "ru"), btn("a_pop", "en")]))
 async def start_a_pop(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "a_pop")
 
-@router.message(F.text == "🎭 Badiiy-publitsistik maqola")
+@router.message(F.text.in_([btn("a_art", "uz"), btn("a_art", "ru"), btn("a_art", "en")]))
 async def start_a_art(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "a_art")
 
 
 # ── 4 ta tezis tugmasi ───────────────────────────────────────────────────────
 
-@router.message(F.text == "📝 Ilmiy konferensiya tezisi")
+@router.message(F.text.in_([btn("t_conf", "uz"), btn("t_conf", "ru"), btn("t_conf", "en")]))
 async def start_t_conf(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "t_conf")
 
-@router.message(F.text == "📝 Ilmiy maqola tezisi")
+@router.message(F.text.in_([btn("t_art", "uz"), btn("t_art", "ru"), btn("t_art", "en")]))
 async def start_t_art(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "t_art")
 
-@router.message(F.text == "🎓 Dissertatsiya / Bitiruv malakaviy ishi tezisi")
+@router.message(F.text.in_([btn("t_diss", "uz"), btn("t_diss", "ru"), btn("t_diss", "en")]))
 async def start_t_diss(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "t_diss")
 
-@router.message(F.text == "📊 Ommabop / Tahliliy tezislar")
+@router.message(F.text.in_([btn("t_pop", "uz"), btn("t_pop", "ru"), btn("t_pop", "en")]))
 async def start_t_pop(message: Message, state: FSMContext, db_user: User):
     await _start_service(message, state, db_user, "t_pop")
 
