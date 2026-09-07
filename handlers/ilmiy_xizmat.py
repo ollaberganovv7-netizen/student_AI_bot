@@ -85,8 +85,8 @@ SERVICE_CONFIG = {
         "OAK va IMRAD talablariga mos ilmiy maqola tezisi (1-2 bet)",
     ),
     "t_diss": (
-        "🎓", "Dissertatsiya / BMI tezisi", 3, "tezis_3", "tezis",
-        "Dissertatsiya yoki Bitiruv malakaviy ishi tezisi (Avtoreferat uslubida)",
+        "🎓", "Dissertatsiya / BMI tezisi", 2, "tezis_2", "maqola",
+        "Bitiruv malakaviy ishi va dissertatsiya tezisi (namunaga mos, 1-3 bet)",
     ),
     "t_pop": (
         "📊", "Ommabop / Tahliliy tezislar", 2, "tezis_2", "tezis",
@@ -205,12 +205,13 @@ Manbalar: mavjud va ishonchli, oddiy tilda izohla.""",
 
         # 5. Dissertatsiya / Bitiruv malakaviy ishi tezisi (t_diss)
         "t_diss": """
-## SEN DISSERTATSIYA / BITIRUV MALAKAVIY ISHI TEZISI YOZUVCHISAN
-Bu — dissertatsiya yoki BMIning ilmiy konferensiya yoki mudofaa uchun tayyorlangan tezisi.
-Struktura: SARLAVHA -> MUALLIF MA'LUMOTLARI -> ILMIY RAHBAR -> ANNOTATSIYA -> KIRISH (dolzarblik, yangilik, maqsad) -> ASOSIY NATIJALAR (tadqiqot topilmalari) -> ILMIY YANGILIK -> AMALIY AHAMIYAT -> XULOSA -> MANBALAR.
-Ilmiy yangilik qismida: "Birinchi marta..." yoki "... yangi yondashuv taklif etildi" kabi aniq yangilik ifodalansin.
-Amaliy ahamiyatda: natijalari qayerda, qanday qo'llanishi mumkin.
-Uslub: rasmiy, ilmiy, aniq.""",
+## SEN DISSERTATSIYA / BITIRUV MALAKAVIY ISHI (BMI) TEZISI YOZUVCHISAN
+Ushbu tezis — bitiruv malakaviy ishi yoki magistrlik/doktorlik dissertatsiyasi tadqiqot natijalarining OAK va OTM standartlariga mos ixcham, zich, mustaqil akademik asaridir.
+2026-yilgi oliy ta'lim mezonlari va PF-98-son Farmoni talablariga muvofiq quyidagi prinsiplarga amal qil:
+1. MANTIQ: Dolzarblik va muammo -> Huquqiy asos -> Maqsad va vazifalar -> Tadqiqot metodlari -> Ilmiy natijalar va tahlil -> Amaliy takliflar -> Xulosa -> Adabiyotlar.
+2. HAVOLALAR: Matn ichida asosiy fikrlarga va ma'lumotlarga [1, 14–18-b.], [2] ko'rinishida nufuzli manbalarga aniq havola ber.
+3. ADABIYOTLAR: Haqiqiy xalqaro hujjatlar (UNESCO, BMT), O'zbekiston Respublikasi Qonunlari va Prezident Farmonlari/Qarorlari bo'lsin.
+4. USLUB: Qat'iy akademik, aniq raqamlar, tahliliy chuqurlik va ilmiy terminologiya. Suvsiz umumiy gaplar qat'iyan taqiqlanadi.""",
 
         # 6. Ommabop maqola (pop)
         "a_pop": """
@@ -284,7 +285,7 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     else:
         if service_key in ["a_pop_sci", "a_pop", "a_art"]:
             price_text = " 5 000 - 9 000 so'm (sahifa soniga qarab)"
-        elif service_key in ("t_conf", "t_art"):
+        elif service_key in ("t_conf", "t_art", "t_diss"):
             price_text = " 3 000 - 5 000 so'm (sahifa soniga qarab)"
         elif service_key == "a_sci" or "maqola" in svc_type:
             price_text = " 5 000 - 15 000 so'm (sahifa soniga qarab)"
@@ -427,9 +428,9 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             base = 2000
             step = 500
         elif service_key == "t_diss":
-            min_p = 2
-            base = 3500
-            step = 500
+            min_p = 1
+            base = 3000
+            step = 1000
         else:
             min_p = 1
             base = 3000
@@ -443,7 +444,7 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             else:
                 calc_price = base + max(0, (pages - min_p)) * step
                 price = round(calc_price / 1000) * 1000
-        elif service_key == "t_conf":
+        elif service_key in ("t_conf", "t_diss"):
             if pages == 1: price = 3000
             elif pages == 2: price = 4000
             elif pages == 3: price = 5000
@@ -1229,6 +1230,13 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     w = 120
                 else:
                     w = 270
+            elif service_key == "t_diss":
+                if pages == 1:
+                    w = 120
+                elif pages == 2:
+                    w = 280
+                else:
+                    w = 420
             elif service_key == "a_art":
                 target_words = int(pages * 290)
                 content_words = max(600, target_words - 280)
@@ -1252,7 +1260,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             except:
                 pass
 
-            if service_key in ("t_conf", "t_art"):
+            if service_key in ("t_conf", "t_art", "t_diss"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
@@ -1332,7 +1340,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
@@ -1397,6 +1405,66 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                          f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati (1. O'zbekiston Respublikasining sohaga oid Qonuni; 2. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (PF-...) yoki Qarori; 3. Nufuzli xalqaro tashkilot hujjati masalan UNESCO, BMT, OECD; 4. Nufuzli xalqaro jurnal maqolasi). "
                          f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
+            elif service_key == "t_diss":
+                style_ins = "DISSERTATSIYA / BMI TEZISI (namunaga to'liq mos, zich akademik, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK DISSERTATSIYA / BMI TEZISI uchun juda ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn aynan 3 ta qisqa akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, global tendensiyalar va O'zbekistondagi me'yoriy-huquqiy asosi ([1], [2] havolalari bilan) (~45 so'z). "
+                         f"2-xatboshi: Tadqiqot maqsadi, vazifalari va qo'llanilgan metodlar (tahlil, taqqoslash, kuzatish, tajriba) (~40 so'z). "
+                         f"3-xatboshi: Tadqiqot natijalari, asosiy topilmalar va amaliy takliflar (~45 so'z). "
+                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va tadqiqotning eng asosiy xulosasini va amaliy tavsiyasini bersin. "
+                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 2 ta eng asosiy nufuzli manba (1. Xalqaro tashkilot hujjati masalan UNESCO yoki BMT hisoboti; 2. O'zbekiston Respublikasining sohaga oid Qonuni yoki Prezident Farmoni). "
+                         f"DIQQAT: Har bir manba qisqa bibliografik ko'rinishda bo'lsin, ortiqcha izoh yozma. "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
+                    ]
+                elif pages == 2:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK DISSERTATSIYA / BMI TEZISI uchun namunadagidek yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn namunadagidek aynan 6 ta mantiqiy akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, global tendensiyalar va xalqaro nufuzli manba iqtibosi ([1, 14–18-b.]) (~65 so'z). "
+                         f"2-xatboshi: O'zbekistonda mavzuning o'rganilganligi va davlat qonunchilik asosi ([2] havolasi bilan) (~40 so'z). "
+                         f"3-xatboshi: Tadqiqot maqsadi va hal etiladigan vazifalar (~45 so'z). "
+                         f"4-xatboshi: Qo'llanilgan tadqiqot metodlari (tahlil, taqqoslash, kuzatish, umumlashtirish, pedagogik tajriba) (~35 so'z). "
+                         f"5-xatboshi: Tadqiqot natijalari va ilmiy xulosalar ([1, 20–24-b.]) (~50 so'z). "
+                         f"6-xatboshi: Amaliy takliflar va samaradorlikni oshirish mexanizmlari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 270-290 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va tadqiqotning eng asosiy xulosasini, zarur pedagogik/amaliy shart-sharoitlarni ifodalasin. "
+                         f"Hajmi: qat'iy 60-70 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati: "
+                         f"1. Xalqaro nufuzli tashkilot hujjati (UNESCO yoki BMT hisoboti); "
+                         f"2. O'zbekiston Respublikasining sohaga oid Qonuni; "
+                         f"3. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (masalan PF-158); "
+                         f"4. O'zbekiston Respublikasi Prezidentining Farmoni/Qarori (masalan PF-6079). "
+                         f"DIQQAT: Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida {pages} BETLIK DISSERTATSIYA / BMI TEZISI uchun batafsil yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 8-10 ta mantiqiy akademik xatboshidan iborat bo'lsin. Dolzarblik, ilmiy yangilik, tahlil va metodologiyani to'liq yorit. "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid kamida 5 ta nufuzli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
                     ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
@@ -1832,6 +1900,13 @@ async def _run_generation(
                     w = 120
                 else:
                     w = 270
+            elif service_key == "t_diss":
+                if pages == 1:
+                    w = 120
+                elif pages == 2:
+                    w = 280
+                else:
+                    w = 420
             elif service_key == "a_art":
                 target_words = int(pages * 290)
                 content_words = max(600, target_words - 280)
@@ -1855,7 +1930,7 @@ async def _run_generation(
             except:
                 pass
 
-            if service_key in ("t_conf", "t_art"):
+            if service_key in ("t_conf", "t_art", "t_diss"):
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu bo'yicha ilmiy tezisda yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
@@ -1935,7 +2010,7 @@ async def _run_generation(
                 await state.clear()
                 return
 
-            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art"):
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf", "t_art", "t_diss"):
                 w = max(100, total_words // 7)
 
             if service_key == "t_conf":
@@ -2000,6 +2075,66 @@ async def _run_generation(
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
                          f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati (1. O'zbekiston Respublikasining sohaga oid Qonuni; 2. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (PF-...) yoki Qarori; 3. Nufuzli xalqaro tashkilot hujjati masalan UNESCO, BMT, OECD; 4. Nufuzli xalqaro jurnal maqolasi). "
                          f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
+            elif service_key == "t_diss":
+                style_ins = "DISSERTATSIYA / BMI TEZISI (namunaga to'liq mos, zich akademik, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
+                if pages == 1:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 1 BETLIK DISSERTATSIYA / BMI TEZISI uchun juda ixcham ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn aynan 3 ta qisqa akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, global tendensiyalar va O'zbekistondagi me'yoriy-huquqiy asosi ([1], [2] havolalari bilan) (~45 so'z). "
+                         f"2-xatboshi: Tadqiqot maqsadi, vazifalari va qo'llanilgan metodlar (tahlil, taqqoslash, kuzatish, tajriba) (~40 so'z). "
+                         f"3-xatboshi: Tadqiqot natijalari, asosiy topilmalar va amaliy takliflar (~45 so'z). "
+                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va tadqiqotning eng asosiy xulosasini va amaliy tavsiyasini bersin. "
+                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 2 ta eng asosiy nufuzli manba (1. Xalqaro tashkilot hujjati masalan UNESCO yoki BMT hisoboti; 2. O'zbekiston Respublikasining sohaga oid Qonuni yoki Prezident Farmoni). "
+                         f"DIQQAT: Har bir manba qisqa bibliografik ko'rinishda bo'lsin, ortiqcha izoh yozma. "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
+                    ]
+                elif pages == 2:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida 2 BETLIK DISSERTATSIYA / BMI TEZISI uchun namunadagidek yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn namunadagidek aynan 6 ta mantiqiy akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, global tendensiyalar va xalqaro nufuzli manba iqtibosi ([1, 14–18-b.]) (~65 so'z). "
+                         f"2-xatboshi: O'zbekistonda mavzuning o'rganilganligi va davlat qonunchilik asosi ([2] havolasi bilan) (~40 so'z). "
+                         f"3-xatboshi: Tadqiqot maqsadi va hal etiladigan vazifalar (~45 so'z). "
+                         f"4-xatboshi: Qo'llanilgan tadqiqot metodlari (tahlil, taqqoslash, kuzatish, umumlashtirish, pedagogik tajriba) (~35 so'z). "
+                         f"5-xatboshi: Tadqiqot natijalari va ilmiy xulosalar ([1, 20–24-b.]) (~50 so'z). "
+                         f"6-xatboshi: Amaliy takliflar va samaradorlikni oshirish mexanizmlari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 270-290 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun yakuniy XULOSA qismini yoz. "
+                         f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va tadqiqotning eng asosiy xulosasini, zarur pedagogik/amaliy shart-sharoitlarni ifodalasin. "
+                         f"Hajmi: qat'iy 60-70 ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid namunadagidek aynan 4 ta nufuzli manba ro'yxati: "
+                         f"1. Xalqaro nufuzli tashkilot hujjati (UNESCO yoki BMT hisoboti); "
+                         f"2. O'zbekiston Respublikasining sohaga oid Qonuni; "
+                         f"3. O'zbekiston Respublikasi Prezidentining tegishli Farmoni (masalan PF-158); "
+                         f"4. O'zbekiston Respublikasi Prezidentining Farmoni/Qarori (masalan PF-6079). "
+                         f"DIQQAT: Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4.). [1] kabi qavslardan foydalanma!")
+                    ]
+                else:
+                    sections = [
+                        ("matn", "ASOSIY MATN",
+                         f"'{topic}' mavzusida {pages} BETLIK DISSERTATSIYA / BMI TEZISI uchun batafsil yaxlit ilmiy matn yoz. "
+                         f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                         f"Matn 8-10 ta mantiqiy akademik xatboshidan iborat bo'lsin. Dolzarblik, ilmiy yangilik, tahlil va metodologiyani to'liq yorit. "
+                         f"Hajmi: roppa-rosa {w} ta so'z bo'lsin. Uslub: {style_ins}."),
+                        ("xulosa", "XULOSA",
+                         f"'{topic}' dissertatsiya / BMI tezisi uchun XULOSA qismini yoz. Sarlavha YOZMA. Hajmi: 70-80 ta so'z."),
+                        ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                         f"'{topic}' mavzusiga oid kamida 5 ta nufuzli manba ro'yxati. Sarlavha YOZMA. Ro'yxatni 1., 2., ... deb boshla.")
                     ]
             elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
