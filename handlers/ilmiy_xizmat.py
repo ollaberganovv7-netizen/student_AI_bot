@@ -1371,16 +1371,16 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 if pages == 1:
                     sections = [
                         ("matn", "ASOSIY MATN",
-                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun juda ixcham ilmiy matn yoz. "
                          f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
-                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
-                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
-                         f"2-xatboshi asosiy ilmiy natija, tahlil va metodologiyani yoritsin. "
-                         f"Oxirgi gap yoki xatboshi albatta '**Xulosa.**' so'zi bilan boshlansin va yakuniy taklifni bersin. "
-                         f"Hajmi: qat'iy 110-120 ta so'z bo'lsin (1 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                         f"Matn aynan 2 ta qisqa akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, asosiy muammo va tadqiqot maqsadi (~45 so'z). "
+                         f"2-xatboshi: Asosiy ilmiy natija, tahlil va yakunida albatta '**Xulosa.**' so'zi bilan tugallangan amaliy xulosa (~50 so'z). "
+                         f"Hajmi: jami qat'iy 90-100 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
-                         f"'{topic}' mavzusiga oid 3 ta eng asosiy nufuzli ilmiy manba ro'yxati (1. Qonun yoki PF Farmoni, 2. Xalqaro nufuzli manba, 3. Ilmiy maqola). "
-                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                         f"'{topic}' mavzusiga oid aynan 2 ta eng asosiy nufuzli manba (1. Qonun yoki PF Farmoni; 2. Nufuzli ilmiy maqola). "
+                         f"DIQQAT: Manbalar juda qisqa bibliografik ko'rinishda bo'lsin, HECH QANDAY izoh yoki qo'shimcha annotatsiya yozma! "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
                     ]
                 else:
                     sections = [
@@ -1974,16 +1974,16 @@ async def _run_generation(
                 if pages == 1:
                     sections = [
                         ("matn", "ASOSIY MATN",
-                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun ixcham ilmiy matn yoz. "
+                         f"'{topic}' mavzusida 1 BETLIK ILMIY MAQOLA TEZISI uchun juda ixcham ilmiy matn yoz. "
                          f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
-                         f"Matn 2-3 ta qisqa akademik xatboshidan iborat bo'lsin. "
-                         f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
-                         f"2-xatboshi asosiy ilmiy natija, tahlil va metodologiyani yoritsin. "
-                         f"Oxirgi gap yoki xatboshi albatta '**Xulosa.**' so'zi bilan boshlansin va yakuniy taklifni bersin. "
-                         f"Hajmi: qat'iy 110-120 ta so'z bo'lsin (1 betdan oshib ketmasligi SHART). Uslub: {style_ins}."),
+                         f"Matn aynan 2 ta qisqa akademik xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, asosiy muammo va tadqiqot maqsadi (~45 so'z). "
+                         f"2-xatboshi: Asosiy ilmiy natija, tahlil va yakunida albatta '**Xulosa.**' so'zi bilan tugallangan amaliy xulosa (~50 so'z). "
+                         f"Hajmi: jami qat'iy 90-100 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
                         ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
-                         f"'{topic}' mavzusiga oid 3 ta eng asosiy nufuzli ilmiy manba ro'yxati (1. Qonun yoki PF Farmoni, 2. Xalqaro nufuzli manba, 3. Ilmiy maqola). "
-                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3.). [1] kabi qavslardan foydalanma!")
+                         f"'{topic}' mavzusiga oid aynan 2 ta eng asosiy nufuzli manba (1. Qonun yoki PF Farmoni; 2. Nufuzli ilmiy maqola). "
+                         f"DIQQAT: Manbalar juda qisqa bibliografik ko'rinishda bo'lsin, HECH QANDAY izoh yoki qo'shimcha annotatsiya yozma! "
+                         f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
                     ]
                 else:
                     sections = [
