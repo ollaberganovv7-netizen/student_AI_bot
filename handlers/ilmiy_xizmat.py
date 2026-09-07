@@ -1467,21 +1467,20 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 if pages == 1:
                     sections = [
                         ("matn", "ASOSIY MATN",
-                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun ixcham tahliliy matn yoz. "
+                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun juda ixcham tahliliy matn yoz. "
                          f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, TAHLIL, NATIJALAR va h.k.) YOZMA! "
-                         f"Matn aynan 3 ta qisqa xatboshidan iborat bo'lsin: "
-                         f"1-xatboshi: Mavzuning ijtimoiy-iqtisodiy dolzarbligi, asosiy muammo va sabablari (~45 so'z). "
-                         f"2-xatboshi: Faktlar, raqamlar, tahliliy taqqoslash va amaldagi tendensiyalar (~40 so'z). "
-                         f"3-xatboshi: Asosiy tahliliy topilmalar, oqibatlar va yechim yo'llari (~45 so'z). "
-                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                         f"Matn aynan 2 ta qisqa tahliliy xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, asosiy muammo, sabablar va statistik faktlar (~45 so'z). "
+                         f"2-xatboshi: Asosiy tahliliy topilmalar, amaliy mexanizmlar va yechim yo'llari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 85-95 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
                         ("xulosa", "XULOSA",
                          f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. "
                          f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
-                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik tavsiya va xulosani bersin. "
-                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik xulosani bersin. "
+                         f"Hajmi: qat'iy 30-35 ta so'z bo'lsin. Uslub: {style_ins}."),
                         ("adabiyotlar", "FOYDALANILGAN MANBALAR",
-                         f"'{topic}' mavzusiga oid aynan 2 ta ishonchli ochiq manba (rasmiy statistika, O'zbekiston Respublikasi Qonuni yoki tahliliy hisobot). "
-                         f"DIQQAT: Har bir manba qisqa ko'rinishda bo'lsin. "
+                         f"'{topic}' mavzusiga oid aynan 2 ta eng asosiy rasmiy manba (biri statistika agentligi yoki vazirlik hisoboti, ikkinchisi qonun yoki farmon). "
+                         f"DIQQAT: Har bir manba juda qisqa bo'lsin, HECH QANDAY izoh yoki qo'shimcha matn yozma! "
                          f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
                     ]
                 elif pages == 2:
@@ -2184,21 +2183,20 @@ async def _run_generation(
                 if pages == 1:
                     sections = [
                         ("matn", "ASOSIY MATN",
-                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun ixcham tahliliy matn yoz. "
+                         f"'{topic}' mavzusida 1 BETLIK OMMABOP / TAHLILIY TEZIS uchun juda ixcham tahliliy matn yoz. "
                          f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, TAHLIL, NATIJALAR va h.k.) YOZMA! "
-                         f"Matn aynan 3 ta qisqa xatboshidan iborat bo'lsin: "
-                         f"1-xatboshi: Mavzuning ijtimoiy-iqtisodiy dolzarbligi, asosiy muammo va sabablari (~45 so'z). "
-                         f"2-xatboshi: Faktlar, raqamlar, tahliliy taqqoslash va amaldagi tendensiyalar (~40 so'z). "
-                         f"3-xatboshi: Asosiy tahliliy topilmalar, oqibatlar va yechim yo'llari (~45 so'z). "
-                         f"Hajmi: jami qat'iy 120-130 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
+                         f"Matn aynan 2 ta qisqa tahliliy xatboshidan iborat bo'lsin: "
+                         f"1-xatboshi: Mavzuning dolzarbligi, asosiy muammo, sabablar va statistik faktlar (~45 so'z). "
+                         f"2-xatboshi: Asosiy tahliliy topilmalar, amaliy mexanizmlar va yechim yo'llari (~45 so'z). "
+                         f"Hajmi: jami qat'iy 85-95 ta so'z bo'lsin (1 betdan aslo oshib ketmasligi SHART). Uslub: {style_ins}."),
                         ("xulosa", "XULOSA",
                          f"'{topic}' tahliliy tezisi uchun yakuniy XULOSA qismini yoz. "
                          f"Sarlavha umuman YOZMA (chunki 'XULOSA' deb tizim o'zi qo'yadi). Faqat 1 ta lo'nda xatboshi yoz. "
-                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik tavsiya va xulosani bersin. "
-                         f"Hajmi: qat'iy 35-45 ta so'z bo'lsin. Uslub: {style_ins}."),
+                         f"Matn 'Xulosa qilib aytganda, ...' deb boshlansin va eng muhim strategik xulosani bersin. "
+                         f"Hajmi: qat'iy 30-35 ta so'z bo'lsin. Uslub: {style_ins}."),
                         ("adabiyotlar", "FOYDALANILGAN MANBALAR",
-                         f"'{topic}' mavzusiga oid aynan 2 ta ishonchli ochiq manba (rasmiy statistika, O'zbekiston Respublikasi Qonuni yoki tahliliy hisobot). "
-                         f"DIQQAT: Har bir manba qisqa ko'rinishda bo'lsin. "
+                         f"'{topic}' mavzusiga oid aynan 2 ta eng asosiy rasmiy manba (biri statistika agentligi yoki vazirlik hisoboti, ikkinchisi qonun yoki farmon). "
+                         f"DIQQAT: Har bir manba juda qisqa bo'lsin, HECH QANDAY izoh yoki qo'shimcha matn yozma! "
                          f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2.). [1] kabi qavslardan foydalanma!")
                     ]
                 elif pages == 2:
