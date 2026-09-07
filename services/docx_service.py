@@ -238,17 +238,27 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
     formatted_author = format_fio(author)
 
     # ── Page margins ─────────────────────────────────────────────────────────
+    is_maqola_style = service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf")
     for section in doc.sections:
-        section.top_margin = Cm(2.5)
-        section.bottom_margin = Cm(2.5)
-        section.left_margin = Cm(2.5)
-        section.right_margin = Cm(2.5)
+        if is_maqola_style:
+            section.top_margin = Cm(2.0)
+            section.bottom_margin = Cm(2.0)
+            section.left_margin = Cm(3.0)
+            section.right_margin = Cm(1.5)
+        else:
+            section.top_margin = Cm(2.5)
+            section.bottom_margin = Cm(2.5)
+            section.left_margin = Cm(2.5)
+            section.right_margin = Cm(2.5)
 
     # ── Default style ────────────────────────────────────────────────────────
     style = doc.styles["Normal"]
     style.font.name = "Times New Roman"
     style.font.size = Pt(14)
-    style.paragraph_format.line_spacing = 1.5
+    if service_type in ("t_conf", "a_pop_sci", "a_pop", "a_art"):
+        style.paragraph_format.line_spacing = 1.0
+    else:
+        style.paragraph_format.line_spacing = 1.5
     style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     style.paragraph_format.first_line_indent = Cm(1.25)
 
@@ -308,7 +318,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
 
         doc.add_paragraph("")  # Space before text
 
-    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art"):
+    elif service_type in ("a_sci", "a_pop_sci", "a_pop", "a_art", "t_conf"):
         # Academic article / maqola style cover (journal format)
         labels = {
             "a_sci":     "ILMIY MAQOLA",
@@ -491,7 +501,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
         p3.runs[0].font.italic = True
         for _ in range(8): doc.add_paragraph("")
         p_auth = doc.add_paragraph()
-        if service_type == "a_pop_sci":
+        if service_type in ["a_pop_sci", "a_pop", "a_art"]:
             p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
             p_auth.paragraph_format.first_line_indent = Cm(0)
             run_auth = p_auth.add_run(f"{formatted_author}")
@@ -535,12 +545,23 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
             level = 1 if stripped.startswith("# ") else 2
             heading_text = stripped.lstrip("#").strip()
             
-            p = doc.add_paragraph(heading_text)
-            _set_heading_style(p, level=level)
-            if level == 2:
-                p.paragraph_format.first_line_indent = Cm(1.25)
-            else:
+            if service_type in ("a_art", "a_pop_sci", "a_pop", "a_sci", "t_conf"):
+                p = doc.add_paragraph(heading_text.upper())
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
                 p.paragraph_format.first_line_indent = Cm(0)
+                p.paragraph_format.space_before = Pt(12)
+                p.paragraph_format.space_after = Pt(6)
+                r = p.runs[0]
+                r.font.name = "Times New Roman"
+                r.font.size = Pt(14)
+                r.font.bold = True
+            else:
+                p = doc.add_paragraph(heading_text)
+                _set_heading_style(p, level=level)
+                if level == 2:
+                    p.paragraph_format.first_line_indent = Cm(1.25)
+                else:
+                    p.paragraph_format.first_line_indent = Cm(0)
             i_line += 1
             continue
 
@@ -571,7 +592,7 @@ def generate_docx(service_type: str, topic: str, content: str, author: str = "Ta
                 i_line += 1
                 continue
 
-        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "NATIJALAR VA MUHOKAMA", "NATIJALAR", "MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR", "FOYDALANILGAN MANBALAR", "SIFAT NAZORATI"]
+        exact_headers = ["TADQIQOT METODLARI", "ANNOTATSIYA", "ABSTRACT", "АННОТАЦИЯ", "KIRISH", "ASOSIY QISM", "METODOLOGIYA", "TADQIQOT NATIJALARI", "NATIJALAR", "MUHOKAMA", "NATIJALAR MUHOKAMASI", "NATIJALAR VA MUHOKAMA", "XULOSA", "FOYDALANILGAN ADABIYOTLAR", "ADABIYOTLAR", "ADABIYOTLAR RO'YXATI", "XULOSA VA TAVSIYALAR", "FOYDALANILGAN MANBALAR", "SIFAT NAZORATI", "KALIT SO'ZLAR", "KALIT SOʻZLAR", "KALIT SO?ZLAR"]
         if upper_stripped in exact_headers:
             if upper_stripped not in seen_headers:
                 if "XULOSA" in upper_stripped:

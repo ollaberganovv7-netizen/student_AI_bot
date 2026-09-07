@@ -66,6 +66,9 @@ PRICING = {
     "mustaqil_pre": 12000,
     "coursework_low": 15000,        # 20-25 pages
     "coursework_high": 25000,       # 40-50 pages
+    "tezis_1": 3000,
+    "tezis_2": 4000,
+    "tezis_3": 5000,
     "tezis_5": 4000,
     "tezis_10": 6000,
     "tezis_15": 8000,

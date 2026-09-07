@@ -77,8 +77,8 @@ SERVICE_CONFIG = {
         "Badiiy-publitsistik maqola (obrazlar, metaforalar, sub'ektiv pozitsiya)",
     ),
     "t_conf": (
-        "📝", "Ilmiy konferensiya tezisi", 2, "tezis_2", "tezis",
-        "OAK/Konferensiya talablariga mos ilmiy konferensiya tezisi",
+        "📝", "Ilmiy konferensiya tezisi", 2, "tezis_2", "maqola",
+        "Ilmiy konferensiya tezisi (namunaga mos, 1-3 bet)",
     ),
     "t_art": (
         "📝", "Ilmiy maqola tezisi (Abstract)", 1, "tezis_1", "tezis",
@@ -120,8 +120,8 @@ TAQIQLANADI: mavzudan chetga chiqish | keraksiz tarixiy ma'lumot | mavzuga aloqa
 - Mavjud bo'lmagan mualliflar, maqolalar, jurnallar, kitoblar va DOI larni HECH QACHON to'qib chiqarma.
 - Agar manba haqiqatdan mavjud bo'lishiga ishonchsiz bo'lsang — uni qo'shma.
 
-## CLAIM → EVIDENCE TIZIMI
-Har bir muhim ilmiy da'vo: DA'VO → DALIL → MANBA → TAHLIL mantiqida qurilsin.
+## CLAIM -> EVIDENCE TIZIMI
+Har bir muhim ilmiy da'vo: DA'VO -> DALIL -> MANBA -> TAHLIL mantiqida qurilsin.
 Faqat "tadqiqotlar shuni ko'rsatadiki..." deb yozish YETARLI EMAS — qaysi tadqiqotlar, kim, qachon, nima natija?
 
 ## SOURCE QUALITY ENGINE
@@ -158,9 +158,9 @@ Matnni yuborishdan oldin: mavzudan chetga chiqmadimmi | faktlar ishonchlimi | ma
         "a_sci": """
 ## SEN ILMIY MAQOLA YOZUVCHISAN
 Xalqaro VAK/Scopus/WoS talablariga mos IMRAD strukturasida yoz:
-ANNOTATSIYA (3 tilda: o'zbek, ingliz, rus) → KALIT SO'ZLAR → KIRISH → ADABIYOTLAR SHARHI → METODOLOGIYA → ASOSIY QISM → NATIJALAR → MUHOKAMA → XULOSA → FOYDALANILGAN ADABIYOTLAR.
+ANNOTATSIYA (3 tilda: o'zbek, ingliz, rus) -> KALIT SO'ZLAR -> KIRISH -> ADABIYOTLAR SHARHI -> METODOLOGIYA -> ASOSIY QISM -> NATIJALAR -> MUHOKAMA -> XULOSA -> FOYDALANILGAN ADABIYOTLAR.
 ANNOTATSIYA: dolzarblik | muammo | maqsad | metod | asosiy natija | ahamiyat (100-200 so'z har tilda).
-KIRISH: katta muammo → aniq muammo → ilmiy bo'shliq → tadqiqot maqsadi → vazifalar.
+KIRISH: katta muammo -> aniq muammo -> ilmiy bo'shliq -> tadqiqot maqsadi -> vazifalar.
 ADABIYOTLAR SHARHI: manbalarni faqat sanab o'tma — taqqosla, farqini ko'rsat, qaysi masala o'rganilmagan ekanini aniqla.
 NATIJALAR: aniq raqamlar, faktlar, jadvallar (agar bo'lsa).
 MUHOKAMA: natijalarni mavjud ilmiy qarashlar bilan taqqosla.
@@ -170,17 +170,20 @@ Faqat haqiqiy mavjud manbalarni foydalanilgan adabiyotlarga kirit.""",
         # 2. Ilmiy konferensiya tezisi (t_conf)
         "t_conf": """
 ## SEN ILMIY KONFERENSIYA TEZISI YOZUVCHISAN
-Konferensiya tezisi — to'liq maqolaning ZICHI va QISQASI, lekin mustaqil ilmiy asar.
-Struktura: SARLAVHA → MUALLIF → ANNOTATSIYA (ixtiyoriy) → KIRISH (dolzarblik, muammo) → ASOSIY FIKR (eng muhim natija/topilma) → DALILLAR (faqat eng kuchli) → XULOSA → MANBALAR (3-7 ta, faqat haqiqiylari).
-Hajm odatda 1-3 sahifa (600-1500 so'z).
-Har bir jumla foydali bo'lsin. Keraksiz kirish gaplarni olib tashla.
-MUAMMO → MAQSAD → ASOSIY FIKR → DALIL → NATIJA → XULOSA mantiqida quril.""",
+Ilmiy konferensiya tezisi — ilmiy tadqiqot natijalarining ixcham, zich, lekin to'liq akademik asaridir.
+2026-yilgi O'zbekiston Respublikasi Prezidentining PF-98-son Farmoni talablariga mos, ilmiy tadqiqot sifatini ta'minlagan holda yoz.
+Uslub: Qat'iy akademik, ilmiy terminologiya, aniq faktlar va institutsional mexanizmlar.
+Tuzilma: IMRAD mantiqi — ANNOTATSIYA -> KALIT SO'ZLAR -> KIRISH (Muammo, dolzarblik, maqsad, vazifalar) -> METODOLOGIYA (Tadqiqot usullari, manbalar) -> TADQIQOT NATIJALARI (Aniq ilmiy topilmalar, mexanizmlar) -> MUHOKAMA (Natijalar tahlili va qiyoslash) -> XULOSA (3-5 ta aniq xulosa) -> FOYDALANILGAN ADABIYOTLAR (5-10 ta real manba, [1], [2] havolalar bilan).
+QOIDALAR:
+1. Umumiy gaplar, darslik ma'lumotlari, asossiz subyektiv fikrlardan qoching.
+2. Faqat haqiqiy manbalarni foydalanilgan adabiyotlarga kiriting (PF-98, qonunlar, monografiyalar, OAK maqolalari).
+3. Matn ichidagi har bir asosiy fikrga [1], [2] ko'rinishida havola bering.""",
 
         # 3. Ilmiy maqola tezisi (t_art)
         "t_art": """
 ## SEN ILMIY MAQOLA TEZISI YOZUVCHISAN
 Tezis — maqolaning oddiy qisqartirilgan shakli emas. U mustaqil ilmiy fikrni zich ifodalaydi.
-Struktura: MUAMMO → MAQSAD → ASOSIY FIKR → DALIL → NATIJA → XULOSA.
+Struktura: MUAMMO -> MAQSAD -> ASOSIY FIKR -> DALIL -> NATIJA -> XULOSA.
 Har bir jumla kerakli. Har bir da'vo — dalil bilan.
 Ortiqcha kirish so'zlar, umumiy gaplar, muqaddima yoqma.
 Manbalar: faqat eng muhim 3-5 ta, haqiqiy mavjud bo'lganlari.""",
@@ -191,7 +194,7 @@ Manbalar: faqat eng muhim 3-5 ta, haqiqiy mavjud bo'lganlari.""",
 Ilmiy-ommabop maqola — murakkab ilmiy fikrni ODDIY va QIZIQARLI tarzda tushuntiradi.
 O'quvchi: ilmiy bilimga ega bo'lmagan keng jamiyat.
 Uslub: rasmiy bo'lmagan, jonli, ammo aniq va faktlarga asoslangan.
-Tuzilma: QIZIQARLI KIRISH (misol, voqea, savol) → MUAMMO TUSHUNTIRISH → ILMIY FAKT (sodda tilda) → AMALIY AHAMIYAT → XULOSA.
+Tuzilma: QIZIQARLI KIRISH (misol, voqea, savol) -> MUAMMO TUSHUNTIRISH -> ILMIY FAKT (sodda tilda) -> AMALIY AHAMIYAT -> XULOSA.
 TAQIQLANADI: ilmiy jargon (zarur bo'lsa — tushuntirib yoz) | quruq faktlar ro'yxati | o'quvchini zeriktiradigan uslub.
 Manbalar: mavjud va ishonchli, oddiy tilda izohla.""",
 
@@ -199,7 +202,7 @@ Manbalar: mavjud va ishonchli, oddiy tilda izohla.""",
         "t_diss": """
 ## SEN DISSERTATSIYA / BITIRUV MALAKAVIY ISHI TEZISI YOZUVCHISAN
 Bu — dissertatsiya yoki BMIning ilmiy konferensiya yoki mudofaa uchun tayyorlangan tezisi.
-Struktura: SARLAVHA → MUALLIF MA'LUMOTLARI → ILMIY RAHBAR → ANNOTATSIYA → KIRISH (dolzarblik, yangilik, maqsad) → ASOSIY NATIJALAR (tadqiqot topilmalari) → ILMIY YANGILIK → AMALIY AHAMIYAT → XULOSA → MANBALAR.
+Struktura: SARLAVHA -> MUALLIF MA'LUMOTLARI -> ILMIY RAHBAR -> ANNOTATSIYA -> KIRISH (dolzarblik, yangilik, maqsad) -> ASOSIY NATIJALAR (tadqiqot topilmalari) -> ILMIY YANGILIK -> AMALIY AHAMIYAT -> XULOSA -> MANBALAR.
 Ilmiy yangilik qismida: "Birinchi marta..." yoki "... yangi yondashuv taklif etildi" kabi aniq yangilik ifodalansin.
 Amaliy ahamiyatda: natijalari qayerda, qanday qo'llanishi mumkin.
 Uslub: rasmiy, ilmiy, aniq.""",
@@ -207,19 +210,24 @@ Uslub: rasmiy, ilmiy, aniq.""",
         # 6. Ommabop maqola (pop)
         "a_pop": """
 ## SEN OMMABOP MAQOLA YOZUVCHISAN
-Ommabop maqola — keng auditoriya uchun yoziladigan, faktlarga asoslangan, qulay o'qiladigan matn.
-Uslub: jonli, tushunarli, ilmiy jargonsiz, ammo aniq.
-Tuzilma: DIQQATNI TORTUVCHI KIRISH → ASOSIY MUAMMO → FAKTLAR VA MISOLLAR → TAHLIL → XULOSA.
-TAQIQLANADI: akademik og'ir uslub | faqat faktlar sanab o'tish | boring kirish gaplar.
-Manbalar: ishonchli va tekshirilgan, ammo ommabop tarzda ko'rsat.""",
+Ommabop maqola keng jamoatchilik uchun yoziladi (OAV, gazeta, jurnal, blog).
+Maqsad: Murakkab g'oyalarni sodda, qiziqarli va ishonchli faktlar bilan tushuntirish.
+Uslub: Jonli, sodda, tushunarli. ILMIY ATAMALARDAN, quruq faktlardan, IMRAD strukturasidan qoching.
+MUHIM QOIDALAR (O'zbekiston qonunchiligiga rioya):
+1. Davlat sirlari (harbiy, qurol-yarog') oshkor qilinmaydi.
+2. Shaxsga doir maxfiy ma'lumotlar ochiq yozilmaydi.
+3. Mualliflik huquqi: Iqtiboslar qayerdan olingani ochiq aytiladi (masalan: "Prezident qarorida...", "Statistika agentligiga ko'ra...").
+4. Fakt-check: Ataylab yolg'on, tasdiqlanmagan axborot bermang.
+Tuzilma: Qiziqarli Sarlavha -> Diqqatni tortuvchi Lid (Kirish) -> Asosiy muammo va yechimlar -> Hayotiy misollar -> Kuchli Xulosa.
+Faqat berilgan maxsus qismni shu uslubda, juda yuqori sifatda yozing.""",
 
         # 7. Ommabop / Tahliliy tezislar (t_pop)
         "t_pop": """
 ## SEN OMMABOP/TAHLILIY TEZIS YOZUVCHISAN
 Bu tezis ommabop yoki tahliliy maqolaning asosiy fikrlarini zich ifodalaydi.
 Uslub: tushunарli, qulay, ammo tahliliy chuqurlikka ega.
-Mantiq: MUAMMO → ASOSIY FIKR → DALILLAR → XULOSA.
-Fakt → sabab → oqibat → taqqoslash → muammo → yechim → xulosa zanjiriga amal qil.
+Mantiq: MUAMMO -> ASOSIY FIKR -> DALILLAR -> XULOSA.
+Fakt -> sabab -> oqibat -> taqqoslash -> muammo -> yechim -> xulosa zanjiriga amal qil.
 O'quvchi savolga javob olsin: "Nima sabab bo'ldi, bu nimaga olib keladi, qanday xulosa?"
 Qisqa, aniq, foydali. Har bir jumla — maqsadli.""",
 
@@ -228,7 +236,7 @@ Qisqa, aniq, foydali. Har bir jumla — maqsadli.""",
 ## SEN BADIIY-PUBLITSISTIK MAQOLA YOZUVCHISAN
 Badiiy-publitsistik maqola — badiiy uslub va publitsistik tahlilni birlashtiradi.
 Uslub: jonli, obrazli, emotsional, ammo faktlarga asoslangan.
-Tuzilma: OBRAZLI KIRISH (metafora, savol, voqea) → MUAMMO TAHLILI → DALILLAR (badiiy tarzda) → HISSIY XULOSA.
+Tuzilma: OBRAZLI KIRISH (metafora, savol, voqea) -> MUAMMO TAHLILI -> DALILLAR (badiiy tarzda) -> HISSIY XULOSA.
 TAQIQLANADI: quruq faktlar ro'yxati | akademik jargon | emotsiyasiz tasvir.
 Manbalar: faktlarni tasdiqlash uchun ishlat, ammo badiiy uslubda yo'nalтир.
 O'quvchi maqolani o'qib hissiyot ham, bilim ham olishi kerak.""",
@@ -238,7 +246,7 @@ O'quvchi maqolani o'qib hissiyot ham, bilim ham olishi kerak.""",
     extra = SERVICE_EXTRA.get(service_key, """
 ## SEN AKADEMIK MATN YOZUVCHISAN
 Mavzuni chuqur tahlil qil, faktlarga asoslan, ilmiy uslubda yoz.
-Tuzilma: KIRISH → ASOSIY QISM → XULOSA → FOYDALANILGAN ADABIYOTLAR.""")
+Tuzilma: KIRISH -> ASOSIY QISM -> XULOSA -> FOYDALANILGAN ADABIYOTLAR.""")
 
     return BASE + extra
 
@@ -271,6 +279,8 @@ async def _start_service(message: Message, state: FSMContext, db_user: User, ser
     else:
         if service_key in ["a_pop_sci", "a_pop", "a_art"]:
             price_text = " 5 000 - 9 000 so'm (sahifa soniga qarab)"
+        elif service_key == "t_conf":
+            price_text = " 3 000 - 5 000 so'm (sahifa soniga qarab)"
         elif service_key == "a_sci" or "maqola" in svc_type:
             price_text = " 5 000 - 15 000 so'm (sahifa soniga qarab)"
         else:
@@ -399,7 +409,11 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             min_p = 5
             base = 5000
             step = 1334
-        elif service_key in ["t_conf", "t_pop"]:
+        elif service_key == "t_conf":
+            min_p = 1
+            base = 3000
+            step = 1000
+        elif service_key == "t_pop":
             min_p = 1
             base = 2000
             step = 500
@@ -424,6 +438,11 @@ async def ilmiy_webapp_received(message: Message, state: FSMContext, db_user: Us
             else:
                 calc_price = base + max(0, (pages - min_p)) * step
                 price = round(calc_price / 1000) * 1000
+        elif service_key == "t_conf":
+            if pages == 1: price = 3000
+            elif pages == 2: price = 4000
+            elif pages == 3: price = 5000
+            else: price = 3000 + max(0, pages - 1) * 1000
         else:
             calc_price = base + max(0, (pages - min_p)) * step
             price = round(calc_price / 1000) * 1000
@@ -553,7 +572,7 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
         file_bytes = await bot.download_file(file.file_path)
         img_b64 = base64.b64encode(file_bytes.read()).decode()
     except Exception as e:
-        await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
+        await check_msg.edit_text(f"\u274c Rasm yuklanmadi: {e}")
         return
 
     # Claude vision - to'lov cheki tahlili
@@ -693,8 +712,6 @@ async def ilmiy_payment_photo(message: Message, state: FSMContext, db_user: User
             except Exception:
                 continue
 
-        await check_msg.edit_text(f"❌ Rasm yuklanmadi: {e}")
-        return
 
     # Claude vision - to'lov cheki tahlili
     from services.ai_service import _claude_client, CLAUDE_MODEL
@@ -1190,7 +1207,27 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
         # ── Maqola: bo'limma-bo'lim generatsiya ──────────────────────────────
         else:
-            total_words = pages * 160
+            if service_key == "t_conf":
+                if pages == 1:
+                    w = 180
+                elif pages == 2:
+                    w = 430
+                elif pages == 3:
+                    w = 700
+                else:
+                    w = int(pages * 230)
+            elif service_key == "a_art":
+                target_words = int(pages * 290)
+                content_words = max(600, target_words - 280)
+                w = int(content_words / 6.5)
+            elif service_key in ("a_pop", "a_pop_sci"):
+                target_words = int(pages * 270)
+                content_words = max(600, target_words - 280)
+                w = int(content_words / 7.0)
+            else:
+                text_pages = max(1, pages - 1.5)
+                total_words = int(text_pages * 230)
+                w = max(100, total_words // 7)
 
             # Step 1: Reja tuzish
             try:
@@ -1202,7 +1239,16 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
             except:
                 pass
 
-            if service_key == "a_sci":
+            if service_key == "t_conf":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu bo'yicha ilmiy konferensiya tezisida yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
+                    "1. [1-ilmiy jihat]\n"
+                    "2. [2-ilmiy jihat]\n"
+                    "3. [3-ilmiy jihat]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_sci":
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu uchun IMRAD standartidagi ilmiy maqolaning 'NATIJALAR VA MUHOKAMA' bo'limi ichiga kiruvchi qism rejasini tuzing. FAQAT shu formatda:\n"
@@ -1219,6 +1265,29 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                     "2. [Mexanizm, dalillar, misollar yoki tadqiqotlar uchun qiziqarli sarlavha]\n"
                     "3. [Amaliy ahamiyat, taqqoslash yoki muhim jihatlar uchun qiziqarli sarlavha]\n"
                     "4. [Muammolar, cheklovlar yoki istiqbollar uchun qiziqarli sarlavha]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_pop":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun OMMABOP MAQOLA rejasini tuzing (jurnalistik/blog uslubida, murakkab ilmiy atamalarsiz). FAQAT shu formatda yozing:\n"
+                    "1. [Diqqatni tortuvchi asosiy bo'lim sarlavhasi]\n"
+                    "1.1. [Kichik bo'lim: Muammoni tushuntirish]\n"
+                    "1.2. [Kichik bo'lim: Hayotiy misollar yoki analogiyalar]\n"
+                    "2. [Ikkinchi asosiy bo'lim: Tahlil va Yechimlar]\n"
+                    "2.1. [Kichik bo'lim: Qiziqarli faktlar yoki mutaxassis fikri]\n"
+                    "2.2. [Kichik bo'lim: Istiqboldagi o'zgarishlar]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_art":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun BADIIY-PUBLITSISTIK maqola rejasini tuzing. "
+                    "4 ta asosiy qism sarlavhasini BOSH HARFLARDA, raqamsiz yozing. FAQAT shu formatda:\n"
+                    "1. [1-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "2. [2-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "3. [3-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "4. [4-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
                     "Boshqa hech narsa yozma."
                 )
             else:
@@ -1250,9 +1319,26 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                 await state.clear()
                 return
 
-            w = max(200, total_words // 7)
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf"):
+                w = max(100, total_words // 7)
 
-            if service_key == "a_pop_sci":
+            if service_key == "t_conf":
+                style_ins = "ILMIY KONFERENSIYA TEZISI (zich, qat'iy akademik, chuqur tahliliy, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
+                par_count = "4-5 ta" if pages == 1 else ("7-9 ta" if pages == 2 else "10-13 ta")
+                sections = [
+                    ("matn", "ASOSIY MATN",
+                     f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
+                     f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                     f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
+                     f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                     f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
+                     f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
+                     f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
@@ -1320,6 +1406,83 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                      f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) hamda XALQARO BAZALARDAGI (Scopus, Web of Science) so'nggi 3-5 yildagi ishonchli maqolalarga havolalar bo'lsin. "
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
+            elif service_key == "a_pop":
+                style_ins = "OMMABOP MAQOLA (keng o'quvchiga, qiziqarli, jonli, hayotiy misollar, ilmiy jargonsiz. Qonunchilikka rioya qilingan holda, davlat sirlarini oshkor etmasdan faktlarga asoslangan)"
+                sections = [
+                    ("annotatsiya_uz", "ANNOTATSIYA",
+                     f"'{topic}' ommabop maqolasi uchun FAQAT O'ZBEK tilida qisqacha annotatsiya (100-150 so'z) va kalit so'zlar yoz.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, tarjima yoki sarlavha qoshmang):\n"
+                     f"[O'zbek tilida annotatsiya matni]\n\n"
+                     f"KALIT SO'ZLAR: [5-8 ta o'zbekcha kalit so'zlar]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' ommabop maqolasining KIRISH qismini yoz. "
+                     f"Diqqatni tortuvchi lid, dolzarblik, asosiy muammo. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun ommabop matn. Faktlar va jonli misollar keltir. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun tushunarli tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun hayotiy analogiyalar va misollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur lekin sodda tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun qiziqarli faktlar va axborotlar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun yechimlar va istiqbollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' ommabop maqolasining XULOSA qismini yoz. Yakuniy kuchli g'oya va ta'sirchan so'zlar. "
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 5-10 ta REAL, ishonchli manba ro'yxati (Prezident farmonlari, Qonunlar hujjatlari, ishonchli OAV, statistika agentligi, kitoblar). "
+                     f"Hech qanday davlat siriga kiruvchi yopiq yoki ishonchsiz manba bo'lmasin. "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_art":
+                style_ins = "BADIIY-PUBLITSISTIK (jonli, obrazli, publitsistik ta'sirchan, muallif pozitsiyasi kuchli, ishonchli faktlarga va qonuniyatlarga asoslangan)"
+                
+                art_1 = plan_titles.get('1', 'ASOSIY MASALA VA DOLZARBLIK').upper()
+                art_2 = plan_titles.get('2', 'HAYOTIY TAHLIL VA DALILLAR').upper()
+                art_3 = plan_titles.get('3', 'IJTIMOIY VA AMALIY AHAMIYAT').upper()
+                art_4 = plan_titles.get('4', 'KELAJAKKA NAZAR VA ISTIQBOLLAR').upper()
+
+                sections = [
+                    ("annotatsiya_uz", "ANNOTATSIYA",
+                     f"'{topic}' badiiy-publitsistik maqolasi uchun FAQAT O'ZBEK tilida mazmunli annotatsiya va alohida kalit so'zlar yoz.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech narsa qo'shmang):\n"
+                     f"[O'zbek tilida 100-120 so'zlik annotatsiya matni]\n\n"
+                     f"KALIT SO'ZLAR\n"
+                     f"[5-8 ta o'zbekcha kalit so'zlar vergul bilan ajratilgan]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' mavzusida badiiy-publitsistik maqola uchun ta'sirchan KIRISH qismini yoz. "
+                     f"O'quvchini darhol jalb qiluvchi lid va muammo qo'yilishi. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", art_1,
+                     f"'{topic}' mavzusi bo'yicha '{art_1}' qismini yoz. Jonli publitsistik uslub, badiiy tasvir va faktlar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", art_2,
+                     f"'{topic}' mavzusi bo'yicha '{art_2}' qismini yoz. Chuqur tahlil va hayotiy misollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("3", art_3,
+                     f"'{topic}' mavzusi bo'yicha '{art_3}' qismini yoz. Muallif pozitsiyasi va dalillar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("4", art_4,
+                     f"'{topic}' mavzusi bo'yicha '{art_4}' qismini yoz. Ijtimoiy ahamiyat va kelajak masalalari. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("muhokama", "MUHOKAMA",
+                     f"'{topic}' mavzusida MUHOKAMA qismini yoz. Ko'tarilgan masalani tahlil qilib, asosiy jihatlarni ajratib ko'rsat (masalan: 'Birinchisi — ... Ikkinchisi — ... Uchinchisi — ...'). "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' maqolasining XULOSA qismini yoz. O'quvchida chuqur fikr va taassurot qoldiradigan yakuniy xulosalar. "
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA. Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 6-10 ta ishonchli manba ro'yxati (Prezident farmon va qarorlari, qonunlar, nufuzli kitoblar, xalqaro manbalar masalan UNESCO, davlat muzeylari va ilmiy nashrlar). "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
+                ]
             else:
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)" if service_key == "a_pop_sci" else "akademik"
                 sections = [
@@ -1365,6 +1528,7 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
 
+            sections_content = {}
             total_sections = len(sections)
             progress_chars = ["⬛", "🟩"]
 
@@ -1451,7 +1615,9 @@ async def ilmiy_start_gen(callback: CallbackQuery, state: FSMContext, db_user: U
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
+                if key == "matn":
+                    full_parts.append(f"\n{sec_content}\n")
+                elif key not in ["barcha_annotatsiyalar", "annotatsiya_uz", "kirish", "metodologiya", "natijalar", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
@@ -1592,7 +1758,27 @@ async def _run_generation(
 
         # ── Maqola: bo'limma-bo'lim generatsiya ──────────────────────────────
         else:
-            total_words = pages * 160
+            if service_key == "t_conf":
+                if pages == 1:
+                    w = 180
+                elif pages == 2:
+                    w = 430
+                elif pages == 3:
+                    w = 700
+                else:
+                    w = int(pages * 230)
+            elif service_key == "a_art":
+                target_words = int(pages * 290)
+                content_words = max(600, target_words - 280)
+                w = int(content_words / 6.5)
+            elif service_key in ("a_pop", "a_pop_sci"):
+                target_words = int(pages * 270)
+                content_words = max(600, target_words - 280)
+                w = int(content_words / 7.0)
+            else:
+                text_pages = max(1, pages - 1.5)
+                total_words = int(text_pages * 230)
+                w = max(100, total_words // 7)
 
             # Step 1: Reja tuzish
             try:
@@ -1604,7 +1790,16 @@ async def _run_generation(
             except:
                 pass
 
-            if service_key == "a_sci":
+            if service_key == "t_conf":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu bo'yicha ilmiy konferensiya tezisida yoritilishi kerak bo'lgan 3 ta asosiy ilmiy jihatni yozing. FAQAT shu formatda:\n"
+                    "1. [1-ilmiy jihat]\n"
+                    "2. [2-ilmiy jihat]\n"
+                    "3. [3-ilmiy jihat]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_sci":
                 plan_prompt = (
                     f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
                     "Ushbu mavzu uchun IMRAD standartidagi ilmiy maqolaning 'NATIJALAR VA MUHOKAMA' bo'limi ichiga kiruvchi qism rejasini tuzing. FAQAT shu formatda:\n"
@@ -1621,6 +1816,29 @@ async def _run_generation(
                     "2. [Mexanizm, dalillar, misollar yoki tadqiqotlar uchun qiziqarli sarlavha]\n"
                     "3. [Amaliy ahamiyat, taqqoslash yoki muhim jihatlar uchun qiziqarli sarlavha]\n"
                     "4. [Muammolar, cheklovlar yoki istiqbollar uchun qiziqarli sarlavha]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_pop":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun OMMABOP MAQOLA rejasini tuzing (jurnalistik/blog uslubida, murakkab ilmiy atamalarsiz). FAQAT shu formatda yozing:\n"
+                    "1. [Diqqatni tortuvchi asosiy bo'lim sarlavhasi]\n"
+                    "1.1. [Kichik bo'lim: Muammoni tushuntirish]\n"
+                    "1.2. [Kichik bo'lim: Hayotiy misollar yoki analogiyalar]\n"
+                    "2. [Ikkinchi asosiy bo'lim: Tahlil va Yechimlar]\n"
+                    "2.1. [Kichik bo'lim: Qiziqarli faktlar yoki mutaxassis fikri]\n"
+                    "2.2. [Kichik bo'lim: Istiqboldagi o'zgarishlar]\n"
+                    "Boshqa hech narsa yozma."
+                )
+            elif service_key == "a_art":
+                plan_prompt = (
+                    f"Mavzu: {topic}\nTil: {lang_instruction}\n\n"
+                    "Ushbu mavzu uchun BADIIY-PUBLITSISTIK maqola rejasini tuzing. "
+                    "4 ta asosiy qism sarlavhasini BOSH HARFLARDA, raqamsiz yozing. FAQAT shu formatda:\n"
+                    "1. [1-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "2. [2-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "3. [3-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
+                    "4. [4-ASOSIY QISM SARLAVHASI (BOSH HARFLARDA)]\n"
                     "Boshqa hech narsa yozma."
                 )
             else:
@@ -1652,9 +1870,26 @@ async def _run_generation(
                 await state.clear()
                 return
 
-            w = max(200, total_words // 7)
+            if service_key not in ("a_art", "a_pop", "a_pop_sci", "t_conf"):
+                w = max(100, total_words // 7)
 
-            if service_key == "a_pop_sci":
+            if service_key == "t_conf":
+                style_ins = "ILMIY KONFERENSIYA TEZISI (zich, qat'iy akademik, chuqur tahliliy, faktlarga boy, sarlavhalarsiz yaxlit ilmiy matn)"
+                par_count = "4-5 ta" if pages == 1 else ("7-9 ta" if pages == 2 else "10-13 ta")
+                sections = [
+                    ("matn", "ASOSIY MATN",
+                     f"'{topic}' mavzusida ILMIY KONFERENSIYA TEZISI uchun yaxlit ilmiy matn yoz. "
+                     f"DIQQAT: Matn ichida hech qanday oraliq sarlavha (KIRISH, METODOLOGIYA, NATIJALAR va h.k.) YOZMA! "
+                     f"Matn {par_count} mantiqiy xatboshidan (paragrafdan) iborat bo'lsin. "
+                     f"1-xatboshi mavzuning dolzarbligi va maqsadiga bag'ishlansin. "
+                     f"Keyingi xatboshilarda tadqiqot obyekti, tahliliy uslublar, aniq ilmiy natijalar, faktlar va qonuniyatlar batafsil yoritsin. "
+                     f"Oxirgi xatboshi albatta 'Xulosa qilib aytganda, ...' deb boshlansin va yakuniy xulosalarni ifodalasin. "
+                     f"Hajmi: roppa-rosa {w} ta so'z bo'lsin ({pages} betdan oshib ketmasligi shart). Uslub: {style_ins}."),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid kamida 5 ta REAL, nufuzli ilmiy manba ro'yxati (kitoblar, monografiyalar, ilmiy jurnallar, davlat arxiv hujjatlari). "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., 4., 5.). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_pop_sci":
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)"
                 sections = [
                     ("barcha_annotatsiyalar", "ANNOTATSIYA",
@@ -1722,6 +1957,83 @@ async def _run_generation(
                      f"OAK talablari bo'yicha APA yoki GOST formatida. Kamida 5-6 ta O'zbek muallifi (kitob yoki maqolalari, nashriyot, yili, betlari) hamda XALQARO BAZALARDAGI (Scopus, Web of Science) so'nggi 3-5 yildagi ishonchli maqolalarga havolalar bo'lsin. "
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
+            elif service_key == "a_pop":
+                style_ins = "OMMABOP MAQOLA (keng o'quvchiga, qiziqarli, jonli, hayotiy misollar, ilmiy jargonsiz. Qonunchilikka rioya qilingan holda, davlat sirlarini oshkor etmasdan faktlarga asoslangan)"
+                sections = [
+                    ("annotatsiya_uz", "ANNOTATSIYA",
+                     f"'{topic}' ommabop maqolasi uchun FAQAT O'ZBEK tilida qisqacha annotatsiya (100-150 so'z) va kalit so'zlar yoz.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech qanday qo'shimcha so'z, tarjima yoki sarlavha qoshmang):\n"
+                     f"[O'zbek tilida annotatsiya matni]\n\n"
+                     f"KALIT SO'ZLAR: [5-8 ta o'zbekcha kalit so'zlar]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' ommabop maqolasining KIRISH qismini yoz. "
+                     f"Diqqatni tortuvchi lid, dolzarblik, asosiy muammo. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", f"1. {plan_titles.get('1','Asosiy bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1','')}' uchun ommabop matn. Faktlar va jonli misollar keltir. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1.1", f"1.1. {plan_titles.get('1.1','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1.1','')}' uchun tushunarli tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1.2", f"1.2. {plan_titles.get('1.2','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('1.2','')}' uchun hayotiy analogiyalar va misollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", f"2. {plan_titles.get('2','Ikkinchi bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2','')}' uchun chuqur lekin sodda tahlil. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2.1", f"2.1. {plan_titles.get('2.1','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2.1','')}' uchun qiziqarli faktlar va axborotlar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2.2", f"2.2. {plan_titles.get('2.2','Kichik bo\'lim')}",
+                     f"'{topic}' bo'limi '{plan_titles.get('2.2','')}' uchun yechimlar va istiqbollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' ommabop maqolasining XULOSA qismini yoz. Yakuniy kuchli g'oya va ta'sirchan so'zlar. "
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA (hatto 'Xulosa' deb ham yozma). Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 5-10 ta REAL, ishonchli manba ro'yxati (Prezident farmonlari, Qonunlar hujjatlari, ishonchli OAV, statistika agentligi, kitoblar). "
+                     f"Hech qanday davlat siriga kiruvchi yopiq yoki ishonchsiz manba bo'lmasin. "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
+                ]
+            elif service_key == "a_art":
+                style_ins = "BADIIY-PUBLITSISTIK (jonli, obrazli, publitsistik ta'sirchan, muallif pozitsiyasi kuchli, ishonchli faktlarga va qonuniyatlarga asoslangan)"
+                
+                art_1 = plan_titles.get('1', 'ASOSIY MASALA VA DOLZARBLIK').upper()
+                art_2 = plan_titles.get('2', 'HAYOTIY TAHLIL VA DALILLAR').upper()
+                art_3 = plan_titles.get('3', 'IJTIMOIY VA AMALIY AHAMIYAT').upper()
+                art_4 = plan_titles.get('4', 'KELAJAKKA NAZAR VA ISTIQBOLLAR').upper()
+
+                sections = [
+                    ("annotatsiya_uz", "ANNOTATSIYA",
+                     f"'{topic}' badiiy-publitsistik maqolasi uchun FAQAT O'ZBEK tilida mazmunli annotatsiya va alohida kalit so'zlar yoz.\n"
+                     f"AYNAN shu formatda yozing (boshqa hech narsa qo'shmang):\n"
+                     f"[O'zbek tilida 100-120 so'zlik annotatsiya matni]\n\n"
+                     f"KALIT SO'ZLAR\n"
+                     f"[5-8 ta o'zbekcha kalit so'zlar vergul bilan ajratilgan]"),
+                    ("kirish", "KIRISH",
+                     f"'{topic}' mavzusida badiiy-publitsistik maqola uchun ta'sirchan KIRISH qismini yoz. "
+                     f"O'quvchini darhol jalb qiluvchi lid va muammo qo'yilishi. Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("1", art_1,
+                     f"'{topic}' mavzusi bo'yicha '{art_1}' qismini yoz. Jonli publitsistik uslub, badiiy tasvir va faktlar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("2", art_2,
+                     f"'{topic}' mavzusi bo'yicha '{art_2}' qismini yoz. Chuqur tahlil va hayotiy misollar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("3", art_3,
+                     f"'{topic}' mavzusi bo'yicha '{art_3}' qismini yoz. Muallif pozitsiyasi va dalillar. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("4", art_4,
+                     f"'{topic}' mavzusi bo'yicha '{art_4}' qismini yoz. Ijtimoiy ahamiyat va kelajak masalalari. "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("muhokama", "MUHOKAMA",
+                     f"'{topic}' mavzusida MUHOKAMA qismini yoz. Ko'tarilgan masalani tahlil qilib, asosiy jihatlarni ajratib ko'rsat (masalan: 'Birinchisi — ... Ikkinchisi — ... Uchinchisi — ...'). "
+                     f"Uslub: {style_ins}. {w} so'z. Sarlavha YOZMA. Xulosa yoki adabiyotlar ro'yxatini QO'SHMA!"),
+                    ("xulosa", "XULOSA",
+                     f"'{topic}' maqolasining XULOSA qismini yoz. O'quvchida chuqur fikr va taassurot qoldiradigan yakuniy xulosalar. "
+                     f"Uslub: {style_ins}. {max(100, w//2)} so'z. Sarlavha umuman YOZMA. Faqat matnni o'zini yoz!"),
+                    ("adabiyotlar", "FOYDALANILGAN ADABIYOTLAR",
+                     f"'{topic}' mavzusiga oid 6-10 ta ishonchli manba ro'yxati (Prezident farmon va qarorlari, qonunlar, nufuzli kitoblar, xalqaro manbalar masalan UNESCO, davlat muzeylari va ilmiy nashrlar). "
+                     f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
+                ]
             else:
                 style_ins = "ILMIY-OMMABOP (qiziqarli, o'quvchini jalb qiladigan, hayotiy misollar va tushunarli tilda, ortiqcha murakkab atamalarsiz)" if service_key == "a_pop_sci" else "akademik"
                 sections = [
@@ -1767,6 +2079,7 @@ async def _run_generation(
                      f"Sarlavha umuman YOZMA. Faqat ro'yxatni o'zini yoz. Ro'yxatni raqam va nuqta bilan boshla (1., 2., 3., va hokazo). [1] kabi qavslardan foydalanma!")
                 ]
 
+            sections_content = {}
             total_sections = len(sections)
             progress_chars = ["⬛", "🟩"]
 
@@ -1853,7 +2166,9 @@ async def _run_generation(
 
             full_parts = []
             for key, (sec_name, sec_content) in sections_content.items():
-                if key not in ["barcha_annotatsiyalar", "kirish", "metodologiya", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
+                if key == "matn":
+                    full_parts.append(f"\n{sec_content}\n")
+                elif key not in ["barcha_annotatsiyalar", "annotatsiya_uz", "kirish", "metodologiya", "natijalar", "natijalar_kirish", "muhokama", "xulosa", "adabiyotlar", "sifat_nazorati"]:
                     full_parts.append(f"\n## {sec_name}\n\n{sec_content}\n")
                 else:
                     full_parts.append(f"\n{sec_name}\n\n{sec_content}\n")
