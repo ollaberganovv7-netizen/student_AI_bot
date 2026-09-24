@@ -1,0 +1,631 @@
+/*
+ * Shared Mini App styles: a calm, native Telegram form.
+ *
+ * Colours come from Telegram's --tg-theme-* variables (set by
+ * telegram-web-app.js and again by MiniApp.applyTheme); the --fb-* values
+ * are fallbacks for clients that send no theme, chosen for 4.5:1 contrast
+ * or better in light and dark on both the page and card grounds; that
+ * includes --fb-button, which draws the selection rings and focus outlines
+ * (the dark one is lighter than Telegram's own for that reason).
+ * Telegram's hint, section header and destructive colours are lifted to
+ * 4.5:1 by MiniApp.applyTheme when a theme sends fainter ones. Text is never drawn on button_color (white on
+ * it is under 4.5:1 in Telegram's own palettes); selection is a ring in it.
+ * System fonts only, 44px touch targets.
+ */
+
+:root {
+  --fb-bg: #ffffff;
+  --fb-text: #000000;
+  --fb-hint: #6d6d72;
+  --fb-link: #1a6fb5;
+  --fb-button: #1a6fb5;
+  --fb-button-text: #ffffff;
+  --fb-secondary-bg: #f1f1f4;
+  --fb-separator: #d9d9de;
+  --fb-destructive: #c62828;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --fb-bg: #17212b;
+  --fb-text: #f5f5f5;
+  --fb-hint: #9aa6b2;
+  --fb-link: #6ab3f3;
+  --fb-button: #5a9fdc;
+  --fb-button-text: #ffffff;
+  --fb-secondary-bg: #232e3c;
+  --fb-separator: #34414f;
+  --fb-destructive: #ff7a70;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fb-bg: #17212b;
+    --fb-text: #f5f5f5;
+    --fb-hint: #9aa6b2;
+    --fb-link: #6ab3f3;
+    --fb-button: #5a9fdc;
+    --fb-button-text: #ffffff;
+    --fb-secondary-bg: #232e3c;
+    --fb-separator: #34414f;
+    --fb-destructive: #ff7a70;
+    color-scheme: dark;
+  }
+}
+
+:root {
+  --bg: var(--tg-theme-bg-color, var(--fb-bg));
+  --text: var(--tg-theme-text-color, var(--fb-text));
+  --hint: var(--tg-theme-hint-color, var(--fb-hint));
+  --link: var(--tg-theme-link-color, var(--fb-link));
+  --button: var(--tg-theme-button-color, var(--fb-button));
+  --button-text: var(--tg-theme-button-text-color, var(--fb-button-text));
+  --card: var(--tg-theme-secondary-bg-color, var(--fb-secondary-bg));
+  --section-title: var(--tg-theme-section-header-text-color, var(--hint));
+  --separator: var(--tg-theme-section-separator-color, var(--fb-separator));
+  --accent: var(--tg-theme-accent-text-color, var(--link));
+  --destructive: var(--tg-theme-destructive-text-color, var(--fb-destructive));
+
+  /* Safe areas: Telegram's values (8.0+) when known, the browser's otherwise. */
+  --sa-top: env(safe-area-inset-top, 0px);
+  --sa-right: env(safe-area-inset-right, 0px);
+  --sa-bottom: env(safe-area-inset-bottom, 0px);
+  --sa-left: env(safe-area-inset-left, 0px);
+  --csa-top: 0px;
+  --csa-right: 0px;
+  --csa-bottom: 0px;
+  --csa-left: 0px;
+
+  --radius: 12px;
+  --radius-sm: 10px;
+  --target: 44px;
+  --gutter: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding:
+    calc(20px + var(--sa-top) + var(--csa-top))
+    calc(var(--gutter) + var(--sa-right) + var(--csa-right))
+    calc(32px + var(--sa-bottom) + var(--csa-bottom))
+    calc(var(--gutter) + var(--sa-left) + var(--csa-left));
+}
+
+/* ── headings ─────────────────────────────────────────────────────────────── */
+
+.page-head {
+  margin: 0 0 8px;
+}
+
+h1,
+.page-title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.page-sub {
+  margin: 6px 0 0;
+  color: var(--hint);
+  font-size: 15px;
+}
+
+.section {
+  margin-top: 24px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.section-title {
+  margin: 0 0 8px;
+  padding: 0 4px;
+  color: var(--section-title);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.hint {
+  margin: 8px 4px 0;
+  color: var(--hint);
+  font-size: 14px;
+}
+
+.hint.lead {
+  margin: 0 4px 8px;
+}
+
+.field .hint {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.field > .hint:first-child {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.hint.warn {
+  color: var(--destructive);
+}
+
+/* Price lines are information the user decides on, not a side note. */
+.hint.price {
+  color: var(--text);
+}
+
+/* ── cards and fields ─────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 4px 16px;
+}
+
+.field {
+  padding: 12px 0;
+}
+
+.field + .field,
+.card > .row + .row,
+.card > .field + .row,
+.card > .row + .field {
+  border-top: 1px solid var(--separator);
+}
+
+.field > label,
+.field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.field-value {
+  color: var(--text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.optional {
+  font-size: 13px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  min-height: var(--target);
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px; /* 16px keeps iOS from zooming into the field */
+  line-height: 1.4;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 76px;
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 36px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--hint) 50%),
+    linear-gradient(135deg, var(--hint) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--hint);
+  opacity: 1;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--button);
+}
+
+:focus-visible {
+  outline: 2px solid var(--button);
+  outline-offset: 2px;
+}
+
+input[type="range"] {
+  display: block;
+  width: 100%;
+  height: var(--target);
+  margin: 0;
+  accent-color: var(--button);
+  background: transparent;
+}
+
+/* ── segmented control (radio inputs) ─────────────────────────────────────── */
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.segmented > input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.segmented > label {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: var(--target);
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.segmented > label small {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.segmented > input:checked + label {
+  box-shadow: inset 0 0 0 2px var(--button);
+  font-weight: 600;
+}
+
+.segmented > input:focus-visible + label {
+  outline: 2px solid var(--button);
+  outline-offset: 2px;
+}
+
+/* ── stepper ──────────────────────────────────────────────────────────────── */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper input {
+  width: 72px;
+  flex: 0 0 72px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.icon-button {
+  flex: 0 0 var(--target);
+  width: var(--target);
+  height: var(--target);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.icon-button:disabled {
+  color: var(--hint);
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* ── rows (key/value, links) ──────────────────────────────────────────────── */
+
+.row {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--target);
+  padding: 10px 0;
+}
+
+.row-value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.row.total {
+  font-weight: 600;
+}
+
+.row-link {
+  width: 100%;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row-link .row-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.row-link .row-sub {
+  color: var(--hint);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  color: var(--hint);
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* ── tabs ─────────────────────────────────────────────────────────────────── */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 20px;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--card);
+}
+
+.tab {
+  flex: 1 1 0;
+  min-height: var(--target);
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* ── chips ────────────────────────────────────────────────────────────────── */
+
+.chips {
+  display: flex;
+  gap: 8px;
+  margin: 20px calc(-1 * var(--gutter)) 0;
+  padding: 0 var(--gutter) 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex: 0 0 auto;
+  min-height: var(--target);
+  padding: 8px 16px;
+  border: 1px solid var(--separator);
+  border-radius: 22px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip[aria-checked="true"] {
+  border-color: var(--button);
+  box-shadow: inset 0 0 0 1px var(--button);
+}
+
+/* ── template grid ────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+@media (min-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.tpl {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.tpl[aria-checked="true"] {
+  border-color: var(--button);
+}
+
+.tpl picture,
+.detail-preview picture {
+  display: block;
+}
+
+.tpl img,
+.detail-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: var(--separator);
+}
+
+.tpl-name {
+  display: block;
+  padding: 8px 10px 10px;
+  font-size: 14px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 0 0 1px var(--button);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.detail-preview {
+  margin-top: 16px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+}
+
+.empty {
+  margin-top: 24px;
+  color: var(--hint);
+  text-align: center;
+}
+
+/* ── notice ───────────────────────────────────────────────────────────────── */
+
+.notice {
+  margin: 12vh auto 0;
+  max-width: 420px;
+  padding: 24px 20px;
+  border-radius: var(--radius);
+  background: var(--card);
+  text-align: center;
+}
+
+.notice-title {
+  font-size: 20px;
+}
+
+.notice-text {
+  margin: 10px 0 0;
+  color: var(--hint);
+  font-size: 15px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}

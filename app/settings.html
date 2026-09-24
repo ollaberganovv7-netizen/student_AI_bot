@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <!-- Page-level config read by assets/app.js: the bot this page belongs to. -->
+  <meta name="miniapp:bot" content="@SLIDEMASTERAI1_BOT">
+  <meta name="color-scheme" content="light dark">
+  <title>Sozlamalar</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="assets/app.css?v=e2bb012fb4">
+  <script src="assets/i18n.js?v=41ca1c0c8e"></script>
+  <script src="assets/app.js?v=ecd11cf8b1"></script>
+</head>
+<body>
+<main id="app" class="page" hidden>
+
+  <div id="view-main">
+    <header class="page-head">
+      <h1 id="page-title"></h1>
+      <p class="page-sub" data-i18n="settings.subtitle"></p>
+    </header>
+
+    <section class="section" aria-labelledby="sec-topic">
+      <h2 class="section-title" id="sec-topic" data-i18n="settings.sec_topic"></h2>
+      <div class="card">
+        <div class="field">
+          <label for="topic" data-i18n="settings.topic"></label>
+          <textarea id="topic" rows="3" maxlength="300" autocomplete="off" data-i18n-placeholder="settings.topic_ph"></textarea>
+        </div>
+        <div class="field">
+          <label for="subject"><span data-i18n="settings.subject"></span><span class="optional" data-i18n="optional"></span></label>
+          <input id="subject" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.subject_ph">
+        </div>
+        <div class="field">
+          <label for="language" data-i18n="settings.language"></label>
+          <select id="language">
+            <option value="uz" data-i18n="settings.lang_uz"></option>
+            <option value="ru" data-i18n="settings.lang_ru"></option>
+            <option value="en" data-i18n="settings.lang_en"></option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sec-size">
+      <h2 class="section-title" id="sec-size" data-i18n="settings.sec_size"></h2>
+      <div class="card">
+        <div class="field">
+          <label for="size"><span id="size-label"></span><output id="size-value" class="field-value" for="size"></output></label>
+          <input id="size" type="range">
+          <p class="hint price" id="tier-hint" hidden></p>
+        </div>
+        <div class="field" id="quality-field">
+          <div class="field-label" id="quality-label" data-i18n="settings.quality"></div>
+          <div class="segmented" role="radiogroup" aria-labelledby="quality-label">
+            <input type="radio" name="quality" id="q-standard" value="standard">
+            <label for="q-standard"><span data-i18n="settings.q_standard"></span><small data-i18n="settings.q_standard_hint"></small></label>
+            <input type="radio" name="quality" id="q-premium" value="premium">
+            <label for="q-premium"><span id="q-premium-name"></span><small id="q-premium-hint"></small></label>
+          </div>
+        </div>
+        <div class="field" id="chapters-field" hidden>
+          <div class="field-label" id="chapters-label" data-i18n="settings.chapters"></div>
+          <div class="segmented" id="chapters" role="radiogroup" aria-labelledby="chapters-label"></div>
+        </div>
+        <div class="field" id="subchapters-field" hidden>
+          <div class="field-label" id="subchapters-label" data-i18n="settings.subchapters"></div>
+          <div class="segmented" id="subchapters" role="radiogroup" aria-labelledby="subchapters-label"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="images-section" aria-labelledby="sec-images" hidden>
+      <h2 class="section-title" id="sec-images" data-i18n="settings.sec_images"></h2>
+      <div class="card">
+        <div class="field">
+          <p class="hint" id="images-free" hidden></p>
+          <label for="images" id="images-label"></label>
+          <div class="stepper">
+            <button type="button" class="icon-button" id="images-dec" data-i18n-aria-label="decrease">−</button>
+            <input id="images" type="number" inputmode="numeric" min="0" step="1" value="0">
+            <button type="button" class="icon-button" id="images-inc" data-i18n-aria-label="increase">+</button>
+            <span class="hint price" id="images-unit"></span>
+          </div>
+          <p class="hint price" id="images-total" hidden></p>
+          <p class="hint" id="images-limit" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sec-title-page">
+      <h2 class="section-title" id="sec-title-page" data-i18n="settings.sec_title_page"></h2>
+      <div class="card">
+        <button type="button" class="row row-link" id="open-title-page">
+          <span class="row-main">
+            <span data-i18n="settings.title_page_hint"></span>
+            <span class="row-sub" id="title-page-summary"></span>
+          </span>
+          <span class="chevron" aria-hidden="true">›</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sec-price">
+      <h2 class="section-title" id="sec-price" data-i18n="settings.sec_price"></h2>
+      <div class="card" id="price-unknown" aria-live="polite" hidden>
+        <p class="row" data-i18n="price_in_bot"></p>
+      </div>
+      <div class="card" id="price-known" aria-live="polite">
+        <div class="row" id="price-base-row">
+          <span data-i18n="settings.price_base"></span>
+          <span class="row-value" id="price-base"></span>
+        </div>
+        <div class="row" id="price-images-row">
+          <span id="price-images-label"></span>
+          <span class="row-value" id="price-images"></span>
+        </div>
+        <div class="row total" id="price-total-row">
+          <span data-i18n="settings.price_total"></span>
+          <span class="row-value" id="price-total"></span>
+        </div>
+      </div>
+      <p class="hint" id="price-note" data-i18n="settings.price_note"></p>
+    </section>
+  </div>
+
+  <div id="view-title" hidden>
+    <header class="page-head">
+      <h1 id="title-page-heading" tabindex="-1" data-i18n="settings.sec_title_page"></h1>
+    </header>
+    <section class="section" aria-labelledby="title-page-heading">
+      <div class="card">
+        <div class="field">
+          <label for="author" data-i18n="settings.author"></label>
+          <input id="author" type="text" maxlength="120" autocomplete="name" data-i18n-placeholder="settings.author_ph">
+        </div>
+        <div class="field">
+          <label for="reviewer" data-i18n="settings.reviewer"></label>
+          <input id="reviewer" type="text" maxlength="120" autocomplete="off" data-i18n-placeholder="settings.reviewer_ph">
+        </div>
+        <div class="field">
+          <label for="university" data-i18n="settings.university"></label>
+          <input id="university" type="text" maxlength="200" autocomplete="organization" data-i18n-placeholder="settings.university_ph">
+        </div>
+        <div class="field" id="fakultet-field">
+          <label for="fakultet" data-i18n="settings.fakultet"></label>
+          <input id="fakultet" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.fakultet_ph">
+        </div>
+        <div class="field" id="specialty-field">
+          <label for="specialty" data-i18n="settings.specialty"></label>
+          <input id="specialty" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.specialty_ph">
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var M = window.MiniApp;
+  var t = M.t;
+
+  // ── state: everything is declared before the first render ────────────────
+
+  // Per service: what the form shows and its size limits when `p` is absent
+  // (the same limits the bot clamps to). Prices are never listed here.
+  var SERVICES = {
+    presentation: { sizeKey: 'slides', tierKey: 'settings.tier_slides',
+      n: { min: 10, max: 30, def: 10 }, step: 1, quality: 'premium', structure: false, faculty: false },
+    referat: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
+      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', structure: true, faculty: true },
+    mustaqil: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
+      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', structure: true, faculty: true },
+    kurs: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
+      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, structure: false, faculty: true },
+    diplom: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
+      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, structure: false, faculty: true }
+  };
+  var MOVED = { uslubiy: true };
+  var STRUCTURE_FALLBACK = { ch: { min: 2, max: 4 }, sc: { min: 2, max: 4 } };
+  var TITLE_FIELDS = ['author', 'reviewer', 'university', 'fakultet', 'specialty'];
+  var PROFILE_KEY = 'profile';
+
+  var docType = M.params.doc_type === 'report' ? 'mustaqil' : (M.params.doc_type || '');
+  var service = Object.prototype.hasOwnProperty.call(SERVICES, docType) ? SERVICES[docType] : null;
+  // The table must be the one for this service; anything else is ignored.
+  var p = (M.prices && (M.prices.svc == null || M.prices.svc === docType)) ? M.prices : null;
+  var s = M.state;
+
+  var limits = null;
+  var form = { n: 0, quality: 'standard', extra: 0, chapters: 2, subchapters: 2 };
+  var imagesShown = false;
+  var storedProfile = {};
+  var touched = {};
+  var els = {};
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  function range(obj, fallback) {
+    var lo = obj ? M.toInt(obj.min, NaN) : NaN;
+    var hi = obj ? M.toInt(obj.max, NaN) : NaN;
+    if (!isFinite(lo) || !isFinite(hi) || lo > hi) return { min: fallback.min, max: fallback.max };
+    return { min: lo, max: hi };
+  }
+
+  function value(id) {
+    return els[id] ? els[id].value.trim() : '';
+  }
+
+  // ── render ────────────────────────────────────────────────────────────────
+
+  function buildSegments(container, name, lo, hi, current, onPick) {
+    container.textContent = '';
+    for (var i = lo; i <= hi; i++) {
+      var id = name + '-' + i;
+      var input = M.el('input', { type: 'radio', name: name, id: id, value: String(i), checked: i === current });
+      input.addEventListener('change', function (event) {
+        onPick(parseInt(event.target.value, 10));
+        M.haptic('select');
+      });
+      container.appendChild(input);
+      container.appendChild(M.el('label', { attrs: { for: id }, text: String(i) }));
+    }
+  }
+
+  function maxPaid() {
+    return M.pricing.maxPaidImages(p, form.n);
+  }
+
+  function renderSize() {
+    els['size-value'].textContent = String(form.n);
+    els.size.setAttribute('aria-valuetext', String(form.n));
+    var tier = M.pricing.tierFor(p, form.quality, form.n);
+    els['tier-hint'].hidden = !tier;
+    if (tier) els['tier-hint'].textContent = t(service.tierKey, { max: tier.max, price: M.fmtPrice(tier.price) });
+  }
+
+  function renderImages() {
+    if (!imagesShown) return;
+    var img = p.img;
+    var free = Math.max(0, M.toInt(img.free, 0));
+    var cap = maxPaid();
+    form.extra = M.clamp(form.extra, 0, cap);
+    els.images.max = String(cap);
+    if (document.activeElement !== els.images) els.images.value = String(form.extra);
+    els['images-dec'].disabled = form.extra <= 0;
+    els['images-inc'].disabled = form.extra >= cap;
+    els.images.disabled = cap === 0;
+
+    els['images-free'].hidden = free === 0;
+    els['images-free'].textContent = t('settings.images_free', { n: free });
+    els['images-total'].hidden = free === 0;
+    els['images-total'].textContent = t('settings.images_total', { free: free, paid: form.extra });
+
+    var limitEl = els['images-limit'];
+    var hardMax = Math.max(0, M.toInt(img.max, 0));
+    if (cap === 0) {
+      limitEl.hidden = false;
+      limitEl.textContent = t('settings.images_none');
+    } else if (cap < hardMax) {
+      limitEl.hidden = false;
+      limitEl.textContent = t('settings.images_limit', { n: cap });
+    } else {
+      limitEl.hidden = true;
+    }
+  }
+
+  function renderPrice() {
+    var q = M.pricing.quote(p, { quality: form.quality, n: form.n, extra: form.extra });
+    els['price-unknown'].hidden = !!q;
+    els['price-known'].hidden = !q;
+    els['price-images-row'].hidden = !q || q.paid === 0;
+    if (!q) {
+      els['price-total'].removeAttribute('data-amount');
+      M.mainButton(t('save'), save);
+      return;
+    }
+    els['price-base'].textContent = q.trial ? t('settings.price_trial') : M.fmtPrice(q.base);
+    els['price-images-label'].textContent = t('settings.price_images', { n: q.paid, unit: M.fmtPrice(q.unit) });
+    els['price-images'].textContent = M.fmtPrice(q.images);
+    els['price-total'].textContent = q.payable ? M.fmtPrice(q.payable) : t('free');
+    els['price-total'].setAttribute('data-amount', String(q.payable));
+    M.mainButton(t('save_price', { price: q.payable ? M.fmtPrice(q.payable) : t('free') }), save);
+  }
+
+  function renderTitleSummary() {
+    var parts = [value('author'), value('university')].filter(Boolean);
+    els['title-page-summary'].textContent = parts.length ? parts.join(' · ') : t('settings.title_page_empty');
+  }
+
+  function render() {
+    renderSize();
+    renderImages();
+    renderPrice();
+  }
+
+  // ── sub-view: title page ──────────────────────────────────────────────────
+
+  function openTitlePage() {
+    els['view-main'].hidden = true;
+    els['view-title'].hidden = false;
+    window.scrollTo(0, 0);
+    M.backButton(closeTitlePage);
+    M.haptic('light');
+    els['title-page-heading'].focus();
+  }
+
+  function closeTitlePage() {
+    if (els['view-title'].hidden) return;
+    els['view-title'].hidden = true;
+    els['view-main'].hidden = false;
+    M.backButton(null);
+    renderTitleSummary();
+    els['open-title-page'].focus();
+  }
+
+  // ── send ──────────────────────────────────────────────────────────────────
+
+  function rememberProfile() {
+    var profile = {};
+    Object.keys(storedProfile).forEach(function (key) { profile[key] = storedProfile[key]; });
+    TITLE_FIELDS.forEach(function (key) {
+      if (value(key)) profile[key] = value(key);
+    });
+    M.store.set(PROFILE_KEY, JSON.stringify(profile));
+  }
+
+  function save() {
+    var topic = value('topic');
+    if (!topic) {
+      closeTitlePage();
+      M.haptic('error');
+      M.showAlert(t('settings.err_topic'));
+      els.topic.focus();
+      return;
+    }
+    // Field names are the bot's contract (utils/webapp_contract.py). An empty
+    // string means "not provided", so nothing set earlier is wiped. No price.
+    var payload = {
+      action: 'full_settings',
+      v: M.PAYLOAD_VERSION,
+      doc_type: docType,
+      topic: topic,
+      subject: value('subject'),
+      author: value('author'),
+      language: els.language.value,
+      quality: form.quality === 'premium' ? 'pro' : 'standard',
+      num_pages: form.n,
+      university: value('university'),
+      reviewer: value('reviewer')
+    };
+    if (imagesShown) payload.ai_images_extra = form.extra;
+    if (service.faculty) {
+      payload.fakultet = value('fakultet');
+      payload.specialty = value('specialty');
+    }
+    if (service.structure) {
+      payload.num_chapters = form.chapters;
+      payload.num_subchapters = form.subchapters;
+    }
+    rememberProfile();
+    M.sendPayload(payload);
+  }
+
+  // ── prefill ───────────────────────────────────────────────────────────────
+
+  function text(v) {
+    return typeof v === 'string' ? v : '';
+  }
+
+  function prefill() {
+    // `s` carries no names; the rest of the order comes from it as is (the
+    // topic is plain JSON text, never URL-decoded again).
+    els.topic.value = text(s.topic);
+    els.subject.value = text(s.subject);
+    els.university.value = text(s.university);
+    els.fakultet.value = text(s.fakultet);
+    els.specialty.value = text(s.specialty);
+    // The document's language, not the page's: without one from the bot it
+    // is Uzbek, as the bot assumes and the old page did. A ru/en student who
+    // only changes the page count must not switch the document's language.
+    els.language.value = ['uz', 'ru', 'en'].indexOf(s.language) >= 0 ? s.language : 'uz';
+
+    // Then what this student typed last time (Telegram CloudStorage), then
+    // the Telegram name for the author. A field the student already edited
+    // is never overwritten.
+    M.store.get(PROFILE_KEY).then(function (raw) {
+      try {
+        var saved = JSON.parse(raw || '{}');
+        if (saved && typeof saved === 'object') storedProfile = saved;
+      } catch (e) { storedProfile = {}; }
+      TITLE_FIELDS.forEach(function (key) {
+        if (!touched[key] && !els[key].value && typeof storedProfile[key] === 'string') {
+          els[key].value = storedProfile[key].slice(0, els[key].maxLength > 0 ? els[key].maxLength : 200);
+        }
+      });
+      var user = M.user;
+      if (!touched.author && !els.author.value && user) {
+        els.author.value = [text(user.first_name), text(user.last_name)].join(' ').trim().slice(0, 120);
+      }
+      renderTitleSummary();
+    });
+  }
+
+  // ── wiring ────────────────────────────────────────────────────────────────
+
+  function wire() {
+    els.size.addEventListener('input', function () {
+      form.n = M.clamp(M.toInt(els.size.value, limits.n.min), limits.n.min, limits.n.max);
+      render();
+    });
+    els.size.addEventListener('change', function () { M.haptic('select'); });
+
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="quality"]'), function (input) {
+      input.addEventListener('change', function () {
+        form.quality = input.value;
+        M.haptic('select');
+        render();
+      });
+    });
+
+    els.images.addEventListener('input', function () {
+      var v = M.toInt(els.images.value, NaN);
+      if (isFinite(v)) {
+        form.extra = M.clamp(v, 0, maxPaid());
+        render();
+      }
+    });
+    els.images.addEventListener('change', function () {
+      els.images.value = String(form.extra);
+    });
+    els['images-dec'].addEventListener('click', function () {
+      form.extra = Math.max(0, form.extra - 1);
+      M.haptic('select');
+      M.setDirty(true);
+      render();
+    });
+    els['images-inc'].addEventListener('click', function () {
+      form.extra = Math.min(maxPaid(), form.extra + 1);
+      M.haptic('select');
+      M.setDirty(true);
+      render();
+    });
+
+    els['open-title-page'].addEventListener('click', openTitlePage);
+
+    TITLE_FIELDS.forEach(function (key) {
+      els[key].addEventListener('input', function () { touched[key] = true; });
+    });
+
+    var app = byId('app');
+    app.addEventListener('input', function () { M.setDirty(true); });
+    app.addEventListener('change', function () { M.setDirty(true); });
+  }
+
+  function init() {
+    Array.prototype.forEach.call(document.querySelectorAll('[id]'), function (node) {
+      els[node.id] = node;
+    });
+    M.applyI18n();
+
+    if (MOVED[docType]) {
+      document.title = t('settings.moved_title');
+      M.showNotice(t('settings.moved_title'), t('settings.moved_text'));
+      M.ready();
+      return;
+    }
+    if (!service) {
+      document.title = t('bad_link_title');
+      M.showNotice(t('bad_link_title'), t('bad_link'));
+      M.ready();
+      return;
+    }
+
+    var title = t('settings.title_' + docType);
+    document.title = title;
+    els['page-title'].textContent = title;
+
+    limits = {
+      n: range(p && p.n, service.n),
+      ch: range(p && p.ch, STRUCTURE_FALLBACK.ch),
+      sc: range(p && p.sc, STRUCTURE_FALLBACK.sc)
+    };
+    var def = p && p.n ? M.toInt(p.n.def, service.n.def) : service.n.def;
+    form.n = M.clamp(M.toInt(s.n, def), limits.n.min, limits.n.max);
+    form.quality = M.pricing.qualityKey(M.params.quality);
+    form.extra = Math.max(0, M.toInt(s.img, 0));
+    form.chapters = M.clamp(M.toInt(s.ch, limits.ch.min), limits.ch.min, limits.ch.max);
+    form.subchapters = M.clamp(M.toInt(s.sc, limits.sc.min), limits.sc.min, limits.sc.max);
+    // Pictures are offered only when the bot's table allows some.
+    imagesShown = !!(p && p.img && M.toInt(p.img.max, 0) > 0);
+
+    // Size slider.
+    els['size-label'].textContent = t('settings.' + service.sizeKey);
+    els.size.min = String(limits.n.min);
+    els.size.max = String(limits.n.max);
+    els.size.step = String(service.step);
+    els.size.value = String(form.n);
+
+    // Quality: presentations say Premium, documents Pro; kurs/diplom have one.
+    els['quality-field'].hidden = !service.quality;
+    if (service.quality) {
+      els['q-premium-name'].textContent = t('settings.q_' + service.quality);
+      els['q-premium-hint'].textContent = t('settings.q_' + service.quality + '_hint');
+    }
+    byId(form.quality === 'premium' ? 'q-premium' : 'q-standard').checked = true;
+
+    // Chapters and sections per chapter (referat, mustaqil).
+    els['chapters-field'].hidden = !service.structure;
+    els['subchapters-field'].hidden = !service.structure;
+    if (service.structure) {
+      buildSegments(els.chapters, 'chapters', limits.ch.min, limits.ch.max, form.chapters,
+        function (v) { form.chapters = v; });
+      buildSegments(els.subchapters, 'subchapters', limits.sc.min, limits.sc.max, form.subchapters,
+        function (v) { form.subchapters = v; });
+    }
+
+    // Pictures.
+    els['images-section'].hidden = !imagesShown;
+    if (imagesShown) {
+      var free = Math.max(0, M.toInt(p.img.free, 0));
+      els['images-label'].textContent = t(free > 0 ? 'settings.images_extra' : 'settings.images_count');
+      els['images-unit'].textContent = t('settings.images_unit', { price: M.fmtPrice(M.toInt(p.img.unit, 0)) });
+    }
+
+    els['fakultet-field'].hidden = !service.faculty;
+    els['specialty-field'].hidden = !service.faculty;
+
+    prefill();
+    wire();
+    render();
+    renderTitleSummary();
+    M.ready({ form: true });
+  }
+
+  if (M.start()) init();
+})();
+</script>
+</body>
+</html>

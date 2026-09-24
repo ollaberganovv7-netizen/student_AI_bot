@@ -1,0 +1,222 @@
+[
+  {
+    "id": "modern_beige-minimalism",
+    "name": "Beige-Minimalism",
+    "category": "modern",
+    "file_path": "templates/modern/beige-minimalism.pptx",
+    "file_size": "55 KB",
+    "preview": "static/previews/modern/beige-minimalism.webp",
+    "preview_jpg": "static/previews/modern/beige-minimalism.jpg",
+    "width": 640,
+    "height": 361
+  },
+  {
+    "id": "modern_business-minimalism_",
+    "name": "Business-Minimalism ",
+    "category": "modern",
+    "file_path": "templates/modern/business-minimalism .pptx",
+    "file_size": "56 KB",
+    "preview": "static/previews/modern/business-minimalism_.webp",
+    "preview_jpg": "static/previews/modern/business-minimalism_.jpg",
+    "width": 640,
+    "height": 358
+  },
+  {
+    "id": "modern_goluboy-abstraktniy",
+    "name": "Goluboy-Abstraktniy",
+    "category": "modern",
+    "file_path": "templates/modern/goluboy-abstraktniy.pptx",
+    "file_size": "946 KB",
+    "preview": "static/previews/modern/goluboy-abstraktniy.webp",
+    "preview_jpg": "static/previews/modern/goluboy-abstraktniy.jpg",
+    "width": 640,
+    "height": 359
+  },
+  {
+    "id": "modern_grey-minimalism",
+    "name": "Grey-Minimalism",
+    "category": "modern",
+    "file_path": "templates/modern/grey-minimalism.pptx",
+    "file_size": "58 KB",
+    "preview": "static/previews/modern/grey-minimalism.webp",
+    "preview_jpg": "static/previews/modern/grey-minimalism.jpg",
+    "width": 640,
+    "height": 361
+  },
+  {
+    "id": "modern_minimalism",
+    "name": "Minimalism",
+    "category": "modern",
+    "file_path": "templates/modern/minimalism.pptx",
+    "file_size": "59 KB",
+    "preview": "static/previews/modern/minimalism.webp",
+    "preview_jpg": "static/previews/modern/minimalism.jpg",
+    "width": 640,
+    "height": 367
+  },
+  {
+    "id": "modern_mrarmor",
+    "name": "Mrarmor",
+    "category": "modern",
+    "file_path": "templates/modern/mrarmor.pptx",
+    "file_size": "361 KB",
+    "preview": "static/previews/modern/mrarmor.webp",
+    "preview_jpg": "static/previews/modern/mrarmor.jpg",
+    "width": 640,
+    "height": 356
+  },
+  {
+    "id": "modern_sinie-tochki",
+    "name": "Sinie-Tochki",
+    "category": "modern",
+    "file_path": "templates/modern/sinie-tochki.pptx",
+    "file_size": "333 KB",
+    "preview": "static/previews/modern/sinie-tochki.webp",
+    "preview_jpg": "static/previews/modern/sinie-tochki.jpg",
+    "width": 640,
+    "height": 359
+  },
+  {
+    "id": "modern_siniy-kontur-wide",
+    "name": "Siniy-Kontur-Wide",
+    "category": "modern",
+    "file_path": "templates/modern/siniy-kontur-wide.pptx",
+    "file_size": "206 KB",
+    "preview": "static/previews/modern/siniy-kontur-wide.webp",
+    "preview_jpg": "static/previews/modern/siniy-kontur-wide.jpg",
+    "width": 640,
+    "height": 358
+  },
+  {
+    "id": "modern_staraya-bumaga",
+    "name": "Staraya-Bumaga",
+    "category": "modern",
+    "file_path": "templates/modern/staraya-bumaga.pptx",
+    "file_size": "397 KB",
+    "preview": "static/previews/modern/staraya-bumaga.webp",
+    "preview_jpg": "static/previews/modern/staraya-bumaga.jpg",
+    "width": 640,
+    "height": 358
+  },
+  {
+    "id": "power_point_1",
+    "name": "1",
+    "category": "power point",
+    "file_path": "templates/power point/1.pptx",
+    "file_size": "322 KB",
+    "preview": "static/previews/power_point/1.webp",
+    "preview_jpg": "static/previews/power_point/1.jpg",
+    "width": 640,
+    "height": 354
+  },
+  {
+    "id": "power_point_2",
+    "name": "2",
+    "category": "power point",
+    "file_path": "templates/power point/2.pptx",
+    "file_size": "58 KB",
+    "preview": "static/previews/power_point/2.webp",
+    "preview_jpg": "static/previews/power_point/2.jpg",
+    "width": 640,
+    "height": 361
+  },
+  {
+    "id": "power_point_3",
+    "name": "3",
+    "category": "power point",
+    "file_path": "templates/power point/3.pptx",
+    "file_size": "175 KB",
+    "preview": "static/previews/power_point/3.webp",
+    "preview_jpg": "static/previews/power_point/3.jpg",
+    "width": 640,
+    "height": 309
+  },
+  {
+    "id": "power_point_4",
+    "name": "4",
+    "category": "power point",
+    "file_path": "templates/power point/4.pptx",
+    "file_size": "34 KB",
+    "preview": "static/previews/power_point/4.webp",
+    "preview_jpg": "static/previews/power_point/4.jpg",
+    "width": 640,
+    "height": 352
+  },
+  {
+    "id": "power_point_5",
+    "name": "5",
+    "category": "power point",
+    "file_path": "templates/power point/5.pptx",
+    "file_size": "341 KB",
+    "preview": "static/previews/power_point/5.webp",
+    "preview_jpg": "static/previews/power_point/5.jpg",
+    "width": 640,
+    "height": 343
+  },
+  {
+    "id": "power_point_6",
+    "name": "6",
+    "category": "power point",
+    "file_path": "templates/power point/6.pptx",
+    "file_size": "608 KB",
+    "preview": "static/previews/power_point/6.webp",
+    "preview_jpg": "static/previews/power_point/6.jpg",
+    "width": 640,
+    "height": 330
+  },
+  {
+    "id": "power_point_10",
+    "name": "10",
+    "category": "power point",
+    "file_path": "templates/power point/10.pptx",
+    "file_size": "45 KB",
+    "preview": "static/previews/power_point/10.webp",
+    "preview_jpg": "static/previews/power_point/10.jpg",
+    "width": 640,
+    "height": 358
+  },
+  {
+    "id": "power_point_classic",
+    "name": "Classic",
+    "category": "power point",
+    "file_path": "templates/power point/classic.pptx",
+    "file_size": "35 KB",
+    "preview": "static/previews/power_point/classic.webp",
+    "preview_jpg": "static/previews/power_point/classic.jpg",
+    "width": 640,
+    "height": 360
+  },
+  {
+    "id": "power_point_dark_premium",
+    "name": "Dark Premium",
+    "category": "power point",
+    "file_path": "templates/power point/dark_premium.pptx",
+    "file_size": "34 KB",
+    "preview": "static/previews/power_point/dark_premium.webp",
+    "preview_jpg": "static/previews/power_point/dark_premium.jpg",
+    "width": 640,
+    "height": 361
+  },
+  {
+    "id": "power_point_powerpoint-waves-blue",
+    "name": "Powerpoint-Waves-Blue",
+    "category": "power point",
+    "file_path": "templates/power point/powerpoint-waves-blue.pptx",
+    "file_size": "99 KB",
+    "preview": "static/previews/power_point/powerpoint-waves-blue.webp",
+    "preview_jpg": "static/previews/power_point/powerpoint-waves-blue.jpg",
+    "width": 640,
+    "height": 360
+  },
+  {
+    "id": "power_point_priroda",
+    "name": "Priroda",
+    "category": "power point",
+    "file_path": "templates/power point/priroda.pptx",
+    "file_size": "1034 KB",
+    "preview": "static/previews/power_point/priroda.webp",
+    "preview_jpg": "static/previews/power_point/priroda.jpg",
+    "width": 640,
+    "height": 350
+  }
+]

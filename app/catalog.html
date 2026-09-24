@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <!-- Page-level config read by assets/app.js: the bot this page belongs to. -->
+  <meta name="miniapp:bot" content="@SLIDEMASTERAI1_BOT">
+  <meta name="color-scheme" content="light dark">
+  <title>Dizayn</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="assets/app.css?v=e2bb012fb4">
+  <script src="assets/i18n.js?v=41ca1c0c8e"></script>
+  <script src="assets/app.js?v=ecd11cf8b1"></script>
+</head>
+<body>
+<main id="app" class="page" hidden>
+
+  <div id="view-grid">
+    <header class="page-head">
+      <h1 data-i18n="catalog.title"></h1>
+      <p class="page-sub" data-i18n="catalog.subtitle"></p>
+    </header>
+    <div class="chips" id="chips" role="radiogroup" data-i18n-aria-label="catalog.categories"></div>
+    <p class="empty" id="status" role="status" data-i18n="catalog.loading"></p>
+    <div class="grid" id="grid" role="radiogroup" data-i18n-aria-label="catalog.templates"></div>
+  </div>
+
+  <div id="view-detail" hidden>
+    <header class="page-head">
+      <h1 id="detail-title" tabindex="-1"></h1>
+      <p class="page-sub" id="detail-category"></p>
+    </header>
+    <div class="detail-preview" id="detail-preview"></div>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var M = window.MiniApp;
+  var t = M.t;
+
+  // ── state: everything is declared before the first render ────────────────
+
+  var ALL = '*';
+  var CATEGORY_KEYS = { 'modern': 'catalog.cat_modern', 'power point': 'catalog.cat_classic' };
+  var PLACEHOLDER = 'assets/placeholder.svg';
+  var DEFAULT_SIZE = { w: 640, h: 360 };
+
+  var templates = [];
+  var categories = [];
+  var category = ALL;
+  // The template the bot uses now (sel). Only a sent choice changes it, so
+  // viewing another design never moves the "current" mark.
+  var selectedId = typeof M.params.sel === 'string' ? M.params.sel : null;
+  var detailId = null;
+  var gridScroll = 0;
+  var chipGroup = null;
+  var gridGroup = null;
+  var els = {};
+
+  // ── catalog data ──────────────────────────────────────────────────────────
+
+  /** A same-site relative path, or null (external hosts are never loaded). */
+  function relPath(value) {
+    if (typeof value !== 'string') return null;
+    var path = value.trim().replace(/\\/g, '/');
+    if (!path || /^[a-z][a-z0-9+.-]*:/i.test(path) || path.indexOf('//') === 0) return null;
+    if (path.split('/').indexOf('..') >= 0) return null;
+    return path.replace(/^\.?\//, '');
+  }
+
+  /**
+   * {webp, jpg} for an entry. build_catalog writes both formats side by
+   * side, so either path gives the other; an old PNG entry has only itself.
+   */
+  function sources(entry) {
+    var webp = relPath(entry.preview_webp);
+    var jpg = relPath(entry.preview_jpg);
+    var main = relPath(entry.preview);
+    if (main) {
+      var match = /\.(webp|jpe?g|png)$/i.exec(main);
+      var stem = match ? main.slice(0, -match[0].length) : main;
+      var ext = match ? match[1].toLowerCase() : '';
+      if (ext === 'webp') {
+        webp = webp || main;
+        jpg = jpg || stem + '.jpg';
+      } else if (ext === 'jpg' || ext === 'jpeg') {
+        jpg = jpg || main;
+        webp = webp || stem + '.webp';
+      } else {
+        jpg = jpg || main;
+      }
+    }
+    if (!webp && !jpg) return null;
+    return { webp: webp, jpg: jpg || webp };
+  }
+
+  function normalizeEntry(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    if (typeof raw.id !== 'string' || !raw.id || typeof raw.name !== 'string') return null;
+    var src = sources(raw);
+    if (!src) return null;   // no preview: hidden here, still valid in the bot
+    return {
+      id: raw.id,
+      name: raw.name,
+      category: typeof raw.category === 'string' ? raw.category : '',
+      src: src,
+      w: M.toInt(raw.width != null ? raw.width : raw.w, DEFAULT_SIZE.w),
+      h: M.toInt(raw.height != null ? raw.height : raw.h, DEFAULT_SIZE.h)
+    };
+  }
+
+  function displayName(entry) {
+    var name = entry.name.trim();
+    if (/^\d+$/.test(name)) return t('catalog.design_n', { n: name });
+    return name.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim() || entry.id;
+  }
+
+  function categoryLabel(cat) {
+    if (CATEGORY_KEYS[cat]) return t(CATEGORY_KEYS[cat]);
+    return cat ? cat.charAt(0).toUpperCase() + cat.slice(1) : t('catalog.all');
+  }
+
+  function find(id) {
+    return templates.filter(function (entry) { return entry.id === id; })[0] || null;
+  }
+
+  function encodePath(path) {
+    return encodeURI(path);
+  }
+
+  // ── render ────────────────────────────────────────────────────────────────
+
+  function picture(entry, eager) {
+    var img = M.el('img', {
+      src: encodePath(entry.src.jpg),
+      alt: t('catalog.preview_alt', { name: displayName(entry) }),
+      attrs: { width: entry.w, height: entry.h, loading: eager ? 'eager' : 'lazy', decoding: 'async' }
+    });
+    var pic = M.el('picture', {}, [
+      entry.src.webp && entry.src.webp !== entry.src.jpg
+        ? M.el('source', { attrs: { type: 'image/webp', srcset: encodePath(entry.src.webp) } })
+        : null,
+      img
+    ]);
+    // A missing WebP falls back to the JPG, a missing JPG to the placeholder.
+    img.addEventListener('error', function onError() {
+      var source = pic.querySelector('source');
+      if (source) {
+        pic.removeChild(source);
+        img.src = encodePath(entry.src.jpg);
+        return;
+      }
+      img.removeEventListener('error', onError);
+      img.src = PLACEHOLDER;
+    });
+    return pic;
+  }
+
+  function renderChips() {
+    var box = els.chips;
+    box.textContent = '';
+    [ALL].concat(categories).forEach(function (cat) {
+      var chip = M.el('button', {
+        type: 'button',
+        class: 'chip',
+        text: cat === ALL ? t('catalog.all') : categoryLabel(cat),
+        attrs: { role: 'radio', 'aria-checked': String(cat === category), 'data-cat': cat }
+      });
+      chip.addEventListener('click', function () { pickCategory(cat); });
+      box.appendChild(chip);
+    });
+    if (chipGroup) chipGroup.sync();
+  }
+
+  function pickCategory(cat) {
+    if (cat === category) return;
+    category = cat;
+    M.haptic('select');
+    Array.prototype.forEach.call(els.chips.children, function (chip) {
+      chip.setAttribute('aria-checked', String(chip.getAttribute('data-cat') === category));
+    });
+    chipGroup.sync();
+    renderGrid();
+  }
+
+  function renderGrid() {
+    var box = els.grid;
+    box.textContent = '';
+    var visible = templates.filter(function (entry) {
+      return category === ALL || entry.category === category;
+    });
+    els.status.hidden = visible.length > 0;
+    if (!visible.length) els.status.textContent = t('catalog.empty');
+    visible.forEach(function (entry, index) {
+      var selected = entry.id === selectedId;
+      var card = M.el('button', {
+        type: 'button',
+        class: 'tpl',
+        attrs: { role: 'radio', 'aria-checked': String(selected), 'data-id': entry.id }
+      }, [
+        picture(entry, index < 4),
+        M.el('span', { class: 'tpl-name', text: displayName(entry) }),
+        selected ? M.el('span', { class: 'badge', text: t('catalog.current'), attrs: { 'aria-hidden': 'true' } }) : null
+      ]);
+      card.addEventListener('click', function () { openDetail(entry.id); });
+      box.appendChild(card);
+    });
+    if (gridGroup) gridGroup.sync();
+    renderGridButton();
+  }
+
+  function renderGridButton() {
+    var entry = selectedId ? find(selectedId) : null;
+    if (entry) M.mainButton(t('catalog.choose', { name: displayName(entry) }), function () { send(entry); });
+    else M.mainButton(null);
+  }
+
+  // ── detail view ───────────────────────────────────────────────────────────
+
+  function openDetail(id) {
+    var entry = find(id);
+    if (!entry) return;
+    detailId = id;
+    gridScroll = window.scrollY || 0;
+    M.haptic('select');
+    els['detail-title'].textContent = displayName(entry);
+    els['detail-category'].textContent = categoryLabel(entry.category);
+    els['detail-preview'].textContent = '';
+    els['detail-preview'].appendChild(picture(entry, true));
+    els['view-grid'].hidden = true;
+    els['view-detail'].hidden = false;
+    window.scrollTo(0, 0);
+    els['detail-title'].focus();
+    M.backButton(closeDetail);
+    M.mainButton(t('catalog.choose_this'), function () { send(entry); });
+  }
+
+  function closeDetail() {
+    var id = detailId;
+    detailId = null;
+    els['view-detail'].hidden = true;
+    els['view-grid'].hidden = false;
+    M.backButton(null);
+    // The chosen category stays as it was, and so do the "current" mark and
+    // the MainButton: the viewed design was not chosen.
+    renderGrid();
+    window.scrollTo(0, gridScroll);
+    var card = els.grid.querySelector('[data-id="' + (window.CSS && CSS.escape ? CSS.escape(id) : id) + '"]');
+    if (card) card.focus();
+  }
+
+  // ── send ──────────────────────────────────────────────────────────────────
+
+  function send(entry) {
+    M.sendPayload({ template_id: entry.id, template_name: entry.name, v: M.PAYLOAD_VERSION });
+  }
+
+  // ── init ──────────────────────────────────────────────────────────────────
+
+  function load() {
+    // The bot's `v` busts caches between deploys, as ?v= does for the assets.
+    var url = 'data/templates.json' + (M.params.v ? '?v=' + encodeURIComponent(M.params.v) : '');
+    return fetch(url, { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json();
+      })
+      .then(function (data) {
+        var list = Array.isArray(data) ? data : (data && Array.isArray(data.templates) ? data.templates : []);
+        templates = list.map(normalizeEntry).filter(Boolean);
+        categories = [];
+        templates.forEach(function (entry) {
+          if (entry.category && categories.indexOf(entry.category) < 0) categories.push(entry.category);
+        });
+        if (selectedId && !find(selectedId)) selectedId = null;
+        renderChips();
+        renderGrid();
+      });
+  }
+
+  function init() {
+    Array.prototype.forEach.call(document.querySelectorAll('[id]'), function (node) {
+      els[node.id] = node;
+    });
+    M.applyI18n();
+    document.title = t('catalog.title');
+
+    chipGroup = M.rovingGroup(els.chips, '[role="radio"]', function (chip) {
+      pickCategory(chip.getAttribute('data-cat'));
+    });
+    gridGroup = M.rovingGroup(els.grid, '[role="radio"]');
+    M.ready();
+
+    load().catch(function () {
+      M.showNotice(t('catalog.title'), t('catalog.load_error'));
+    });
+  }
+
+  if (M.start()) init();
+})();
+</script>
+</body>
+</html>
