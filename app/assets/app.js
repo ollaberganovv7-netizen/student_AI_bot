@@ -191,12 +191,28 @@
   }
 
   /**
+   * Price of one ordered unit (slide or page) for a quality, from
+   * `p.per = {standard, premium}`; null when the table prices by tiers
+   * instead (kurs/diplom) or has no usable number.
+   */
+  function unitPrice(table, quality) {
+    if (!isObject(table) || !isObject(table.per)) return null;
+    var v = toInt(table.per[qualityKey(quality)], NaN);
+    if (!isFinite(v)) v = toInt(table.per.standard, NaN);
+    return isFinite(v) && v >= 0 ? v : null;
+  }
+
+  /**
    * What the order would cost, from `p` alone:
-   * {base, tierMax, paid, unit, images, total, payable, trial} or null.
-   * `payable` is what the student pays: the free trial covers the base only.
+   * {base, tierMax, paid, unit, images, total, payable, trial, perUnit, n}
+   * or null. The base is n x per-unit price when `p.per` is given, else the
+   * matching tier. `payable` is what the student pays: the free trial covers
+   * the base only, pictures are always paid.
    */
   function quote(table, opts) {
-    var tier = tierFor(table, opts.quality, opts.n);
+    var per = unitPrice(table, opts.quality);
+    var n = Math.max(0, toInt(opts.n, 0));
+    var tier = per != null ? { max: n, price: per * n } : tierFor(table, opts.quality, opts.n);
     if (!tier) return null;
     var unit = Math.max(0, toInt(table.img && table.img.unit, 0));
     var paid = clamp(toInt(opts.extra, 0), 0, maxPaidImages(table, opts.n));
@@ -210,7 +226,9 @@
       images: images,
       total: tier.price + images,
       payable: trial ? images : tier.price + images,
-      trial: trial
+      trial: trial,
+      perUnit: per,
+      n: n
     };
   }
 
@@ -289,9 +307,10 @@
         root.style.removeProperty(name);
       }
     });
-    // Text sits on the page (bg) and on cards (secondary_bg). The CSS
-    // fallbacks already reach 4.5:1, so only Telegram's colours are adjusted.
-    var grounds = [theme.bg_color, theme.secondary_bg_color].map(hexToRgb).filter(Boolean);
+    // Text sits on the page (secondary_bg), on list groups (section_bg) and
+    // on bg where a client sends no section colour. The CSS fallbacks
+    // already reach 4.5:1, so only Telegram's colours are adjusted.
+    var grounds = [theme.bg_color, theme.secondary_bg_color, theme.section_bg_color].map(hexToRgb).filter(Boolean);
     var toward = hexToRgb(theme.text_color);
     Object.keys(READABLE_TOKENS).forEach(function (key) {
       var fixed = readable(theme[key], grounds, toward);
@@ -671,8 +690,10 @@
     safeCall(function () { tg.ready(); });
     safeCall(function () { tg.expand(); });
     if (atLeast('6.1')) {
-      safeCall(function () { tg.setHeaderColor('bg_color'); });
-      safeCall(function () { tg.setBackgroundColor('bg_color'); });
+      // The pages are grouped lists on secondary_bg_color, so Telegram's
+      // header and overscroll match the page ground.
+      safeCall(function () { tg.setHeaderColor('secondary_bg_color'); });
+      safeCall(function () { tg.setBackgroundColor('secondary_bg_color'); });
     }
     if (opts && opts.form && atLeast('7.7')) {
       safeCall(function () { tg.disableVerticalSwipes(); });
@@ -699,6 +720,7 @@
       qualityKey: qualityKey,
       tiers: tiers,
       tierFor: tierFor,
+      unitPrice: unitPrice,
       maxPaidImages: maxPaidImages,
       quote: quote
     },

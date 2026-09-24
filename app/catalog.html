@@ -9,11 +9,15 @@
   <meta name="color-scheme" content="light dark">
   <title>Dizayn</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="assets/app.css?v=e2bb012fb4">
-  <script src="assets/i18n.js?v=41ca1c0c8e"></script>
-  <script src="assets/app.js?v=ecd11cf8b1"></script>
+  <link rel="stylesheet" href="assets/app.css?v=cc36de46d7">
+  <script src="assets/i18n.js?v=730c8021c5"></script>
+  <script src="assets/app.js?v=947ba4c274"></script>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 8 14"><path d="M1.5 1.5L6.5 7l-5 5.5"/></symbol>
+</svg>
 <main id="app" class="page" hidden>
 
   <div id="view-grid">
@@ -21,12 +25,26 @@
       <h1 data-i18n="catalog.title"></h1>
       <p class="page-sub" data-i18n="catalog.subtitle"></p>
     </header>
+    <section class="group" id="current-group" aria-labelledby="current-title" hidden>
+      <h2 class="group-title" id="current-title" data-i18n="catalog.current_row"></h2>
+      <div class="list">
+        <button type="button" class="cell cell-link" id="current-row">
+          <img class="current-thumb" id="current-thumb" alt="" width="72" height="41">
+          <span class="cell-text">
+            <span class="cell-label" id="current-name"></span>
+            <span class="cell-sub" id="current-cat"></span>
+          </span>
+          <svg class="chev i" aria-hidden="true"><use href="#i-chev"/></svg>
+        </button>
+      </div>
+    </section>
     <div class="chips" id="chips" role="radiogroup" data-i18n-aria-label="catalog.categories"></div>
+    <p class="count-line" id="count-line" aria-live="polite"></p>
     <p class="empty" id="status" role="status" data-i18n="catalog.loading"></p>
     <div class="grid" id="grid" role="radiogroup" data-i18n-aria-label="catalog.templates"></div>
   </div>
 
-  <div id="view-detail" hidden>
+  <div id="view-detail" class="subview" hidden>
     <header class="page-head">
       <h1 id="detail-title" tabindex="-1"></h1>
       <p class="page-sub" id="detail-category"></p>
@@ -205,13 +223,36 @@
       }, [
         picture(entry, index < 4),
         M.el('span', { class: 'tpl-name', text: displayName(entry) }),
-        selected ? M.el('span', { class: 'badge', text: t('catalog.current'), attrs: { 'aria-hidden': 'true' } }) : null
+        M.el('span', { class: 'tpl-cat', text: selected ? t('catalog.current') : categoryLabel(entry.category) }),
+        selected ? M.el('span', { class: 'badge', attrs: { 'aria-hidden': 'true' } }, [checkIcon()]) : null
       ]);
       card.addEventListener('click', function () { openDetail(entry.id); });
       box.appendChild(card);
     });
+    els['count-line'].textContent = visible.length ? t('catalog.count', { n: visible.length }) : '';
     if (gridGroup) gridGroup.sync();
+    renderCurrent();
     renderGridButton();
+  }
+
+  function checkIcon() {
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('class', 'i');
+    var use = document.createElementNS(ns, 'use');
+    use.setAttribute('href', '#i-check');
+    svg.appendChild(use);
+    return svg;
+  }
+
+  /** The design the bot uses now, as a row at the top (native "current value"). */
+  function renderCurrent() {
+    var entry = selectedId ? find(selectedId) : null;
+    els['current-group'].hidden = !entry;
+    if (!entry) return;
+    els['current-thumb'].src = encodePath(entry.src.jpg);
+    els['current-name'].textContent = displayName(entry);
+    els['current-cat'].textContent = categoryLabel(entry.category);
   }
 
   function renderGridButton() {
@@ -294,6 +335,7 @@
       pickCategory(chip.getAttribute('data-cat'));
     });
     gridGroup = M.rovingGroup(els.grid, '[role="radio"]');
+    els['current-row'].addEventListener('click', function () { if (selectedId) openDetail(selectedId); });
     M.ready();
 
     load().catch(function () {

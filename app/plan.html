@@ -9,11 +9,18 @@
   <meta name="color-scheme" content="light dark">
   <title>Reja</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="assets/app.css?v=e2bb012fb4">
-  <script src="assets/i18n.js?v=41ca1c0c8e"></script>
-  <script src="assets/app.js?v=ecd11cf8b1"></script>
+  <link rel="stylesheet" href="assets/app.css?v=cc36de46d7">
+  <script src="assets/i18n.js?v=730c8021c5"></script>
+  <script src="assets/app.js?v=947ba4c274"></script>
 </head>
 <body>
+<!-- Inline icon sprite: decorative only, every row has a text label. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9.5 6H20M9.5 12H20M9.5 18H20M4.5 6h.5M4.5 12h.5M4.5 18h.5"/></symbol>
+</svg>
+
+<!-- The plan page of older keyboards; new ones edit the plan inside
+     settings.html (Reja sub-view). Same look, same plan_update payload. -->
 <main id="app" class="page" hidden>
   <header class="page-head">
     <h1 id="page-title"></h1>
@@ -25,21 +32,24 @@
     <button type="button" class="tab" role="tab" id="tab-manual" aria-controls="panel-manual" aria-selected="false" data-i18n="plan.tab_manual"></button>
   </div>
 
-  <section class="section" role="tabpanel" id="panel-auto" aria-labelledby="tab-auto">
-    <div class="card">
-      <div class="field">
-        <div class="field-label" id="count-label"></div>
+  <section class="group" role="tabpanel" id="panel-auto" aria-labelledby="tab-auto">
+    <div class="list icons">
+      <div class="cell cell-stack">
+        <div class="cell-row">
+          <span class="ic ic-teal" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span>
+          <span class="cell-label" id="count-label"></span>
+        </div>
         <div class="segmented" id="count" role="radiogroup" aria-labelledby="count-label"></div>
       </div>
     </div>
-    <p class="hint" data-i18n="plan.auto_hint"></p>
+    <p class="group-foot" data-i18n="plan.auto_hint"></p>
   </section>
 
-  <section class="section" role="tabpanel" id="panel-manual" aria-labelledby="tab-manual" hidden>
+  <section class="group" role="tabpanel" id="panel-manual" aria-labelledby="tab-manual" hidden>
     <p class="hint lead" id="limit-note"></p>
-    <div class="card" id="fields"></div>
-    <p class="hint warn" id="cut-note" role="status" aria-live="polite" hidden></p>
-    <p class="hint" data-i18n="plan.manual_hint"></p>
+    <div class="list numbered" id="fields"></div>
+    <p class="group-foot warn" id="cut-note" role="status" aria-live="polite" hidden></p>
+    <p class="group-foot" data-i18n="plan.manual_hint"></p>
   </section>
 </main>
 
@@ -110,18 +120,34 @@
     var placeholder = t(unit === 'sections' ? 'plan.ph_section' : 'plan.ph_chapter');
     for (var i = 0; i < ch.max; i++) {
       var id = 'line-' + (i + 1);
-      var input = M.el('input', {
-        type: 'text', id: id, maxLength: PLAN_LINE_MAX,
+      // A one-line textarea that grows, so a long title stays visible.
+      var input = M.el('textarea', {
+        id: id, maxLength: PLAN_LINE_MAX, rows: 1,
         attrs: { autocomplete: 'off', placeholder: placeholder, enterkeyhint: i + 1 < ch.max ? 'next' : 'done' }
       });
       input.addEventListener('paste', onPaste);
       input.addEventListener('keydown', onEnter);
-      box.appendChild(M.el('div', { class: 'field' }, [
-        M.el('label', { attrs: { for: id }, text: t(labelKey, { n: i + 1 }) }),
-        input
+      input.addEventListener('input', function (event) { markFilled(event.target); grow(event.target); });
+      box.appendChild(M.el('div', { class: 'cell cell-field' }, [
+        M.el('span', { class: 'num', text: String(i + 1), attrs: { 'aria-hidden': 'true' } }),
+        M.el('div', { class: 'cell-text' }, [
+          M.el('label', { attrs: { for: id }, text: t(labelKey, { n: i + 1 }) }),
+          input
+        ])
       ]));
       inputs.push(input);
     }
+  }
+
+  function grow(area) {
+    area.style.height = 'auto';
+    area.style.height = area.scrollHeight + 'px';
+  }
+
+  /** A filled line's number gets a ring, so the student sees what counts. */
+  function markFilled(input) {
+    var cell = input.closest('.cell');
+    if (cell) cell.classList.toggle('filled', !!input.value.trim());
   }
 
   function selectTab(next, focus) {
@@ -132,6 +158,7 @@
     els['panel-auto'].hidden = !auto;
     els['panel-manual'].hidden = auto;
     tabGroup.sync();
+    if (!auto) inputs.forEach(grow);
     if (focus) els[auto ? 'tab-auto' : 'tab-manual'].focus();
   }
 
@@ -149,6 +176,8 @@
     var room = inputs.length - start;
     lines.slice(0, room).forEach(function (line, k) {
       inputs[start + k].value = line.slice(0, PLAN_LINE_MAX);
+      markFilled(inputs[start + k]);
+      grow(inputs[start + k]);
     });
     // More lines than the fields below the pasted one hold: say so here,
     // instead of the bot dropping them silently later. {max} is how many were

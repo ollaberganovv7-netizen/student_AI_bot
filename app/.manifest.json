@@ -1,14 +1,14 @@
 {
  "files": {
-  "assets/app.css": "e2bb012fb433a6f676d99bc9028e2d70c76f5ddcc22ebb90daa11940e6a8687f",
-  "assets/app.js": "ecd11cf8b1fbeb9cdf5466b0ee0537d00f1633c2b35e4757b11840ab0132d731",
-  "assets/i18n.js": "41ca1c0c8e41a6dd9a5d4f834b5a4f74ac2bd106c9f115bb41433c8c1c9ec3ec",
+  "assets/app.css": "cc36de46d750c0a5d1f5c1ec6a777acbd3a8dd611ee2f12865b1adcefc596c81",
+  "assets/app.js": "947ba4c2744b3d51279135cec15d2fbe5a2cdcc5c6d3f6e9f316673f46259ba4",
+  "assets/i18n.js": "730c8021c5658f056ee2f3a8de2dc4a6ddcc8c86992ab6dac1251343467d4526",
   "assets/placeholder.svg": "a9ec0be0dcceaee622f06ef142a54bf531864607a48560240ec65838820c9ed0",
-  "catalog.html": "252547fa271aecb1f1f538f5d8ac7cca1cf2d2600a61310bea53bda523e6b16b",
+  "catalog.html": "4d310351e1974cdc401cd546c07ffaca9a2fb29591abc3d022b245fcbadf77de",
   "data/templates.json": "5624fa680c53e30b3591dc42fd2a004dcb05451b56d3091d153e87ce951ffe50",
-  "plan.html": "994e448f753697a16e1849c7a0718c4873caebc054c317841928c0b454dec2a4",
+  "plan.html": "2248ecf5875f4a453930cdf39bd6c7c21b97330f464bda7b1a2cfd68518f5113",
   "robots.txt": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1",
-  "settings.html": "34101873010bb4efe51a71ac2956315e6d7463672c07a2735ad450dfa0760f89",
+  "settings.html": "469e4436b2e0e7c07e94ea3dc9cd13848613874d383d0efbe35baf869af185fa",
   "static/previews/modern/beige-minimalism.jpg": "8b9b436929346d626c4a39ce496d25538a1660670f1de7ed05af80ea54050a89",
   "static/previews/modern/beige-minimalism.webp": "b190ce48c3643781be889cf0349a197d5652f8e706f5228c662f9d103c7c43b1",
   "static/previews/modern/business-minimalism_.jpg": "1d1a5e58136f560e067270c9867f3082cd99fdc33b2f96fb2f7906f4ae603172",
@@ -50,5 +50,5 @@
   "static/previews/power_point/priroda.jpg": "ec13c33cb6bcbfe6bcee7624e5933c2214019276c906eb302f1f69d0d90405da",
   "static/previews/power_point/priroda.webp": "cf107f0752326157cd2d28eb3058de0b5c83d12c9f47af7483101a97bc414604"
  },
- "source_commit": "955cec216dc3351880abcff41e24f2b56dbf4c17"
+ "source_commit": "2180a319599e3827e6e6b40cdb54d3b674485077"
 }

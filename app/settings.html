@@ -9,148 +9,271 @@
   <meta name="color-scheme" content="light dark">
   <title>Sozlamalar</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="assets/app.css?v=e2bb012fb4">
-  <script src="assets/i18n.js?v=41ca1c0c8e"></script>
-  <script src="assets/app.js?v=ecd11cf8b1"></script>
+  <link rel="stylesheet" href="assets/app.css?v=cc36de46d7">
+  <script src="assets/i18n.js?v=730c8021c5"></script>
+  <script src="assets/app.js?v=947ba4c274"></script>
 </head>
 <body>
+<!-- Inline icon sprite: decorative only, every row has a text label. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-topic" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.5 5.7 3.5 9s-1 6.3-3.5 9c-2.5-2.7-3.5-5.7-3.5-9s1-6.3 3.5-9z"/></symbol>
+  <symbol id="i-slides" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></symbol>
+  <symbol id="i-page" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9zM18.5 15l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></symbol>
+  <symbol id="i-photo" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M21 15.5l-5-5-9 8.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9.5 6H20M9.5 12H20M9.5 18H20M4.5 6h.5M4.5 12h.5M4.5 18h.5"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10.5" r="2"/><path d="M5.8 16c.6-1.5 1.8-2.3 3.2-2.3s2.6.8 3.2 2.3M15 10h3.5M15 14h3.5"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8C10.5 5 7 4.2 7 6.3 7 8 10 8 12 8zm0 0c1.5-3 5-3.8 5-1.7C17 8 14 8 12 8z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 8 14"><path d="M1.5 1.5L6.5 7l-5 5.5"/></symbol>
+  <symbol id="i-updown" viewBox="0 0 12 16"><path d="M2.5 6L6 2.5 9.5 6M2.5 10L6 13.5 9.5 10"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.7 4.2-5.5 7.5-5.5s6.1 1.8 7.5 5.5"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M2.5 9.5L12 5l9.5 4.5L12 14zM6.5 11.5v4.3c1.6 1.5 3.4 2.2 5.5 2.2s3.9-.7 5.5-2.2v-4.3M21.5 9.5v5"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24"><path d="M3 9.5L12 4l9 5.5zM5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20.5h18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5l9 4.8-9 4.8-9-4.8zM3 12.5l9 4.8 9-4.8M3 16.5l9 4.8 9-4.8"/></symbol>
+  <symbol id="i-brief" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 13h18"/></symbol>
+</svg>
+
 <main id="app" class="page" hidden>
 
+  <!-- ═════════════════════════ main view ═════════════════════════ -->
   <div id="view-main">
     <header class="page-head">
       <h1 id="page-title"></h1>
       <p class="page-sub" data-i18n="settings.subtitle"></p>
     </header>
 
-    <section class="section" aria-labelledby="sec-topic">
-      <h2 class="section-title" id="sec-topic" data-i18n="settings.sec_topic"></h2>
-      <div class="card">
-        <div class="field">
-          <label for="topic" data-i18n="settings.topic"></label>
-          <textarea id="topic" rows="3" maxlength="300" autocomplete="off" data-i18n-placeholder="settings.topic_ph"></textarea>
+    <div class="promo" id="trial-banner" hidden>
+      <span class="ic" aria-hidden="true"><svg class="i"><use href="#i-gift"/></svg></span>
+      <span>
+        <strong class="promo-title" data-i18n="settings.trial_title"></strong>
+        <span class="promo-text" id="trial-text"></span>
+      </span>
+    </div>
+
+    <section class="group" aria-labelledby="sec-topic">
+      <h2 class="group-title" id="sec-topic" data-i18n="settings.sec_topic"></h2>
+      <div class="list icons">
+        <div class="cell cell-field">
+          <span class="ic ic-blue" aria-hidden="true"><svg class="i"><use href="#i-topic"/></svg></span>
+          <div class="cell-text">
+            <label for="topic" data-i18n="settings.topic"></label>
+            <textarea id="topic" rows="1" maxlength="300" autocomplete="off" data-i18n-placeholder="settings.topic_ph"></textarea>
+          </div>
         </div>
-        <div class="field">
-          <label for="subject"><span data-i18n="settings.subject"></span><span class="optional" data-i18n="optional"></span></label>
-          <input id="subject" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.subject_ph">
+        <div class="cell cell-field">
+          <span class="ic ic-indigo" aria-hidden="true"><svg class="i"><use href="#i-book"/></svg></span>
+          <div class="cell-text">
+            <label for="subject"><span data-i18n="settings.subject"></span><span class="optional" data-i18n="optional"></span></label>
+            <input id="subject" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.subject_ph">
+          </div>
         </div>
-        <div class="field">
-          <label for="language" data-i18n="settings.language"></label>
-          <select id="language">
-            <option value="uz" data-i18n="settings.lang_uz"></option>
-            <option value="ru" data-i18n="settings.lang_ru"></option>
-            <option value="en" data-i18n="settings.lang_en"></option>
-          </select>
+        <div class="cell">
+          <span class="ic ic-green" aria-hidden="true"><svg class="i"><use href="#i-globe"/></svg></span>
+          <label class="cell-label" for="language" data-i18n="settings.language"></label>
+          <span class="cell-select">
+            <select id="language">
+              <option value="uz" data-i18n="settings.lang_uz"></option>
+              <option value="ru" data-i18n="settings.lang_ru"></option>
+              <option value="en" data-i18n="settings.lang_en"></option>
+            </select>
+            <svg class="i" aria-hidden="true"><use href="#i-updown"/></svg>
+          </span>
         </div>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="sec-size">
-      <h2 class="section-title" id="sec-size" data-i18n="settings.sec_size"></h2>
-      <div class="card">
-        <div class="field">
-          <label for="size"><span id="size-label"></span><output id="size-value" class="field-value" for="size"></output></label>
+    <section class="group" aria-labelledby="sec-size">
+      <h2 class="group-title" id="sec-size" data-i18n="settings.sec_size"></h2>
+      <div class="list icons">
+        <div class="cell cell-stack">
+          <div class="cell-row">
+            <span class="ic ic-orange" aria-hidden="true"><svg class="i"><use id="size-icon" href="#i-slides"/></svg></span>
+            <span class="cell-text">
+              <label class="cell-label" for="size" id="size-label"></label>
+              <span class="cell-sub" id="size-unit"></span>
+            </span>
+            <span class="stepper">
+              <button type="button" class="icon-button" id="size-dec" data-i18n-aria-label="decrease"><svg class="i" aria-hidden="true"><use href="#i-minus"/></svg></button>
+              <output id="size-value" class="stepper-value" for="size" aria-live="polite"></output>
+              <button type="button" class="icon-button" id="size-inc" data-i18n-aria-label="increase"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button>
+            </span>
+          </div>
           <input id="size" type="range">
-          <p class="hint price" id="tier-hint" hidden></p>
+          <div class="slider-scale" aria-hidden="true"><span id="size-min"></span><span id="size-max"></span></div>
         </div>
-        <div class="field" id="quality-field">
-          <div class="field-label" id="quality-label" data-i18n="settings.quality"></div>
-          <div class="segmented" role="radiogroup" aria-labelledby="quality-label">
+        <div class="cell cell-stack" id="quality-field">
+          <div class="cell-row">
+            <span class="ic ic-pink" aria-hidden="true"><svg class="i"><use href="#i-spark"/></svg></span>
+            <span class="cell-label" id="quality-label" data-i18n="settings.quality"></span>
+          </div>
+          <div class="segmented tall" role="radiogroup" aria-labelledby="quality-label">
             <input type="radio" name="quality" id="q-standard" value="standard">
-            <label for="q-standard"><span data-i18n="settings.q_standard"></span><small data-i18n="settings.q_standard_hint"></small></label>
+            <label for="q-standard"><span data-i18n="settings.q_standard"></span><small id="q-standard-hint"></small></label>
             <input type="radio" name="quality" id="q-premium" value="premium">
             <label for="q-premium"><span id="q-premium-name"></span><small id="q-premium-hint"></small></label>
           </div>
         </div>
-        <div class="field" id="chapters-field" hidden>
-          <div class="field-label" id="chapters-label" data-i18n="settings.chapters"></div>
-          <div class="segmented" id="chapters" role="radiogroup" aria-labelledby="chapters-label"></div>
+      </div>
+    </section>
+
+    <section class="group" id="images-section" aria-labelledby="sec-images" hidden>
+      <h2 class="group-title" id="sec-images" data-i18n="settings.sec_images"></h2>
+      <div class="list icons">
+        <div class="cell">
+          <span class="ic ic-purple" aria-hidden="true"><svg class="i"><use href="#i-photo"/></svg></span>
+          <span class="cell-text">
+            <label class="cell-label" for="images" id="images-label"></label>
+            <span class="cell-sub wrap" id="images-unit"></span>
+          </span>
+          <span class="stepper">
+            <button type="button" class="icon-button" id="images-dec" data-i18n-aria-label="decrease"><svg class="i" aria-hidden="true"><use href="#i-minus"/></svg></button>
+            <input id="images" type="number" inputmode="numeric" min="0" step="1" value="0">
+            <button type="button" class="icon-button" id="images-inc" data-i18n-aria-label="increase"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          </span>
         </div>
-        <div class="field" id="subchapters-field" hidden>
-          <div class="field-label" id="subchapters-label" data-i18n="settings.subchapters"></div>
+      </div>
+      <p class="group-foot" id="images-free"></p>
+      <p class="group-foot" id="images-limit" hidden></p>
+    </section>
+
+    <section class="group" aria-labelledby="sec-structure">
+      <h2 class="group-title" id="sec-structure" data-i18n="settings.sec_structure"></h2>
+      <div class="list icons">
+        <button type="button" class="cell cell-link" id="open-plan">
+          <span class="ic ic-teal" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span>
+          <span class="cell-text">
+            <span class="cell-label" data-i18n="settings.plan"></span>
+            <span class="cell-sub" id="plan-summary"></span>
+          </span>
+          <svg class="chev i" aria-hidden="true"><use href="#i-chev"/></svg>
+        </button>
+        <button type="button" class="cell cell-link" id="open-title-page">
+          <span class="ic ic-red" aria-hidden="true"><svg class="i"><use href="#i-card"/></svg></span>
+          <span class="cell-text">
+            <span class="cell-label" data-i18n="settings.sec_title_page"></span>
+            <span class="cell-sub" id="title-page-summary"></span>
+          </span>
+          <svg class="chev i" aria-hidden="true"><use href="#i-chev"/></svg>
+        </button>
+      </div>
+      <p class="group-foot" id="structure-foot"></p>
+    </section>
+
+    <section class="group" aria-labelledby="sec-price">
+      <h2 class="group-title" id="sec-price" data-i18n="settings.sec_price"></h2>
+      <div class="list" id="price-unknown" aria-live="polite" hidden>
+        <p class="cell" data-i18n="price_in_bot"></p>
+      </div>
+      <div class="list" id="price-known" aria-live="polite">
+        <div class="cell price-line" id="price-base-row">
+          <span class="cell-label" id="price-base-label"></span>
+          <span class="amt" id="price-base"></span>
+        </div>
+        <div class="cell price-line" id="price-images-row">
+          <span class="cell-label" id="price-images-label"></span>
+          <span class="amt" id="price-images"></span>
+        </div>
+        <div class="cell price-total" id="price-total-row">
+          <span class="cell-label" data-i18n="settings.price_pay"></span>
+          <span class="amt" id="price-total"></span>
+        </div>
+      </div>
+      <p class="group-foot" id="price-note" data-i18n="settings.price_note"></p>
+    </section>
+  </div>
+
+  <!-- ═════════════════════════ sub-view: plan ═════════════════════════ -->
+  <div id="view-plan" class="subview" hidden>
+    <header class="page-head">
+      <h1 id="plan-heading" tabindex="-1" data-i18n="settings.plan"></h1>
+      <p class="page-sub" id="plan-sub"></p>
+    </header>
+
+    <div class="tabs" role="tablist" id="tabs" data-i18n-aria-label="plan.tabs">
+      <button type="button" class="tab" role="tab" id="tab-auto" aria-controls="panel-auto" aria-selected="true" data-i18n="plan.tab_auto"></button>
+      <button type="button" class="tab" role="tab" id="tab-manual" aria-controls="panel-manual" aria-selected="false" data-i18n="plan.tab_manual"></button>
+    </div>
+
+    <section class="group" role="tabpanel" id="panel-auto" aria-labelledby="tab-auto">
+      <div class="list icons">
+        <div class="cell cell-stack">
+          <div class="cell-row">
+            <span class="ic ic-teal" aria-hidden="true"><svg class="i"><use href="#i-list"/></svg></span>
+            <span class="cell-label" id="count-label"></span>
+          </div>
+          <div class="segmented" id="count" role="radiogroup" aria-labelledby="count-label"></div>
+        </div>
+      </div>
+      <p class="group-foot" data-i18n="plan.auto_hint"></p>
+    </section>
+
+    <section class="group" role="tabpanel" id="panel-manual" aria-labelledby="tab-manual" hidden>
+      <p class="hint lead" id="limit-note"></p>
+      <p class="hint lead" id="kept-note" data-i18n="plan.kept_note" hidden></p>
+      <div class="list numbered" id="fields"></div>
+      <p class="group-foot warn" id="cut-note" role="status" aria-live="polite" hidden></p>
+      <p class="group-foot" data-i18n="plan.manual_hint"></p>
+    </section>
+
+    <section class="group" id="subchapters-field" aria-labelledby="subchapters-label" hidden>
+      <div class="list icons">
+        <div class="cell cell-stack">
+          <div class="cell-row">
+            <span class="ic ic-indigo" aria-hidden="true"><svg class="i"><use href="#i-layers"/></svg></span>
+            <span class="cell-label" id="subchapters-label" data-i18n="settings.subchapters"></span>
+          </div>
           <div class="segmented" id="subchapters" role="radiogroup" aria-labelledby="subchapters-label"></div>
         </div>
       </div>
     </section>
-
-    <section class="section" id="images-section" aria-labelledby="sec-images" hidden>
-      <h2 class="section-title" id="sec-images" data-i18n="settings.sec_images"></h2>
-      <div class="card">
-        <div class="field">
-          <p class="hint" id="images-free" hidden></p>
-          <label for="images" id="images-label"></label>
-          <div class="stepper">
-            <button type="button" class="icon-button" id="images-dec" data-i18n-aria-label="decrease">−</button>
-            <input id="images" type="number" inputmode="numeric" min="0" step="1" value="0">
-            <button type="button" class="icon-button" id="images-inc" data-i18n-aria-label="increase">+</button>
-            <span class="hint price" id="images-unit"></span>
-          </div>
-          <p class="hint price" id="images-total" hidden></p>
-          <p class="hint" id="images-limit" hidden></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="sec-title-page">
-      <h2 class="section-title" id="sec-title-page" data-i18n="settings.sec_title_page"></h2>
-      <div class="card">
-        <button type="button" class="row row-link" id="open-title-page">
-          <span class="row-main">
-            <span data-i18n="settings.title_page_hint"></span>
-            <span class="row-sub" id="title-page-summary"></span>
-          </span>
-          <span class="chevron" aria-hidden="true">›</span>
-        </button>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="sec-price">
-      <h2 class="section-title" id="sec-price" data-i18n="settings.sec_price"></h2>
-      <div class="card" id="price-unknown" aria-live="polite" hidden>
-        <p class="row" data-i18n="price_in_bot"></p>
-      </div>
-      <div class="card" id="price-known" aria-live="polite">
-        <div class="row" id="price-base-row">
-          <span data-i18n="settings.price_base"></span>
-          <span class="row-value" id="price-base"></span>
-        </div>
-        <div class="row" id="price-images-row">
-          <span id="price-images-label"></span>
-          <span class="row-value" id="price-images"></span>
-        </div>
-        <div class="row total" id="price-total-row">
-          <span data-i18n="settings.price_total"></span>
-          <span class="row-value" id="price-total"></span>
-        </div>
-      </div>
-      <p class="hint" id="price-note" data-i18n="settings.price_note"></p>
-    </section>
   </div>
 
-  <div id="view-title" hidden>
+  <!-- ═════════════════════════ sub-view: title page ═════════════════════════ -->
+  <div id="view-title" class="subview" hidden>
     <header class="page-head">
       <h1 id="title-page-heading" tabindex="-1" data-i18n="settings.sec_title_page"></h1>
+      <p class="page-sub" data-i18n="settings.title_sub"></p>
     </header>
-    <section class="section" aria-labelledby="title-page-heading">
-      <div class="card">
-        <div class="field">
-          <label for="author" data-i18n="settings.author"></label>
-          <input id="author" type="text" maxlength="120" autocomplete="name" data-i18n-placeholder="settings.author_ph">
+    <section class="group" aria-labelledby="title-page-heading">
+      <div class="list icons">
+        <div class="cell cell-field">
+          <span class="ic ic-blue" aria-hidden="true"><svg class="i"><use href="#i-person"/></svg></span>
+          <div class="cell-text">
+            <label for="author" data-i18n="settings.author"></label>
+            <input id="author" type="text" maxlength="120" autocomplete="name" data-i18n-placeholder="settings.author_ph">
+          </div>
         </div>
-        <div class="field">
-          <label for="reviewer" data-i18n="settings.reviewer"></label>
-          <input id="reviewer" type="text" maxlength="120" autocomplete="off" data-i18n-placeholder="settings.reviewer_ph">
+        <div class="cell cell-field">
+          <span class="ic ic-orange" aria-hidden="true"><svg class="i"><use href="#i-cap"/></svg></span>
+          <div class="cell-text">
+            <label for="reviewer" data-i18n="settings.reviewer"></label>
+            <input id="reviewer" type="text" maxlength="120" autocomplete="off" data-i18n-placeholder="settings.reviewer_ph">
+          </div>
         </div>
-        <div class="field">
-          <label for="university" data-i18n="settings.university"></label>
-          <input id="university" type="text" maxlength="200" autocomplete="organization" data-i18n-placeholder="settings.university_ph">
+        <div class="cell cell-field">
+          <span class="ic ic-indigo" aria-hidden="true"><svg class="i"><use href="#i-bank"/></svg></span>
+          <div class="cell-text">
+            <label for="university" data-i18n="settings.university"></label>
+            <input id="university" type="text" maxlength="200" autocomplete="organization" data-i18n-placeholder="settings.university_ph">
+          </div>
         </div>
-        <div class="field" id="fakultet-field">
-          <label for="fakultet" data-i18n="settings.fakultet"></label>
-          <input id="fakultet" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.fakultet_ph">
+        <div class="cell cell-field" id="fakultet-field">
+          <span class="ic ic-teal" aria-hidden="true"><svg class="i"><use href="#i-layers"/></svg></span>
+          <div class="cell-text">
+            <label for="fakultet" data-i18n="settings.fakultet"></label>
+            <input id="fakultet" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.fakultet_ph">
+          </div>
         </div>
-        <div class="field" id="specialty-field">
-          <label for="specialty" data-i18n="settings.specialty"></label>
-          <input id="specialty" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.specialty_ph">
+        <div class="cell cell-field" id="specialty-field">
+          <span class="ic ic-green" aria-hidden="true"><svg class="i"><use href="#i-brief"/></svg></span>
+          <div class="cell-text">
+            <label for="specialty" data-i18n="settings.specialty"></label>
+            <input id="specialty" type="text" maxlength="150" autocomplete="off" data-i18n-placeholder="settings.specialty_ph">
+          </div>
         </div>
       </div>
     </section>
@@ -169,20 +292,35 @@
 
   // Per service: what the form shows and its size limits when `p` is absent
   // (the same limits the bot clamps to). Prices are never listed here.
+  // plan: the Reja sub-view (kurs/diplom plan their chapters in the bot);
+  // structure: sections per chapter as well.
   var SERVICES = {
-    presentation: { sizeKey: 'slides', tierKey: 'settings.tier_slides',
-      n: { min: 10, max: 30, def: 10 }, step: 1, quality: 'premium', structure: false, faculty: false },
-    referat: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
-      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', structure: true, faculty: true },
-    mustaqil: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
-      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', structure: true, faculty: true },
-    kurs: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
-      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, structure: false, faculty: true },
-    diplom: { sizeKey: 'pages', tierKey: 'settings.tier_pages',
-      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, structure: false, faculty: true }
+    presentation: { sizeKey: 'slides', unitKey: 'per_slide', icon: 'i-slides',
+      n: { min: 10, max: 30, def: 10 }, step: 1, quality: 'premium', plan: true, structure: false, faculty: false,
+      perUnit: true },
+    referat: { sizeKey: 'pages', unitKey: 'per_page', icon: 'i-page',
+      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', plan: true, structure: true, faculty: true,
+      perUnit: true },
+    mustaqil: { sizeKey: 'pages', unitKey: 'per_page', icon: 'i-page',
+      n: { min: 10, max: 30, def: 15 }, step: 1, quality: 'pro', plan: true, structure: true, faculty: true,
+      perUnit: true },
+    kurs: { sizeKey: 'pages', unitKey: 'per_page', icon: 'i-page',
+      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, plan: false, structure: false, faculty: true },
+    diplom: { sizeKey: 'pages', unitKey: 'per_page', icon: 'i-page',
+      n: { min: 25, max: 50, def: 25 }, step: 5, quality: null, plan: false, structure: false, faculty: true }
   };
   var MOVED = { uslubiy: true };
-  var STRUCTURE_FALLBACK = { ch: { min: 2, max: 4 }, sc: { min: 2, max: 4 } };
+  // Chapter limits and the default count when `p` has none.
+  var PLAN_FALLBACK = {
+    presentation: { ch: { min: 2, max: 6 }, def: 4 },
+    doc: { ch: { min: 2, max: 4 }, sc: { min: 2, max: 4 }, def: 2 }
+  };
+  var PLAN_LINE_MAX = 150;
+  // Numbering and bullets a pasted list brings along.
+  var NUMBERING = /^\s*(?:\d{1,3}\s*[.)]|[-•*–])\s*/;
+  // The one leading "N." / "N)" the bot itself strips from a plan line
+  // (utils/webapp_contract._PLAN_NUMBER), and nothing more.
+  var BOT_NUMBERING = /^\s*\d{1,3}\s*[.)]\s*/;
   var TITLE_FIELDS = ['author', 'reviewer', 'university', 'fakultet', 'specialty'];
   var PROFILE_KEY = 'profile';
 
@@ -190,10 +328,33 @@
   var service = Object.prototype.hasOwnProperty.call(SERVICES, docType) ? SERVICES[docType] : null;
   // The table must be the one for this service; anything else is ignored.
   var p = (M.prices && (M.prices.svc == null || M.prices.svc === docType)) ? M.prices : null;
+  // What prices are read from. Slides, referat and mustaqil are priced per
+  // unit (`p.per`); a `p` without it is the old tier table of a keyboard sent
+  // before the per-unit prices, whose numbers (and free pictures) the bot no
+  // longer charges, so the page says the bot shows the price instead.
+  var priced = p && service && service.perUnit && !(p.per && typeof p.per === 'object') ? null : p;
   var s = M.state;
 
   var limits = null;
   var form = { n: 0, quality: 'standard', extra: 0, chapters: 2, subchapters: 2 };
+  var plan = { mode: 'auto', lines: [] };
+  // The plan goes into the payload only when the page knows the order's
+  // current plan (the bot sent it in `s`) or the student changed it here:
+  // "auto" clears a manual plan in the bot, so a plan the page never saw
+  // must not be overwritten by the page's default.
+  var planKnown = false;
+  var planTouched = false;
+  // pm "kept" (or "manual" without titles): the order has a manual plan the
+  // bot could not fit into the link. The page keeps it (sends no plan) until the
+  // student writes a new one or picks the automatic plan.
+  var planKept = false;
+  // A deck whose chapter count the bot still derives from its size (no `ch`
+  // in `s`): the page shows that count and follows the slider with it until
+  // the student picks a count here.
+  var chaptersFollowSize = false;
+  var planUnit = 'chapters';
+  var planInputs = [];
+  var tabGroup = null;
   var imagesShown = false;
   var storedProfile = {};
   var touched = {};
@@ -230,22 +391,53 @@
     }
   }
 
+  // No picture is free any more, so none takes a slot off the cap. An old
+  // `p` (a keyboard drawn before the per-unit prices) still says img.free 2
+  // for decks, which the bot no longer reserves.
   function maxPaid() {
-    return M.pricing.maxPaidImages(p, form.n);
+    var table = p && p.img ? { img: { max: p.img.max, rsv: p.img.rsv, free: 0 } } : p;
+    return M.pricing.maxPaidImages(table, form.n);
+  }
+
+  /**
+   * The bot's own chapter count for a deck of n slides: n // 3 within the
+   * chapter limits (handlers/presentation._chapters_for; its floor of 3 never
+   * applies, since a deck has at least 10 slides).
+   */
+  function chaptersForSize(n) {
+    return M.clamp(Math.floor(n / 3), limits.ch.min, limits.ch.max);
+  }
+
+  function followSize() {
+    if (!chaptersFollowSize) return;
+    var next = chaptersForSize(form.n);
+    if (next === form.chapters) return;
+    form.chapters = next;
+    var radio = byId('count-' + next);
+    if (radio) radio.checked = true;
+    renderPlanSummary();
+  }
+
+  function perUnitText(quality) {
+    var unit = M.pricing.unitPrice(priced, quality);
+    return unit == null ? '' : t('settings.' + service.unitKey, { price: M.fmtPrice(unit) });
   }
 
   function renderSize() {
     els['size-value'].textContent = String(form.n);
+    els.size.value = String(form.n);
     els.size.setAttribute('aria-valuetext', String(form.n));
-    var tier = M.pricing.tierFor(p, form.quality, form.n);
-    els['tier-hint'].hidden = !tier;
-    if (tier) els['tier-hint'].textContent = t(service.tierKey, { max: tier.max, price: M.fmtPrice(tier.price) });
+    var pct = (form.n - limits.n.min) / Math.max(1, limits.n.max - limits.n.min) * 100;
+    els.size.style.setProperty('--pct', pct + '%');
+    els['size-dec'].disabled = form.n <= limits.n.min;
+    els['size-inc'].disabled = form.n >= limits.n.max;
+    els['size-unit'].textContent = perUnitText(form.quality);
+    els['size-unit'].hidden = !els['size-unit'].textContent;
   }
 
   function renderImages() {
     if (!imagesShown) return;
     var img = p.img;
-    var free = Math.max(0, M.toInt(img.free, 0));
     var cap = maxPaid();
     form.extra = M.clamp(form.extra, 0, cap);
     els.images.max = String(cap);
@@ -254,10 +446,8 @@
     els['images-inc'].disabled = form.extra >= cap;
     els.images.disabled = cap === 0;
 
-    els['images-free'].hidden = free === 0;
-    els['images-free'].textContent = t('settings.images_free', { n: free });
-    els['images-total'].hidden = free === 0;
-    els['images-total'].textContent = t('settings.images_total', { free: free, paid: form.extra });
+    // Every picture is paid (img.free is 0 by contract; an old `p` said 2).
+    els['images-free'].textContent = t('settings.images_foot');
 
     var limitEl = els['images-limit'];
     var hardMax = Math.max(0, M.toInt(img.max, 0));
@@ -273,21 +463,42 @@
   }
 
   function renderPrice() {
-    var q = M.pricing.quote(p, { quality: form.quality, n: form.n, extra: form.extra });
+    var q = M.pricing.quote(priced, { quality: form.quality, n: form.n, extra: form.extra });
     els['price-unknown'].hidden = !!q;
     els['price-known'].hidden = !q;
     els['price-images-row'].hidden = !q || q.paid === 0;
+    // The free first order is shown only while the bot offers it (p.trial).
+    els['trial-banner'].hidden = !(q && q.trial);
     if (!q) {
       els['price-total'].removeAttribute('data-amount');
       M.mainButton(t('save'), save);
       return;
     }
-    els['price-base'].textContent = q.trial ? t('settings.price_trial') : M.fmtPrice(q.base);
+    els['price-base-label'].textContent = q.perUnit != null
+      ? t('settings.price_' + service.sizeKey, { n: form.n, unit: M.fmtPrice(q.perUnit) })
+      : t('settings.price_base');
+    var base = els['price-base'];
+    base.textContent = '';
+    if (q.trial) {
+      base.appendChild(M.el('s', { text: M.fmtPrice(q.base) }));
+      base.appendChild(M.el('span', { class: 'free-tag', text: t('free') }));
+    } else {
+      base.textContent = M.fmtPrice(q.base);
+    }
     els['price-images-label'].textContent = t('settings.price_images', { n: q.paid, unit: M.fmtPrice(q.unit) });
     els['price-images'].textContent = M.fmtPrice(q.images);
-    els['price-total'].textContent = q.payable ? M.fmtPrice(q.payable) : t('free');
+    // "Free" only for an order the trial really covers; otherwise the
+    // amount, whatever it is.
+    var payable = q.trial && !q.payable ? t('free') : M.fmtPrice(q.payable);
+    els['price-total'].textContent = payable;
     els['price-total'].setAttribute('data-amount', String(q.payable));
-    M.mainButton(t('save_price', { price: q.payable ? M.fmtPrice(q.payable) : t('free') }), save);
+    M.mainButton(t('save_price', { price: payable }), save);
+  }
+
+  function renderQualityHints() {
+    if (!service.quality) return;
+    els['q-standard-hint'].textContent = perUnitText('standard') || t('settings.q_standard_hint');
+    els['q-premium-hint'].textContent = perUnitText('premium') || t('settings.q_' + service.quality + '_hint');
   }
 
   function renderTitleSummary() {
@@ -295,30 +506,151 @@
     els['title-page-summary'].textContent = parts.length ? parts.join(' · ') : t('settings.title_page_empty');
   }
 
+  function planTitles() {
+    return planInputs.map(function (input) { return input.value.trim(); }).filter(Boolean);
+  }
+
+  /** The plan kept in the bot still stands: no new titles, no switch to auto. */
+  function keptPlanStands() {
+    return planKept && plan.mode === 'manual' && !planTitles().length;
+  }
+
+  function renderPlanSummary() {
+    if (keptPlanStands()) {
+      els['plan-summary'].textContent = t('settings.plan_kept_' + planUnit, { n: form.chapters });
+      return;
+    }
+    var manual = plan.mode === 'manual' && planTitles().length >= limits.ch.min;
+    var n = manual ? planTitles().length : form.chapters;
+    var key = 'settings.plan_' + (manual ? 'manual_' : 'auto_') + planUnit;
+    els['plan-summary'].textContent = t(key, { n: n });
+  }
+
   function render() {
+    followSize();
     renderSize();
     renderImages();
     renderPrice();
   }
 
-  // ── sub-view: title page ──────────────────────────────────────────────────
+  // ── sub-views: plan, title page ───────────────────────────────────────────
 
-  function openTitlePage() {
+  var openView = null;
+
+  function openSub(id, heading) {
     els['view-main'].hidden = true;
-    els['view-title'].hidden = false;
+    els[id].hidden = false;
+    openView = id;
     window.scrollTo(0, 0);
-    M.backButton(closeTitlePage);
+    if (id === 'view-plan') planInputs.forEach(grow);
+    M.backButton(closeSub);
     M.haptic('light');
-    els['title-page-heading'].focus();
+    els[heading].focus();
   }
 
-  function closeTitlePage() {
-    if (els['view-title'].hidden) return;
-    els['view-title'].hidden = true;
+  function closeSub() {
+    if (!openView) return;
+    var was = openView;
+    els[was].hidden = true;
     els['view-main'].hidden = false;
+    openView = null;
     M.backButton(null);
     renderTitleSummary();
-    els['open-title-page'].focus();
+    renderPlanSummary();
+    els[was === 'view-plan' ? 'open-plan' : 'open-title-page'].focus();
+  }
+
+  function selectTab(next, focus) {
+    plan.mode = next;
+    var auto = next === 'auto';
+    els['tab-auto'].setAttribute('aria-selected', String(auto));
+    els['tab-manual'].setAttribute('aria-selected', String(!auto));
+    els['panel-auto'].hidden = !auto;
+    els['panel-manual'].hidden = auto;
+    tabGroup.sync();
+    if (focus) els[auto ? 'tab-auto' : 'tab-manual'].focus();
+  }
+
+  /** A tab the student picked (click or arrow keys). */
+  function pickTab(next, focus) {
+    if (next !== plan.mode) {
+      planTouched = true;
+      M.setDirty(true);
+    }
+    selectTab(next, focus);
+    M.haptic('select');
+  }
+
+  function grow(area) {
+    area.style.height = 'auto';
+    area.style.height = area.scrollHeight + 'px';
+  }
+
+  function markFilled(input) {
+    var cell = input.closest('.cell');
+    if (cell) cell.classList.toggle('filled', !!input.value.trim());
+  }
+
+  function buildPlanFields() {
+    var box = els.fields;
+    box.textContent = '';
+    planInputs = [];
+    var labelKey = planUnit === 'sections' ? 'plan.field_section' : 'plan.field_chapter';
+    var placeholder = t(planUnit === 'sections' ? 'plan.ph_section' : 'plan.ph_chapter');
+    for (var i = 0; i < limits.ch.max; i++) {
+      var id = 'line-' + (i + 1);
+      // A one-line textarea that grows, so a long chapter title stays visible.
+      var input = M.el('textarea', {
+        id: id, maxLength: PLAN_LINE_MAX, value: plan.lines[i] || '', rows: 1,
+        attrs: { autocomplete: 'off', placeholder: placeholder, enterkeyhint: i + 1 < limits.ch.max ? 'next' : 'done' }
+      });
+      input.addEventListener('paste', onPaste);
+      input.addEventListener('keydown', onEnter);
+      input.addEventListener('input', function (event) { markFilled(event.target); grow(event.target); });
+      box.appendChild(M.el('div', { class: 'cell cell-field' }, [
+        M.el('span', { class: 'num', text: String(i + 1), attrs: { 'aria-hidden': 'true' } }),
+        M.el('div', { class: 'cell-text' }, [
+          M.el('label', { attrs: { for: id }, text: t(labelKey, { n: i + 1 }) }),
+          input
+        ])
+      ]));
+      planInputs.push(input);
+      markFilled(input);
+    }
+  }
+
+  function onPaste(event) {
+    var data = event.clipboardData && event.clipboardData.getData('text');
+    if (!data || !/[\r\n]/.test(data)) return;
+    var lines = data.split(/\r?\n|\r/).map(function (line) {
+      return line.replace(NUMBERING, '').trim();
+    }).filter(Boolean);
+    if (lines.length < 2) return;
+    event.preventDefault();
+    var start = planInputs.indexOf(event.target);
+    var room = planInputs.length - start;
+    lines.slice(0, room).forEach(function (line, k) {
+      planInputs[start + k].value = line.slice(0, PLAN_LINE_MAX);
+      markFilled(planInputs[start + k]);
+      grow(planInputs[start + k]);
+    });
+    var used = Math.min(lines.length, room);
+    var extra = lines.length - used;
+    els['cut-note'].hidden = extra <= 0;
+    if (extra > 0) {
+      els['cut-note'].textContent = t('plan.cut', { max: used, n: extra });
+      M.haptic('warning');
+    }
+    planTouched = true;
+    M.setDirty(true);
+  }
+
+  function onEnter(event) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    var next = planInputs[planInputs.indexOf(event.target) + 1];
+    if (next) next.focus();
+    else event.target.blur();
   }
 
   // ── send ──────────────────────────────────────────────────────────────────
@@ -335,10 +667,19 @@
   function save() {
     var topic = value('topic');
     if (!topic) {
-      closeTitlePage();
+      closeSub();
       M.haptic('error');
       M.showAlert(t('settings.err_topic'));
       els.topic.focus();
+      return;
+    }
+    var sendPlan = service.plan && (planKnown || planTouched) && !keptPlanStands();
+    var titles = planTitles();
+    var manual = sendPlan && plan.mode === 'manual';
+    if (manual && titles.length < limits.ch.min) {
+      if (openView !== 'view-plan') openSub('view-plan', 'plan-heading');
+      M.haptic('error');
+      M.showAlert(t(planUnit === 'sections' ? 'plan.err_min_sections' : 'plan.err_min_chapters', { min: limits.ch.min }));
       return;
     }
     // Field names are the bot's contract (utils/webapp_contract.py). An empty
@@ -361,10 +702,17 @@
       payload.fakultet = value('fakultet');
       payload.specialty = value('specialty');
     }
-    if (service.structure) {
+    if (sendPlan) {
+      // The plan, as plan.html's plan_update sends it: manual titles are
+      // "1. A\n2. B" and their count is the chapter count.
+      payload.plan_mode = manual ? 'manual' : 'auto';
+      payload.num_chapters = manual ? titles.length : form.chapters;
+      if (manual) payload.manual_plan = titles.map(function (title, i) { return (i + 1) + '. ' + title; }).join('\n');
+    } else if (service.structure) {
+      // Documents always sent their chapter count (the bot's own value, from `s`).
       payload.num_chapters = form.chapters;
-      payload.num_subchapters = form.subchapters;
     }
+    if (service.structure) payload.num_subchapters = form.subchapters;
     rememberProfile();
     M.sendPayload(payload);
   }
@@ -376,21 +724,13 @@
   }
 
   function prefill() {
-    // `s` carries no names; the rest of the order comes from it as is (the
-    // topic is plain JSON text, never URL-decoded again).
     els.topic.value = text(s.topic);
     els.subject.value = text(s.subject);
     els.university.value = text(s.university);
     els.fakultet.value = text(s.fakultet);
     els.specialty.value = text(s.specialty);
-    // The document's language, not the page's: without one from the bot it
-    // is Uzbek, as the bot assumes and the old page did. A ru/en student who
-    // only changes the page count must not switch the document's language.
     els.language.value = ['uz', 'ru', 'en'].indexOf(s.language) >= 0 ? s.language : 'uz';
 
-    // Then what this student typed last time (Telegram CloudStorage), then
-    // the Telegram name for the author. A field the student already edited
-    // is never overwritten.
     M.store.get(PROFILE_KEY).then(function (raw) {
       try {
         var saved = JSON.parse(raw || '{}');
@@ -411,12 +751,22 @@
 
   // ── wiring ────────────────────────────────────────────────────────────────
 
+  function stepSize(delta) {
+    form.n = M.clamp(form.n + delta * service.step, limits.n.min, limits.n.max);
+    M.haptic('select');
+    M.setDirty(true);
+    render();
+  }
+
   function wire() {
+    els.topic.addEventListener('input', function () { grow(els.topic); });
     els.size.addEventListener('input', function () {
       form.n = M.clamp(M.toInt(els.size.value, limits.n.min), limits.n.min, limits.n.max);
       render();
     });
     els.size.addEventListener('change', function () { M.haptic('select'); });
+    els['size-dec'].addEventListener('click', function () { stepSize(-1); });
+    els['size-inc'].addEventListener('click', function () { stepSize(1); });
 
     Array.prototype.forEach.call(document.querySelectorAll('input[name="quality"]'), function (input) {
       input.addEventListener('change', function () {
@@ -449,14 +799,32 @@
       render();
     });
 
-    els['open-title-page'].addEventListener('click', openTitlePage);
+    els['open-title-page'].addEventListener('click', function () { openSub('view-title', 'title-page-heading'); });
+    els['open-plan'].addEventListener('click', function () { openSub('view-plan', 'plan-heading'); });
+
+    tabGroup = M.rovingGroup(els.tabs, '[role="tab"]', function (tab) {
+      pickTab(tab.id === 'tab-manual' ? 'manual' : 'auto', false);
+    });
+    els['tab-auto'].addEventListener('click', function () { pickTab('auto', true); });
+    els['tab-manual'].addEventListener('click', function () { pickTab('manual', true); });
 
     TITLE_FIELDS.forEach(function (key) {
       els[key].addEventListener('input', function () { touched[key] = true; });
     });
 
+    // An edit of the count or the titles is a plan choice (tabs: pickTab);
+    // sections per chapter are sent on their own and are not.
+    function planEdited(event) {
+      if (event.target.closest && event.target.closest('#panel-auto, #panel-manual')) planTouched = true;
+    }
+    els['view-plan'].addEventListener('input', planEdited);
+    els['view-plan'].addEventListener('change', planEdited);
+
     var app = byId('app');
-    app.addEventListener('input', function () { M.setDirty(true); });
+    app.addEventListener('input', function (event) {
+      M.setDirty(true);
+      if (event.target.closest && event.target.closest('#fields')) els['cut-note'].hidden = true;
+    });
     app.addEventListener('change', function () { M.setDirty(true); });
   }
 
@@ -483,61 +851,99 @@
     document.title = title;
     els['page-title'].textContent = title;
 
+    var isPresentation = docType === 'presentation';
+    var planFallback = isPresentation ? PLAN_FALLBACK.presentation : PLAN_FALLBACK.doc;
+    planUnit = isPresentation ? 'sections' : 'chapters';
     limits = {
       n: range(p && p.n, service.n),
-      ch: range(p && p.ch, STRUCTURE_FALLBACK.ch),
-      sc: range(p && p.sc, STRUCTURE_FALLBACK.sc)
+      ch: range(p && p.ch, planFallback.ch),
+      sc: range(p && p.sc, PLAN_FALLBACK.doc.sc)
     };
     var def = p && p.n ? M.toInt(p.n.def, service.n.def) : service.n.def;
-    form.n = M.clamp(M.toInt(s.n, def), limits.n.min, limits.n.max);
+    form.n = M.clamp(M.toInt(s.n != null ? s.n : s.slides, def), limits.n.min, limits.n.max);
     form.quality = M.pricing.qualityKey(M.params.quality);
     form.extra = Math.max(0, M.toInt(s.img, 0));
-    form.chapters = M.clamp(M.toInt(s.ch, limits.ch.min), limits.ch.min, limits.ch.max);
+    var chDef = M.toInt(p && p.ch && p.ch.def, planFallback.def);
+    form.chapters = M.clamp(M.toInt(s.ch, chDef), limits.ch.min, limits.ch.max);
     form.subchapters = M.clamp(M.toInt(s.sc, limits.sc.min), limits.sc.min, limits.sc.max);
-    // Pictures are offered only when the bot's table allows some.
     imagesShown = !!(p && p.img && M.toInt(p.img.max, 0) > 0);
 
-    // Size slider.
+    // Size: stepper + slider.
     els['size-label'].textContent = t('settings.' + service.sizeKey);
+    els['size-icon'].setAttribute('href', '#' + service.icon);
     els.size.min = String(limits.n.min);
     els.size.max = String(limits.n.max);
     els.size.step = String(service.step);
-    els.size.value = String(form.n);
+    els['size-min'].textContent = String(limits.n.min);
+    els['size-max'].textContent = String(limits.n.max);
 
     // Quality: presentations say Premium, documents Pro; kurs/diplom have one.
     els['quality-field'].hidden = !service.quality;
-    if (service.quality) {
-      els['q-premium-name'].textContent = t('settings.q_' + service.quality);
-      els['q-premium-hint'].textContent = t('settings.q_' + service.quality + '_hint');
-    }
+    if (service.quality) els['q-premium-name'].textContent = t('settings.q_' + service.quality);
     byId(form.quality === 'premium' ? 'q-premium' : 'q-standard').checked = true;
+    renderQualityHints();
 
-    // Chapters and sections per chapter (referat, mustaqil).
-    els['chapters-field'].hidden = !service.structure;
-    els['subchapters-field'].hidden = !service.structure;
-    if (service.structure) {
-      buildSegments(els.chapters, 'chapters', limits.ch.min, limits.ch.max, form.chapters,
-        function (v) { form.chapters = v; });
-      buildSegments(els.subchapters, 'subchapters', limits.sc.min, limits.sc.max, form.subchapters,
-        function (v) { form.subchapters = v; });
-    }
+    // Trial banner wording.
+    els['trial-text'].textContent = t(isPresentation ? 'settings.trial_text_slides' : 'settings.trial_text_pages');
 
     // Pictures.
     els['images-section'].hidden = !imagesShown;
     if (imagesShown) {
-      var free = Math.max(0, M.toInt(p.img.free, 0));
-      els['images-label'].textContent = t(free > 0 ? 'settings.images_extra' : 'settings.images_count');
-      els['images-unit'].textContent = t('settings.images_unit', { price: M.fmtPrice(M.toInt(p.img.unit, 0)) });
+      els['images-label'].textContent = t('settings.images_count');
+      els['images-unit'].textContent = t('settings.images_each', { price: M.fmtPrice(M.toInt(p.img.unit, 0)) });
     }
+
+    // Plan sub-view.
+    els['plan-heading'].textContent = t(isPresentation ? 'plan.title_presentation' : 'plan.title_doc');
+    els['plan-sub'].textContent = t(isPresentation ? 'settings.plan_sub_presentation' : 'settings.plan_sub_doc');
+    els['count-label'].textContent = t(isPresentation ? 'plan.count_sections' : 'plan.count_chapters');
+    els['limit-note'].textContent = t(isPresentation ? 'plan.limit_sections' : 'plan.limit_chapters',
+      { min: limits.ch.min, max: limits.ch.max });
+    // The order's plan from `s`: plan = titles, pm = 'auto' | 'manual' |
+    // 'kept' (a manual plan whose titles did not fit into the link).
+    // Titles or auto/manual mean the page knows the current plan and may
+    // send it back.
+    // The bot sends clean titles (one leading "N." already stripped), so a
+    // list is taken as is: a title may itself start with a number
+    // ("1.1 Kirish", "19. asr adabiyoti"). The text form "1. A\n2. B" is
+    // plan_update's own format and loses exactly its numbering.
+    var given = Array.isArray(s.plan) ? s.plan
+      : (typeof s.plan === 'string' ? s.plan.split('\n').map(function (line) {
+        return line.replace(BOT_NUMBERING, '');
+      }) : []);
+    plan.lines = given.map(function (line) {
+      return typeof line === 'string' ? line.trim().slice(0, PLAN_LINE_MAX) : '';
+    }).filter(Boolean).slice(0, limits.ch.max);
+    plan.mode = plan.lines.length && s.pm !== 'auto' ? 'manual' : 'auto';
+    planKept = service.plan && (s.pm === 'kept' || s.pm === 'manual') && !plan.lines.length;
+    if (planKept) plan.mode = 'manual';
+    planKnown = service.plan && !planKept && (plan.lines.length > 0 || s.pm === 'auto' || s.pm === 'manual');
+    els['kept-note'].hidden = !planKept;
+    chaptersFollowSize = isPresentation && s.ch == null && !planKnown && !planKept;
+    if (chaptersFollowSize) form.chapters = chaptersForSize(form.n);
+
+    buildSegments(els.count, 'count', limits.ch.min, limits.ch.max, form.chapters,
+      function (v) { form.chapters = v; chaptersFollowSize = false; });
+    els['subchapters-field'].hidden = !service.structure;
+    if (service.structure) {
+      buildSegments(els.subchapters, 'subchapters', limits.sc.min, limits.sc.max, form.subchapters,
+        function (v) { form.subchapters = v; });
+    }
+    buildPlanFields();
+    els['open-plan'].hidden = !service.plan;
+    els['structure-foot'].textContent = t(service.plan ? 'settings.structure_foot' : 'settings.structure_foot_title');
 
     els['fakultet-field'].hidden = !service.faculty;
     els['specialty-field'].hidden = !service.faculty;
 
     prefill();
     wire();
+    selectTab(plan.mode);
     render();
     renderTitleSummary();
+    renderPlanSummary();
     M.ready({ form: true });
+    grow(els.topic);
   }
 
   if (M.start()) init();
