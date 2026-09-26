@@ -55,7 +55,17 @@
       "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
       "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
     },
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/modern/cerimon/01.webp",
+      "static/previews/samples/modern/cerimon/02.webp",
+      "static/previews/samples/modern/cerimon/03.webp",
+      "static/previews/samples/modern/cerimon/04.webp",
+      "static/previews/samples/modern/cerimon/05.webp",
+      "static/previews/samples/modern/cerimon/06.webp",
+      "static/previews/samples/modern/cerimon/07.webp",
+      "static/previews/samples/modern/cerimon/08.webp"
+    ]
   },
   {
     "id": "modern_fortinbras",
@@ -77,7 +87,17 @@
       "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
       "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
     },
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/modern/fortinbras/01.webp",
+      "static/previews/samples/modern/fortinbras/02.webp",
+      "static/previews/samples/modern/fortinbras/03.webp",
+      "static/previews/samples/modern/fortinbras/04.webp",
+      "static/previews/samples/modern/fortinbras/05.webp",
+      "static/previews/samples/modern/fortinbras/06.webp",
+      "static/previews/samples/modern/fortinbras/07.webp",
+      "static/previews/samples/modern/fortinbras/08.webp"
+    ]
   },
   {
     "id": "modern_goluboy-abstraktniy",
@@ -171,7 +191,17 @@
       "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
       "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
     },
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/modern/salerio/01.webp",
+      "static/previews/samples/modern/salerio/02.webp",
+      "static/previews/samples/modern/salerio/03.webp",
+      "static/previews/samples/modern/salerio/04.webp",
+      "static/previews/samples/modern/salerio/05.webp",
+      "static/previews/samples/modern/salerio/06.webp",
+      "static/previews/samples/modern/salerio/07.webp",
+      "static/previews/samples/modern/salerio/08.webp"
+    ]
   },
   {
     "id": "modern_sinie-tochki",
@@ -243,7 +273,17 @@
       "uz": "To'q yashil"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/1/01.webp",
+      "static/previews/samples/power_point/1/02.webp",
+      "static/previews/samples/power_point/1/03.webp",
+      "static/previews/samples/power_point/1/04.webp",
+      "static/previews/samples/power_point/1/05.webp",
+      "static/previews/samples/power_point/1/06.webp",
+      "static/previews/samples/power_point/1/07.webp",
+      "static/previews/samples/power_point/1/08.webp"
+    ]
   },
   {
     "id": "power_point_2",
@@ -261,7 +301,17 @@
       "uz": "Qizil lavha"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/2/01.webp",
+      "static/previews/samples/power_point/2/02.webp",
+      "static/previews/samples/power_point/2/03.webp",
+      "static/previews/samples/power_point/2/04.webp",
+      "static/previews/samples/power_point/2/05.webp",
+      "static/previews/samples/power_point/2/06.webp",
+      "static/previews/samples/power_point/2/07.webp",
+      "static/previews/samples/power_point/2/08.webp"
+    ]
   },
   {
     "id": "power_point_3",
@@ -279,7 +329,17 @@
       "uz": "Galereya"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/3/01.webp",
+      "static/previews/samples/power_point/3/02.webp",
+      "static/previews/samples/power_point/3/03.webp",
+      "static/previews/samples/power_point/3/04.webp",
+      "static/previews/samples/power_point/3/05.webp",
+      "static/previews/samples/power_point/3/06.webp",
+      "static/previews/samples/power_point/3/07.webp",
+      "static/previews/samples/power_point/3/08.webp"
+    ]
   },
   {
     "id": "power_point_4",
@@ -297,7 +357,17 @@
       "uz": "Kulrang-moviy"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/4/01.webp",
+      "static/previews/samples/power_point/4/02.webp",
+      "static/previews/samples/power_point/4/03.webp",
+      "static/previews/samples/power_point/4/04.webp",
+      "static/previews/samples/power_point/4/05.webp",
+      "static/previews/samples/power_point/4/06.webp",
+      "static/previews/samples/power_point/4/07.webp",
+      "static/previews/samples/power_point/4/08.webp"
+    ]
   },
   {
     "id": "power_point_5",
@@ -315,7 +385,17 @@
       "uz": "Muhr"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/5/01.webp",
+      "static/previews/samples/power_point/5/02.webp",
+      "static/previews/samples/power_point/5/03.webp",
+      "static/previews/samples/power_point/5/04.webp",
+      "static/previews/samples/power_point/5/05.webp",
+      "static/previews/samples/power_point/5/06.webp",
+      "static/previews/samples/power_point/5/07.webp",
+      "static/previews/samples/power_point/5/08.webp"
+    ]
   },
   {
     "id": "power_point_6",
@@ -333,7 +413,17 @@
       "uz": "Binafsha"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/6/01.webp",
+      "static/previews/samples/power_point/6/02.webp",
+      "static/previews/samples/power_point/6/03.webp",
+      "static/previews/samples/power_point/6/04.webp",
+      "static/previews/samples/power_point/6/05.webp",
+      "static/previews/samples/power_point/6/06.webp",
+      "static/previews/samples/power_point/6/07.webp",
+      "static/previews/samples/power_point/6/08.webp"
+    ]
   },
   {
     "id": "power_point_10",
@@ -351,7 +441,17 @@
       "uz": "Yashil qirralar"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/10/01.webp",
+      "static/previews/samples/power_point/10/02.webp",
+      "static/previews/samples/power_point/10/03.webp",
+      "static/previews/samples/power_point/10/04.webp",
+      "static/previews/samples/power_point/10/05.webp",
+      "static/previews/samples/power_point/10/06.webp",
+      "static/previews/samples/power_point/10/07.webp",
+      "static/previews/samples/power_point/10/08.webp"
+    ]
   },
   {
     "id": "power_point_classic",
@@ -369,7 +469,17 @@
       "uz": "Oq klassik"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/classic/01.webp",
+      "static/previews/samples/power_point/classic/02.webp",
+      "static/previews/samples/power_point/classic/03.webp",
+      "static/previews/samples/power_point/classic/04.webp",
+      "static/previews/samples/power_point/classic/05.webp",
+      "static/previews/samples/power_point/classic/06.webp",
+      "static/previews/samples/power_point/classic/07.webp",
+      "static/previews/samples/power_point/classic/08.webp"
+    ]
   },
   {
     "id": "power_point_dark_premium",
@@ -387,7 +497,17 @@
       "uz": "To'q ko'k"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/dark_premium/01.webp",
+      "static/previews/samples/power_point/dark_premium/02.webp",
+      "static/previews/samples/power_point/dark_premium/03.webp",
+      "static/previews/samples/power_point/dark_premium/04.webp",
+      "static/previews/samples/power_point/dark_premium/05.webp",
+      "static/previews/samples/power_point/dark_premium/06.webp",
+      "static/previews/samples/power_point/dark_premium/07.webp",
+      "static/previews/samples/power_point/dark_premium/08.webp"
+    ]
   },
   {
     "id": "power_point_powerpoint-waves-blue",
@@ -405,7 +525,17 @@
       "uz": "Ko'k to'lqinlar"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/powerpoint-waves-blue/01.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/02.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/03.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/04.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/05.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/06.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/07.webp",
+      "static/previews/samples/power_point/powerpoint-waves-blue/08.webp"
+    ]
   },
   {
     "id": "power_point_priroda",
@@ -423,7 +553,17 @@
       "uz": "Tabiat"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/priroda/01.webp",
+      "static/previews/samples/power_point/priroda/02.webp",
+      "static/previews/samples/power_point/priroda/03.webp",
+      "static/previews/samples/power_point/priroda/04.webp",
+      "static/previews/samples/power_point/priroda/05.webp",
+      "static/previews/samples/power_point/priroda/06.webp",
+      "static/previews/samples/power_point/priroda/07.webp",
+      "static/previews/samples/power_point/priroda/08.webp"
+    ]
   },
   {
     "id": "power_point_uz-ornament",
@@ -441,6 +581,16 @@
       "uz": "O'zbek naqshi"
     },
     "credit": null,
-    "hidden": false
+    "hidden": false,
+    "samples": [
+      "static/previews/samples/power_point/uz-ornament/01.webp",
+      "static/previews/samples/power_point/uz-ornament/02.webp",
+      "static/previews/samples/power_point/uz-ornament/03.webp",
+      "static/previews/samples/power_point/uz-ornament/04.webp",
+      "static/previews/samples/power_point/uz-ornament/05.webp",
+      "static/previews/samples/power_point/uz-ornament/06.webp",
+      "static/previews/samples/power_point/uz-ornament/07.webp",
+      "static/previews/samples/power_point/uz-ornament/08.webp"
+    ]
   }
 ]
