@@ -145,7 +145,93 @@
       'plan.cut': "Faqat birinchi {max} tasi olindi: ortiqcha {n} ta qator e'tiborsiz qoldirildi.",
       'plan.err_min_sections': "Kamida {min} ta bo'lim nomini yozing.",
       'plan.err_min_chapters': "Kamida {min} ta bob nomini yozing.",
-      'plan.save': "Rejani saqlash"
+      'plan.save': "Rejani saqlash",
+
+      // Mini App (api mode) wording of the chat pages: t() prefers key@api there.
+      'open_text@api': "Bu ilova Telegram ichida ishlaydi: uni {bot} botining menyu tugmasi orqali oching.",
+      'open_text_any@api': "Bu ilova Telegram ichida ishlaydi: uni botning menyu tugmasi orqali oching.",
+      'bad_link@api': "Ilovaning bosh sahifasiga qayting va qayta oching.",
+      'send_failed@api': "Saqlab bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
+      'price_in_bot@api': "Narx buyurtma sahifasida ko'rsatiladi",
+      'settings.subtitle@api': "«Saqlash»dan keyin buyurtmani ilovada tasdiqlaysiz.",
+      'settings.price_note@api': "Yakuniy narx buyurtma sahifasida, tasdiqlashdan oldin ko'rsatiladi.",
+      'settings.plan_kept_sections@api': "O'zim yozdim · {n} ta bo'lim (buyurtmada saqlangan)",
+      'settings.plan_kept_chapters@api': "O'zim yozdim · {n} ta bob (buyurtmada saqlangan)",
+      'plan.kept_note@api': "Rejangiz buyurtmada saqlangan, bu yerda ko'rsatilmaydi. Yangisini yozsangiz, u eskisining o'rnini egallaydi.",
+
+      // Shared by the Mini App pages.
+      'auth_title': "Qayta oching",
+      'auth_text': "Seans eskirgan. Ilovani yoping va botning menyu tugmasi orqali qayta oching.",
+      'leave_confirm': "O'zgarishlar saqlanmaydi. Chiqasizmi?",
+      'back': "Orqaga",
+      'retry': "Qayta urinish",
+      'close': "Yopish",
+      'cancel': "Bekor qilish",
+      'loading': "Yuklanmoqda…",
+      'copy': "Nusxa olish",
+      'copied': "Nusxa olindi",
+      'copy_failed': "Nusxa olib bo'lmadi. Matnni belgilab, o'zingiz nusxa oling.",
+      'opens_chat': "chatda ochiladi",
+
+      // API error codes (STAGE8_SPEC §9); MiniApp.errorText(code).
+      'err.unknown': "Nimadir xato ketdi. Qayta urinib ko'ring.",
+      'err.offline': "Internet yo'q. Aloqani tekshirib, qayta urinib ko'ring.",
+      'err.timeout': "Server javob bermadi. Qayta urinib ko'ring.",
+      'err.bad_request': "So'rov noto'g'ri. Sahifani yopib, qayta oching.",
+      'err.missing_idempotency_key': "So'rov noto'g'ri. Sahifani yopib, qayta oching.",
+      'err.auth_missing': "Seans topilmadi. Ilovani botning menyu tugmasi orqali oching.",
+      'err.auth_invalid': "Seans tasdiqlanmadi. Ilovani yoping va qayta oching.",
+      'err.auth_expired': "Seans eskirgan. Ilovani yoping va qayta oching.",
+      'err.not_registered': "Avval botni ishga tushiring: chatda /start ni bosing.",
+      'err.banned': "Hisobingiz bloklangan. Savollar bo'lsa, qo'llab-quvvatlashga yozing.",
+      'err.not_open_yet': "Ilova hali hamma uchun ochilmagan. Hozircha botdan foydalaning.",
+      'err.too_large': "Ma'lumot juda katta.",
+      'err.rate_limited': "So'rovlar juda ko'p. Birozdan keyin qayta urinib ko'ring.",
+      'err.internal': "Serverda xatolik yuz berdi. Birozdan keyin qayta urinib ko'ring.",
+      'err.unavailable': "Xizmat vaqtincha ishlamayapti. Birozdan keyin qayta urinib ko'ring.",
+      'err.bad_language': "Bu til qo'llab-quvvatlanmaydi.",
+      'err.not_in_app': "Bu xizmat faqat chatda ishlaydi.",
+      'err.bad_payload': "Sozlamalarni saqlab bo'lmadi. Sahifani yopib, qayta oching.",
+      'err.draft_changed': "Buyurtma boshqa oynada o'zgargan. Ma'lumotlar yangilandi.",
+      'err.orders_paused': "Ilovada buyurtma berish vaqtincha to'xtatilgan. Buyurtmani chatda bering.",
+      'err.service_disabled': "Bu xizmat vaqtincha ishlamayapti.",
+      'err.topic_missing': "Avval mavzuni yozing.",
+      'err.price_changed': "Narx o'zgardi. Yangi narxni tekshiring.",
+      'err.busy': "Sizda tayyorlanayotgan buyurtma bor. U tugashini kuting.",
+      'err.insufficient_funds': "Hisobingizda mablag' yetarli emas.",
+      'err.chat_unreachable': "Bot sizga yoza olmayapti. Botni oching va /start ni bosing.",
+      'err.not_found': "Topilmadi.",
+      'err.not_resendable': "Bu faylni qayta yuborib bo'lmaydi.",
+      'err.file_gone': "Fayl Telegramda endi mavjud emas. Buyurtmani qayta bering.",
+      'err.telegram_unavailable': "Telegram javob bermadi. Birozdan keyin qayta urinib ko'ring.",
+      'err.bad_amount': "Summa noto'g'ri.",
+      'err.too_many_pending': "Tekshiruvda cheklar ko'p. Admin ularni ko'rib chiqishini kuting.",
+      'err.topup_unavailable': "Hisobni to'ldirish hozircha ishlamayapti.",
+      'err.unsupported_file': "Bu fayl turi qabul qilinmaydi. Rasm yoki PDF yuboring.",
+
+      // Job and payment statuses (MiniAppUI.statusPill).
+      'status.starting': "Boshlanmoqda",
+      'status.queued': "Navbatda",
+      'status.building': "Tayyorlanmoqda",
+      'status.sending': "Yuborilmoqda",
+      'status.delivered': "Yuborildi",
+      'status.failed': "Xatolik",
+      'status.cancelled': "Bekor qilindi",
+      'status.refused': "Boshlanmadi",
+      'status.pending': "Tekshirilmoqda",
+      'status.approved': "Tasdiqlandi",
+      'status.rejected': "Rad etildi",
+
+      // MiniAppUI components.
+      'ui.progress': "Jarayon",
+      'ui.price_slides': "Slaydlar: {n} × {unit}",
+      'ui.price_pages': "Sahifalar: {n} × {unit}",
+      'ui.price_images': "AI rasmlar: {n} × {unit}",
+      'ui.price_trial': "Birinchi buyurtma",
+      'ui.price_admin': "Admin buyurtmasi",
+      'ui.price_pay': "To'lov",
+      'ui.balance': "Balans",
+      'ui.pending_receipts': "⏳ {n} ta chek tekshirilmoqda"
     },
 
     ru: {
@@ -277,7 +363,93 @@
       'plan.cut': "Учтены только первые {max}; лишние строки ({n}) отброшены.",
       'plan.err_min_sections': "Напишите хотя бы {min} названия разделов.",
       'plan.err_min_chapters': "Напишите хотя бы {min} названия глав.",
-      'plan.save': "Сохранить план"
+      'plan.save': "Сохранить план",
+
+      // Mini App (api mode) wording of the chat pages: t() prefers key@api there.
+      'open_text@api': "Это приложение работает внутри Telegram: откройте его кнопкой меню бота {bot}.",
+      'open_text_any@api': "Это приложение работает внутри Telegram: откройте его кнопкой меню бота.",
+      'bad_link@api': "Вернитесь на главную страницу приложения и откройте ещё раз.",
+      'send_failed@api': "Не удалось сохранить. Проверьте интернет и попробуйте ещё раз.",
+      'price_in_bot@api': "Цена будет показана на странице заказа",
+      'settings.subtitle@api': "После «Сохранить» заказ подтверждается в приложении.",
+      'settings.price_note@api': "Итоговая цена будет показана на странице заказа перед подтверждением.",
+      'settings.plan_kept_sections@api': "Свой план · разделов: {n} (сохранён в заказе)",
+      'settings.plan_kept_chapters@api': "Свой план · глав: {n} (сохранён в заказе)",
+      'plan.kept_note@api': "Ваш план сохранён в заказе и здесь не показан. Если напишете новый, он заменит прежний.",
+
+      // Shared by the Mini App pages.
+      'auth_title': "Откройте заново",
+      'auth_text': "Сеанс устарел. Закройте приложение и откройте его снова кнопкой меню бота.",
+      'leave_confirm': "Изменения не сохранятся. Выйти?",
+      'back': "Назад",
+      'retry': "Повторить",
+      'close': "Закрыть",
+      'cancel': "Отмена",
+      'loading': "Загрузка…",
+      'copy': "Копировать",
+      'copied': "Скопировано",
+      'copy_failed': "Не удалось скопировать. Выделите текст и скопируйте его вручную.",
+      'opens_chat': "откроется в чате",
+
+      // API error codes (STAGE8_SPEC §9); MiniApp.errorText(code).
+      'err.unknown': "Что-то пошло не так. Попробуйте ещё раз.",
+      'err.offline': "Нет интернета. Проверьте связь и попробуйте ещё раз.",
+      'err.timeout': "Сервер не ответил. Попробуйте ещё раз.",
+      'err.bad_request': "Неверный запрос. Закройте страницу и откройте её снова.",
+      'err.missing_idempotency_key': "Неверный запрос. Закройте страницу и откройте её снова.",
+      'err.auth_missing': "Сеанс не найден. Откройте приложение кнопкой меню бота.",
+      'err.auth_invalid': "Сеанс не подтверждён. Закройте приложение и откройте его снова.",
+      'err.auth_expired': "Сеанс устарел. Закройте приложение и откройте его снова.",
+      'err.not_registered': "Сначала запустите бота: нажмите /start в чате.",
+      'err.banned': "Ваш аккаунт заблокирован. Если есть вопросы, напишите в поддержку.",
+      'err.not_open_yet': "Приложение пока открыто не для всех. Пользуйтесь ботом.",
+      'err.too_large': "Слишком большой объём данных.",
+      'err.rate_limited': "Слишком много запросов. Попробуйте чуть позже.",
+      'err.internal': "Ошибка на сервере. Попробуйте чуть позже.",
+      'err.unavailable': "Сервис временно недоступен. Попробуйте чуть позже.",
+      'err.bad_language': "Этот язык не поддерживается.",
+      'err.not_in_app': "Эта услуга работает только в чате.",
+      'err.bad_payload': "Не удалось сохранить настройки. Закройте страницу и откройте её снова.",
+      'err.draft_changed': "Заказ изменён в другом окне. Данные обновлены.",
+      'err.orders_paused': "Заказы в приложении временно приостановлены. Оформите заказ в чате.",
+      'err.service_disabled': "Эта услуга временно недоступна.",
+      'err.topic_missing': "Сначала напишите тему.",
+      'err.price_changed': "Цена изменилась. Проверьте новую цену.",
+      'err.busy': "У вас уже готовится заказ. Дождитесь его окончания.",
+      'err.insufficient_funds': "На балансе недостаточно средств.",
+      'err.chat_unreachable': "Бот не может вам написать. Откройте бота и нажмите /start.",
+      'err.not_found': "Не найдено.",
+      'err.not_resendable': "Этот файл нельзя отправить повторно.",
+      'err.file_gone': "Файла больше нет в Telegram. Оформите заказ заново.",
+      'err.telegram_unavailable': "Telegram не ответил. Попробуйте чуть позже.",
+      'err.bad_amount': "Неверная сумма.",
+      'err.too_many_pending': "На проверке слишком много чеков. Дождитесь, пока админ их проверит.",
+      'err.topup_unavailable': "Пополнение баланса сейчас недоступно.",
+      'err.unsupported_file': "Этот тип файла не принимается. Отправьте фото или PDF.",
+
+      // Job and payment statuses (MiniAppUI.statusPill).
+      'status.starting': "Запуск",
+      'status.queued': "В очереди",
+      'status.building': "Готовится",
+      'status.sending': "Отправляется",
+      'status.delivered': "Отправлено",
+      'status.failed': "Ошибка",
+      'status.cancelled': "Отменено",
+      'status.refused': "Не запущено",
+      'status.pending': "На проверке",
+      'status.approved': "Подтверждено",
+      'status.rejected': "Отклонено",
+
+      // MiniAppUI components.
+      'ui.progress': "Ход выполнения",
+      'ui.price_slides': "Слайды: {n} × {unit}",
+      'ui.price_pages': "Страницы: {n} × {unit}",
+      'ui.price_images': "AI-изображения: {n} × {unit}",
+      'ui.price_trial': "Первый заказ",
+      'ui.price_admin': "Заказ админа",
+      'ui.price_pay': "К оплате",
+      'ui.balance': "Баланс",
+      'ui.pending_receipts': "⏳ На проверке чеков: {n}"
     },
 
     en: {
@@ -409,7 +581,93 @@
       'plan.cut': "Only the first {max} were used; {n} extra lines were ignored.",
       'plan.err_min_sections': "Write at least {min} section titles.",
       'plan.err_min_chapters': "Write at least {min} chapter titles.",
-      'plan.save': "Save outline"
+      'plan.save': "Save outline",
+
+      // Mini App (api mode) wording of the chat pages: t() prefers key@api there.
+      'open_text@api': "This app works inside Telegram: open it with the menu button of {bot}.",
+      'open_text_any@api': "This app works inside Telegram: open it with the bot's menu button.",
+      'bad_link@api': "Go back to the app's home page and open it again.",
+      'send_failed@api': "Couldn't save. Check your connection and try again.",
+      'price_in_bot@api': "The price is shown on the order page",
+      'settings.subtitle@api': "After Save you confirm the order in the app.",
+      'settings.price_note@api': "The final price is shown on the order page before you confirm.",
+      'settings.plan_kept_sections@api': "My own · {n} sections (kept in the order)",
+      'settings.plan_kept_chapters@api': "My own · {n} chapters (kept in the order)",
+      'plan.kept_note@api': "Your plan is kept in the order and not shown here. Writing a new one replaces it.",
+
+      // Shared by the Mini App pages.
+      'auth_title': "Open it again",
+      'auth_text': "This session has expired. Close the app and open it again with the bot's menu button.",
+      'leave_confirm': "Your changes will not be saved. Leave?",
+      'back': "Back",
+      'retry': "Try again",
+      'close': "Close",
+      'cancel': "Cancel",
+      'loading': "Loading…",
+      'copy': "Copy",
+      'copied': "Copied",
+      'copy_failed': "Couldn't copy. Select the text and copy it yourself.",
+      'opens_chat': "opens in the chat",
+
+      // API error codes (STAGE8_SPEC §9); MiniApp.errorText(code).
+      'err.unknown': "Something went wrong. Please try again.",
+      'err.offline': "No internet connection. Check it and try again.",
+      'err.timeout': "The server did not answer. Please try again.",
+      'err.bad_request': "The request was not valid. Close the page and open it again.",
+      'err.missing_idempotency_key': "The request was not valid. Close the page and open it again.",
+      'err.auth_missing': "No session found. Open the app with the bot's menu button.",
+      'err.auth_invalid': "The session could not be verified. Close the app and open it again.",
+      'err.auth_expired': "This session has expired. Close the app and open it again.",
+      'err.not_registered': "Start the bot first: tap /start in the chat.",
+      'err.banned': "Your account is blocked. Contact support if you have questions.",
+      'err.not_open_yet': "The app is not open to everyone yet. Please use the bot for now.",
+      'err.too_large': "That is too much data.",
+      'err.rate_limited': "Too many requests. Please try again in a moment.",
+      'err.internal': "Server error. Please try again in a moment.",
+      'err.unavailable': "The service is temporarily unavailable. Please try again in a moment.",
+      'err.bad_language': "This language is not supported.",
+      'err.not_in_app': "This service works only in the chat.",
+      'err.bad_payload': "Couldn't save the settings. Close the page and open it again.",
+      'err.draft_changed': "The order was changed in another window. It has been reloaded.",
+      'err.orders_paused': "Ordering in the app is paused for now. Please order in the chat.",
+      'err.service_disabled': "This service is temporarily unavailable.",
+      'err.topic_missing': "Write the topic first.",
+      'err.price_changed': "The price has changed. Please check the new price.",
+      'err.busy': "An order of yours is already being prepared. Please wait for it to finish.",
+      'err.insufficient_funds': "Your balance is not enough.",
+      'err.chat_unreachable': "The bot cannot message you. Open the bot and tap /start.",
+      'err.not_found': "Not found.",
+      'err.not_resendable': "This file cannot be sent again.",
+      'err.file_gone': "The file is no longer on Telegram. Please order it again.",
+      'err.telegram_unavailable': "Telegram did not answer. Please try again in a moment.",
+      'err.bad_amount': "The amount is not valid.",
+      'err.too_many_pending': "Too many receipts are waiting. Wait until an admin checks them.",
+      'err.topup_unavailable': "Top-ups are not available right now.",
+      'err.unsupported_file': "This file type is not accepted. Send a photo or a PDF.",
+
+      // Job and payment statuses (MiniAppUI.statusPill).
+      'status.starting': "Starting",
+      'status.queued': "Queued",
+      'status.building': "In progress",
+      'status.sending': "Sending",
+      'status.delivered': "Delivered",
+      'status.failed': "Failed",
+      'status.cancelled': "Cancelled",
+      'status.refused': "Not started",
+      'status.pending': "Being checked",
+      'status.approved': "Approved",
+      'status.rejected': "Rejected",
+
+      // MiniAppUI components.
+      'ui.progress': "Progress",
+      'ui.price_slides': "Slides: {n} × {unit}",
+      'ui.price_pages': "Pages: {n} × {unit}",
+      'ui.price_images': "AI pictures: {n} × {unit}",
+      'ui.price_trial': "First order",
+      'ui.price_admin': "Admin order",
+      'ui.price_pay': "To pay",
+      'ui.balance': "Balance",
+      'ui.pending_receipts': "⏳ Receipts being checked: {n}"
     }
   };
 
@@ -419,24 +677,69 @@
     return LANGS.indexOf(short) >= 0 ? short : null;
   }
 
+  // A wording variant (the Mini App's "api" mode): t(key) prefers
+  // STRINGS[lang][key + '@' + variant] when that exists.
+  var variant = '';
+
+  function own(table, key) {
+    return !!table && Object.prototype.hasOwnProperty.call(table, key);
+  }
+
+  /** True when `key` has a string in `lang` or in Uzbek. */
+  function has(lang, key) {
+    return own(STRINGS[lang], key) || own(STRINGS[DEFAULT_LANG], key);
+  }
+
+  /** '' (none) or a name such as 'api'; anything else is ignored. */
+  function setVariant(name) {
+    variant = typeof name === 'string' && /^[a-z]{0,16}$/.test(name) ? name : '';
+  }
+
   /**
    * The string for `key` in `lang`, falling back to Uzbek, then to the key
    * itself (visible, so a missing string is noticed rather than blank).
+   * With a variant set, key@variant is tried first in each language.
    * Unknown placeholders are left as they are.
    */
   function translate(lang, key, vars) {
     var table = STRINGS[lang] || STRINGS[DEFAULT_LANG];
-    var text = Object.prototype.hasOwnProperty.call(table, key) ? table[key] : STRINGS[DEFAULT_LANG][key];
+    var alt = variant ? key + '@' + variant : null;
+    var text = null;
+    if (alt && own(table, alt)) text = table[alt];
+    else if (own(table, key)) text = table[key];
+    else if (alt && own(STRINGS[DEFAULT_LANG], alt)) text = STRINGS[DEFAULT_LANG][alt];
+    else if (own(STRINGS[DEFAULT_LANG], key)) text = STRINGS[DEFAULT_LANG][key];
     if (text == null) return key;
     return String(text).replace(/\{(\w+)\}/g, function (match, name) {
       return vars && vars[name] != null ? String(vars[name]) : match;
     });
   }
 
-  /** Adds or overrides strings, e.g. for a page that is not part of this file yet. */
-  function extend(lang, dict) {
-    if (!STRINGS[lang] || !dict) return;
-    Object.keys(dict).forEach(function (key) { STRINGS[lang][key] = dict[key]; });
+  /**
+   * Adds strings for a page: extend({uz: {...}, ru: {...}, en: {...}}), or
+   * extend(lang, {...}). A key that already exists is never overwritten, so
+   * a page file cannot change a shared string. Returns the refused keys
+   * ("lang:key"); each refusal is also logged as a warning.
+   */
+  function extend(arg, dict) {
+    var byLang = {};
+    if (typeof arg === 'string') byLang[arg] = dict;
+    else if (arg && typeof arg === 'object') byLang = arg;
+    var refused = [];
+    Object.keys(byLang).forEach(function (lang) {
+      var table = STRINGS[lang];
+      var add = byLang[lang];
+      if (!table || !add || typeof add !== 'object') return;
+      Object.keys(add).forEach(function (key) {
+        if (own(table, key)) {
+          refused.push(lang + ':' + key);
+        } else if (typeof add[key] === 'string') {
+          table[key] = add[key];
+        }
+      });
+    });
+    if (refused.length && root.console) root.console.warn('MiniAppI18n.extend kept existing strings:', refused.join(', '));
+    return refused;
   }
 
   root.MiniAppI18n = {
@@ -445,6 +748,8 @@
     strings: STRINGS,
     normalize: normalize,
     translate: translate,
+    has: has,
+    setVariant: setVariant,
     extend: extend
   };
 })(window);

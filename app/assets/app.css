@@ -318,6 +318,11 @@ h1:focus {
   white-space: nowrap;
 }
 
+/* A label that must stay whole: the value beside it is cut instead. */
+.cell-text.keep {
+  flex: 0 0 auto;
+}
+
 .cell-value {
   flex: 0 1 auto;
   min-width: 0;
@@ -1152,4 +1157,665 @@ input[type="range"]:focus-visible {
 .cell-row .cell-sub,
 .cell > .cell-text .cell-sub.wrap {
   white-space: normal;
+}
+
+/* ══ Mini App components (api-mode pages under /tg/; MiniAppUI builds them) ══
+ * Additive: nothing above changes. Status colours are fixed per scheme and
+ * reach 4.5:1 on their tint over the light and dark list grounds; link-
+ * coloured text uses --link-text, which MiniApp.applyTheme lifts to 4.5:1
+ * when Telegram's link colour is fainter (iOS light #007aff is 4.0:1).
+ */
+
+:root {
+  --link-text: var(--tg-theme-link-color, var(--fb-link));
+  --pill-good: #16702f;
+  --pill-good-bg: rgba(52, 199, 89, 0.14);
+  --pill-warn: #8a4f00;
+  --pill-warn-bg: rgba(255, 149, 0, 0.16);
+  --pill-bad: #c00018;
+  --pill-bad-bg: rgba(255, 59, 48, 0.12);
+  --pill-info: #0a5bb0;
+  --pill-info-bg: rgba(0, 122, 255, 0.12);
+  --pill-neutral: #55555a;
+  --pill-neutral-bg: rgba(118, 118, 128, 0.12);
+  --toast-bg: rgba(28, 28, 30, 0.94);
+  --toast-ring: transparent;
+}
+
+:root[data-theme="dark"] {
+  --pill-good: #4cd964;
+  --pill-good-bg: rgba(48, 209, 88, 0.16);
+  --pill-warn: #ffb340;
+  --pill-warn-bg: rgba(255, 159, 10, 0.18);
+  --pill-bad: #ff8a80;
+  --pill-bad-bg: rgba(255, 69, 58, 0.18);
+  --pill-info: #6cb0ff;
+  --pill-info-bg: rgba(10, 132, 255, 0.2);
+  --pill-neutral: #c2c2c8;
+  --pill-neutral-bg: rgba(118, 118, 128, 0.24);
+  --toast-bg: rgba(58, 58, 60, 0.96);
+  --toast-ring: rgba(255, 255, 255, 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pill-good: #4cd964;
+    --pill-good-bg: rgba(48, 209, 88, 0.16);
+    --pill-warn: #ffb340;
+    --pill-warn-bg: rgba(255, 159, 10, 0.18);
+    --pill-bad: #ff8a80;
+    --pill-bad-bg: rgba(255, 69, 58, 0.18);
+    --pill-info: #6cb0ff;
+    --pill-info-bg: rgba(10, 132, 255, 0.2);
+    --pill-neutral: #c2c2c8;
+    --pill-neutral-bg: rgba(118, 118, 128, 0.24);
+    --toast-bg: rgba(58, 58, 60, 0.96);
+    --toast-ring: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* ── balance card ─────────────────────────────────────────────────────────── */
+
+.balance-card {
+  display: flex;
+  align-items: center;
+  gap: var(--icon-gap);
+  width: 100%;
+  min-height: 88px;
+  margin: 18px 0 0;
+  padding: 14px var(--inset);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--cell);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+
+button.balance-card {
+  cursor: pointer;
+}
+
+.balance-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+}
+
+.balance-label,
+.balance-pending {
+  color: var(--hint);
+  font-size: 14px;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.balance-amount {
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 359px) {
+  .balance-amount {
+    font-size: 28px;
+  }
+}
+
+.balance-card .ic {
+  flex-basis: 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.balance-card .ic svg.i {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── buttons inside the page (the primary action is Telegram's MainButton) ── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--cell);
+  color: var(--link-text);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn:active:not(:disabled) {
+  background: var(--fill);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn svg.i {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-primary {
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1.5px var(--button);
+}
+
+.btn-destructive {
+  color: var(--destructive);
+}
+
+.btn-block,
+.list > .btn {
+  width: 100%;
+}
+
+.list > .btn {
+  border-radius: 0;
+}
+
+.list > * + .btn {
+  border-top: 0.5px solid var(--separator);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-row > .btn {
+  flex: 1 1 140px;
+}
+
+/* A row that leaves the app (to the chat): arrow instead of a chevron. */
+.cell svg.ext {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  color: var(--hint);
+}
+
+/* ── progress ─────────────────────────────────────────────────────────────── */
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px var(--inset);
+}
+
+.progress-track {
+  position: relative;
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--fill);
+  overflow: hidden;
+}
+
+.progress-bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--button);
+  transition: width 0.4s ease;
+}
+
+.progress.indeterminate .progress-bar {
+  width: 35%;
+  animation: progress-slide 1.3s ease-in-out infinite;
+}
+
+@keyframes progress-slide {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+.progress-text {
+  min-height: 1.3em;
+  color: var(--hint);
+  font-size: 14px;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress.indeterminate .progress-bar {
+    width: 100%;
+    opacity: 0.45;
+  }
+}
+
+/* ── status pills ─────────────────────────────────────────────────────────── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.pill-good { color: var(--pill-good); background: var(--pill-good-bg); }
+.pill-warn { color: var(--pill-warn); background: var(--pill-warn-bg); }
+.pill-bad { color: var(--pill-bad); background: var(--pill-bad-bg); }
+.pill-info { color: var(--pill-info); background: var(--pill-info-bg); }
+.pill-neutral { color: var(--pill-neutral); background: var(--pill-neutral-bg); }
+
+/* ── toast ────────────────────────────────────────────────────────────────── */
+
+.toasts {
+  position: fixed;
+  right: 0;
+  bottom: calc(16px + var(--sa-bottom) + var(--csa-bottom));
+  left: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: var(--toast-bg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 0 0 1px var(--toast-ring);
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.35;
+  animation: toast-in 0.2s ease-out;
+}
+
+.toast svg.i {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
+.toast-success svg.i { color: #4cd964; }
+.toast-error svg.i { color: #ff8a80; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── banner ───────────────────────────────────────────────────────────────── */
+
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 12px var(--inset);
+  border-radius: var(--radius);
+  background: var(--cell);
+  box-shadow: inset 0 0 0 1px var(--banner-ring, transparent);
+}
+
+.banner-info { --banner-ring: var(--pill-info-bg); }
+.banner-success { --banner-ring: var(--pill-good-bg); }
+.banner-warn { --banner-ring: var(--pill-warn-bg); }
+.banner-error { --banner-ring: var(--pill-bad-bg); }
+
+.banner-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.banner-title {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.banner-text {
+  color: var(--hint);
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.banner-error .banner-text {
+  color: var(--text);
+}
+
+.banner-action {
+  align-self: flex-start;
+  min-width: 44px;
+  min-height: 44px;
+  margin: 0 0 -8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--link-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── skeleton ─────────────────────────────────────────────────────────────── */
+
+.skeleton .cell {
+  pointer-events: none;
+}
+
+.sk {
+  display: block;
+  border-radius: 6px;
+  background: var(--fill);
+  animation: sk-pulse 1.4s ease-in-out infinite;
+}
+
+.sk-tile {
+  flex: 0 0 var(--icon);
+  width: var(--icon);
+  height: var(--icon);
+  border-radius: 7px;
+}
+
+.sk-lines {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  gap: 7px;
+  min-width: 0;
+}
+
+.sk-line {
+  width: 72%;
+  height: 12px;
+}
+
+.sk-line.short {
+  width: 42%;
+}
+
+@keyframes sk-pulse {
+  50% { opacity: 0.45; }
+}
+
+/* ── empty state ──────────────────────────────────────────────────────────── */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding: 20px;
+  text-align: center;
+}
+
+.empty-state .ic {
+  flex-basis: 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+}
+
+.empty-state .ic svg.i {
+  width: 26px;
+  height: 26px;
+}
+
+.empty-title {
+  margin: 4px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.empty-text {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--hint);
+  font-size: 15px;
+}
+
+/* ── file rows (history) ──────────────────────────────────────────────────── */
+
+.file-row {
+  padding-right: 6px;
+}
+
+.file-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.file-action {
+  flex: 0 0 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  background: none;
+  color: var(--link-text);
+  cursor: pointer;
+}
+
+.file-action:active {
+  background: var(--fill);
+}
+
+.file-action svg.i {
+  width: 22px;
+  height: 22px;
+}
+
+/* ── copy field (card number, referral link) ──────────────────────────────── */
+
+.copy-field {
+  padding: 10px var(--inset) 12px;
+}
+
+.copy-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--hint);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.copy-label:empty {
+  display: none;
+}
+
+.copy-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copy-field input.copy-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--fill);
+  color: var(--text);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+}
+
+.copy-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--link-text);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.copy-button:active {
+  background: var(--fill);
+}
+
+@media (max-width: 359px) {
+  .copy-word {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ── amount chips (top-up) ────────────────────────────────────────────────── */
+
+.amount-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.amount-chips .chip {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 8px 14px;
+  background: var(--cell);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The chip and the selected thumb are both white in light themes: a ring in
+   the button colour makes the choice visible. */
+.amount-chips .chip[aria-checked="true"] {
+  box-shadow: inset 0 0 0 2px var(--button);
+}
+
+.amount-chips + .list {
+  margin-top: 10px;
+}
+
+/* ── upload (receipt file) ────────────────────────────────────────────────── */
+
+.upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 120px;
+  padding: 16px;
+  border: 1.5px dashed var(--separator);
+  border-radius: var(--radius);
+  background: var(--cell);
+  color: var(--text);
+  text-align: center;
+  cursor: pointer;
+}
+
+.upload.has-file {
+  border-style: solid;
+}
+
+.upload input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload:focus-within {
+  outline: 2px solid var(--button);
+  outline-offset: 2px;
+}
+
+.upload svg.i {
+  width: 26px;
+  height: 26px;
+  color: var(--link-text);
+}
+
+.upload-title {
+  color: var(--link-text);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.upload-hint {
+  color: var(--hint);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.upload-preview {
+  display: block;
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 10px;
+  object-fit: contain;
 }

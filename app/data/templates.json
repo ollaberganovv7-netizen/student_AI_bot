@@ -4,219 +4,443 @@
     "name": "Beige-Minimalism",
     "category": "modern",
     "file_path": "templates/modern/beige-minimalism.pptx",
-    "file_size": "55 KB",
-    "preview": "static/previews/modern/beige-minimalism.webp",
-    "preview_jpg": "static/previews/modern/beige-minimalism.jpg",
-    "width": 640,
-    "height": 361
+    "file_size": "43 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Beige minimalism",
+      "ru": "Бежевый минимализм",
+      "uz": "Bej minimalizm"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_business-minimalism_",
     "name": "Business-Minimalism ",
     "category": "modern",
     "file_path": "templates/modern/business-minimalism .pptx",
-    "file_size": "56 KB",
-    "preview": "static/previews/modern/business-minimalism_.webp",
-    "preview_jpg": "static/previews/modern/business-minimalism_.jpg",
+    "file_size": "44 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Business minimalism",
+      "ru": "Бизнес-минимализм",
+      "uz": "Biznes minimalizm"
+    },
+    "credit": null,
+    "hidden": true
+  },
+  {
+    "id": "modern_cerimon",
+    "name": "Cerimon",
+    "category": "modern",
+    "file_path": "templates/modern/cerimon.pptx",
+    "file_size": "28 KB",
+    "preview": "static/previews/modern/cerimon.webp",
+    "preview_jpg": "static/previews/modern/cerimon.jpg",
     "width": 640,
-    "height": 358
+    "height": 360,
+    "titles": {
+      "en": "Teal stripe",
+      "ru": "Бирюзовая полоса",
+      "uz": "Firuza chiziq"
+    },
+    "credit": {
+      "en": "Design: SlidesCarnival (slidescarnival.com), CC BY 4.0, modified.",
+      "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
+      "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
+    },
+    "hidden": false
+  },
+  {
+    "id": "modern_fortinbras",
+    "name": "Fortinbras",
+    "category": "modern",
+    "file_path": "templates/modern/fortinbras.pptx",
+    "file_size": "151 KB",
+    "preview": "static/previews/modern/fortinbras.webp",
+    "preview_jpg": "static/previews/modern/fortinbras.jpg",
+    "width": 640,
+    "height": 360,
+    "titles": {
+      "en": "Red bookmark",
+      "ru": "Красная закладка",
+      "uz": "Qizil xatcho'p"
+    },
+    "credit": {
+      "en": "Design: SlidesCarnival (slidescarnival.com), CC BY 4.0, modified.",
+      "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
+      "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
+    },
+    "hidden": false
   },
   {
     "id": "modern_goluboy-abstraktniy",
     "name": "Goluboy-Abstraktniy",
     "category": "modern",
     "file_path": "templates/modern/goluboy-abstraktniy.pptx",
-    "file_size": "946 KB",
-    "preview": "static/previews/modern/goluboy-abstraktniy.webp",
-    "preview_jpg": "static/previews/modern/goluboy-abstraktniy.jpg",
-    "width": 640,
-    "height": 359
+    "file_size": "923 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Light blue abstract",
+      "ru": "Голубая абстракция",
+      "uz": "Moviy abstraksiya"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_grey-minimalism",
     "name": "Grey-Minimalism",
     "category": "modern",
     "file_path": "templates/modern/grey-minimalism.pptx",
-    "file_size": "58 KB",
-    "preview": "static/previews/modern/grey-minimalism.webp",
-    "preview_jpg": "static/previews/modern/grey-minimalism.jpg",
-    "width": 640,
-    "height": 361
+    "file_size": "44 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Grey minimalism",
+      "ru": "Серый минимализм",
+      "uz": "Kulrang minimalizm"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_minimalism",
     "name": "Minimalism",
     "category": "modern",
     "file_path": "templates/modern/minimalism.pptx",
-    "file_size": "59 KB",
-    "preview": "static/previews/modern/minimalism.webp",
-    "preview_jpg": "static/previews/modern/minimalism.jpg",
-    "width": 640,
-    "height": 367
+    "file_size": "47 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Minimalism",
+      "ru": "Минимализм",
+      "uz": "Minimalizm"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_mrarmor",
     "name": "Mrarmor",
     "category": "modern",
     "file_path": "templates/modern/mrarmor.pptx",
-    "file_size": "361 KB",
-    "preview": "static/previews/modern/mrarmor.webp",
-    "preview_jpg": "static/previews/modern/mrarmor.jpg",
+    "file_size": "340 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Marble",
+      "ru": "Мрамор",
+      "uz": "Marmar"
+    },
+    "credit": null,
+    "hidden": true
+  },
+  {
+    "id": "modern_salerio",
+    "name": "Salerio",
+    "category": "modern",
+    "file_path": "templates/modern/salerio.pptx",
+    "file_size": "31 KB",
+    "preview": "static/previews/modern/salerio.webp",
+    "preview_jpg": "static/previews/modern/salerio.jpg",
     "width": 640,
-    "height": 356
+    "height": 360,
+    "titles": {
+      "en": "Navy and orange",
+      "ru": "Сине-оранжевый",
+      "uz": "Ko'k-to'q sariq"
+    },
+    "credit": {
+      "en": "Design: SlidesCarnival (slidescarnival.com), CC BY 4.0, modified.",
+      "ru": "Дизайн: SlidesCarnival (slidescarnival.com), CC BY 4.0, изменён.",
+      "uz": "Dizayn: SlidesCarnival (slidescarnival.com), CC BY 4.0, o'zgartirilgan."
+    },
+    "hidden": false
   },
   {
     "id": "modern_sinie-tochki",
     "name": "Sinie-Tochki",
     "category": "modern",
     "file_path": "templates/modern/sinie-tochki.pptx",
-    "file_size": "333 KB",
-    "preview": "static/previews/modern/sinie-tochki.webp",
-    "preview_jpg": "static/previews/modern/sinie-tochki.jpg",
-    "width": 640,
-    "height": 359
+    "file_size": "308 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Blue dots",
+      "ru": "Синие точки",
+      "uz": "Ko'k nuqtalar"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_siniy-kontur-wide",
     "name": "Siniy-Kontur-Wide",
     "category": "modern",
     "file_path": "templates/modern/siniy-kontur-wide.pptx",
-    "file_size": "206 KB",
-    "preview": "static/previews/modern/siniy-kontur-wide.webp",
-    "preview_jpg": "static/previews/modern/siniy-kontur-wide.jpg",
-    "width": 640,
-    "height": 358
+    "file_size": "184 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Blue frame",
+      "ru": "Синяя рамка",
+      "uz": "Ko'k ramka"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "modern_staraya-bumaga",
     "name": "Staraya-Bumaga",
     "category": "modern",
     "file_path": "templates/modern/staraya-bumaga.pptx",
-    "file_size": "397 KB",
-    "preview": "static/previews/modern/staraya-bumaga.webp",
-    "preview_jpg": "static/previews/modern/staraya-bumaga.jpg",
-    "width": 640,
-    "height": 358
+    "file_size": "376 KB",
+    "preview": null,
+    "preview_jpg": null,
+    "width": null,
+    "height": null,
+    "titles": {
+      "en": "Old paper",
+      "ru": "Старая бумага",
+      "uz": "Eski qog'oz"
+    },
+    "credit": null,
+    "hidden": true
   },
   {
     "id": "power_point_1",
     "name": "1",
     "category": "power point",
     "file_path": "templates/power point/1.pptx",
-    "file_size": "322 KB",
+    "file_size": "273 KB",
     "preview": "static/previews/power_point/1.webp",
     "preview_jpg": "static/previews/power_point/1.jpg",
     "width": 640,
-    "height": 354
+    "height": 360,
+    "titles": {
+      "en": "Dark green",
+      "ru": "Тёмно-зелёный",
+      "uz": "To'q yashil"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_2",
     "name": "2",
     "category": "power point",
     "file_path": "templates/power point/2.pptx",
-    "file_size": "58 KB",
+    "file_size": "48 KB",
     "preview": "static/previews/power_point/2.webp",
     "preview_jpg": "static/previews/power_point/2.jpg",
     "width": 640,
-    "height": 361
+    "height": 360,
+    "titles": {
+      "en": "Red banner",
+      "ru": "Красная плашка",
+      "uz": "Qizil lavha"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_3",
     "name": "3",
     "category": "power point",
     "file_path": "templates/power point/3.pptx",
-    "file_size": "175 KB",
+    "file_size": "168 KB",
     "preview": "static/previews/power_point/3.webp",
     "preview_jpg": "static/previews/power_point/3.jpg",
     "width": 640,
-    "height": 309
+    "height": 360,
+    "titles": {
+      "en": "Gallery",
+      "ru": "Галерея",
+      "uz": "Galereya"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_4",
     "name": "4",
     "category": "power point",
     "file_path": "templates/power point/4.pptx",
-    "file_size": "34 KB",
+    "file_size": "29 KB",
     "preview": "static/previews/power_point/4.webp",
     "preview_jpg": "static/previews/power_point/4.jpg",
     "width": 640,
-    "height": 352
+    "height": 360,
+    "titles": {
+      "en": "Grey-blue",
+      "ru": "Серо-голубой",
+      "uz": "Kulrang-moviy"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_5",
     "name": "5",
     "category": "power point",
     "file_path": "templates/power point/5.pptx",
-    "file_size": "341 KB",
+    "file_size": "328 KB",
     "preview": "static/previews/power_point/5.webp",
     "preview_jpg": "static/previews/power_point/5.jpg",
     "width": 640,
-    "height": 343
+    "height": 360,
+    "titles": {
+      "en": "Seal",
+      "ru": "Печать",
+      "uz": "Muhr"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_6",
     "name": "6",
     "category": "power point",
     "file_path": "templates/power point/6.pptx",
-    "file_size": "608 KB",
+    "file_size": "599 KB",
     "preview": "static/previews/power_point/6.webp",
     "preview_jpg": "static/previews/power_point/6.jpg",
     "width": 640,
-    "height": 330
+    "height": 360,
+    "titles": {
+      "en": "Purple",
+      "ru": "Фиолетовый",
+      "uz": "Binafsha"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_10",
     "name": "10",
     "category": "power point",
     "file_path": "templates/power point/10.pptx",
-    "file_size": "45 KB",
+    "file_size": "39 KB",
     "preview": "static/previews/power_point/10.webp",
     "preview_jpg": "static/previews/power_point/10.jpg",
     "width": 640,
-    "height": 358
+    "height": 360,
+    "titles": {
+      "en": "Green facets",
+      "ru": "Зелёные грани",
+      "uz": "Yashil qirralar"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_classic",
     "name": "Classic",
     "category": "power point",
     "file_path": "templates/power point/classic.pptx",
-    "file_size": "35 KB",
+    "file_size": "31 KB",
     "preview": "static/previews/power_point/classic.webp",
     "preview_jpg": "static/previews/power_point/classic.jpg",
     "width": 640,
-    "height": 360
+    "height": 360,
+    "titles": {
+      "en": "White classic",
+      "ru": "Белая классика",
+      "uz": "Oq klassik"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_dark_premium",
     "name": "Dark Premium",
     "category": "power point",
     "file_path": "templates/power point/dark_premium.pptx",
-    "file_size": "34 KB",
+    "file_size": "28 KB",
     "preview": "static/previews/power_point/dark_premium.webp",
     "preview_jpg": "static/previews/power_point/dark_premium.jpg",
     "width": 640,
-    "height": 361
+    "height": 360,
+    "titles": {
+      "en": "Dark navy",
+      "ru": "Тёмно-синий",
+      "uz": "To'q ko'k"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_powerpoint-waves-blue",
     "name": "Powerpoint-Waves-Blue",
     "category": "power point",
     "file_path": "templates/power point/powerpoint-waves-blue.pptx",
-    "file_size": "99 KB",
+    "file_size": "98 KB",
     "preview": "static/previews/power_point/powerpoint-waves-blue.webp",
     "preview_jpg": "static/previews/power_point/powerpoint-waves-blue.jpg",
     "width": 640,
-    "height": 360
+    "height": 360,
+    "titles": {
+      "en": "Blue waves",
+      "ru": "Синие волны",
+      "uz": "Ko'k to'lqinlar"
+    },
+    "credit": null,
+    "hidden": false
   },
   {
     "id": "power_point_priroda",
     "name": "Priroda",
     "category": "power point",
     "file_path": "templates/power point/priroda.pptx",
-    "file_size": "1034 KB",
+    "file_size": "973 KB",
     "preview": "static/previews/power_point/priroda.webp",
     "preview_jpg": "static/previews/power_point/priroda.jpg",
     "width": 640,
-    "height": 350
+    "height": 360,
+    "titles": {
+      "en": "Nature",
+      "ru": "Природа",
+      "uz": "Tabiat"
+    },
+    "credit": null,
+    "hidden": false
+  },
+  {
+    "id": "power_point_uz-ornament",
+    "name": "Uz-Ornament",
+    "category": "power point",
+    "file_path": "templates/power point/uz-ornament.pptx",
+    "file_size": "22 KB",
+    "preview": "static/previews/power_point/uz-ornament.webp",
+    "preview_jpg": "static/previews/power_point/uz-ornament.jpg",
+    "width": 640,
+    "height": 360,
+    "titles": {
+      "en": "Uzbek ornament",
+      "ru": "Узбекский орнамент",
+      "uz": "O'zbek naqshi"
+    },
+    "credit": null,
+    "hidden": false
   }
 ]
